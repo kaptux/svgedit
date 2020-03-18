@@ -850,16 +850,8 @@ editor.init = function() {
    * @returns {void}
    */
   const setIcon = (editor.setIcon = function(elem, iconId, forcedSize) {
-    const icon =
-      typeof iconId === "string" ? $.getSvgIcon(iconId, true) : iconId.clone();
-    if (!icon) {
-      // Todo: Investigate why this still occurs in some cases
-      console.log("NOTE: Icon image missing: " + iconId); // eslint-disable-line no-console
-      return;
-    }
-    $(elem)
-      .empty()
-      .append(icon);
+    //Todo: Update UI (Maybe!!)
+    console.log("update ui", iconId);
   });
 
   /**
@@ -881,7 +873,7 @@ editor.init = function() {
     const { ok, cancel } = uiStrings.common;
     jQueryPluginDBox($, { ok, cancel });
 
-    setIcons(); // Wait for dbox as needed for i18n
+    initUI(); // Wait for dbox as needed for i18n
 
     try {
       await Promise.all(
@@ -1072,14 +1064,6 @@ editor.init = function() {
     stateObj.tool_scale = editor.tool_scale = scale;
 
     setFlyoutPositions();
-    // $('.tools_flyout').each(function () {
-    //   const pos = $(this).position();
-    //   console.log($(this), pos.left+(34 * scale));
-    //   $(this).css({left: pos.left+(34 * scale), top: pos.top+(77 * scale)});
-    //   console.log('l', $(this).css('left'));
-    // });
-    //
-    // const scale = .75;
 
     const hiddenPs = elems.parents(":hidden");
     hiddenPs.css("visibility", "hidden").show();
@@ -1090,43 +1074,8 @@ editor.init = function() {
     editor.pref("iconsize", size);
     $("#iconsize").val(size);
 
-    // Change icon size
-    // $('.tool_button, .push_button, .tool_button_current, .disabled, .icon_label, #url_notice, #tool_open')
-    // .find('> svg, > img').each(function () {
-    //   this.setAttribute('width',size_num);
-    //   this.setAttribute('height',size_num);
-    // });
-    //
-    // $.resizeSvgIcons({
-    //   '.flyout_arrow_horiz > svg, .flyout_arrow_horiz > img': size_num / 5,
-    //   '#logo > svg, #logo > img': size_num * 1.3,
-    //   '#tools_bottom .icon_label > *': (size_num === 16 ? 18 : size_num * .75)
-    // });
-    // if (size != 's') {
-    //   $.resizeSvgIcons({'#layerbuttons svg, #layerbuttons img': size_num * .6});
-    // }
-
     // Note that all rules will be prefixed with '#svg_editor' when parsed
     const cssResizeRules = {
-      // '.tool_button,\
-      // .push_button,\
-      // .tool_button_current,\
-      // .push_button_pressed,\
-      // .disabled,\
-      // .icon_label,\
-      // .tools_flyout .tool_button': {
-      //   width: {s: '16px', l: '32px', xl: '48px'},
-      //   height: {s: '16px', l: '32px', xl: '48px'},
-      //   padding: {s: '1px', l: '2px', xl: '3px'}
-      // },
-      // '.tool_sep': {
-      //   height: {s: '16px', l: '32px', xl: '48px'},
-      //   margin: {s: '2px 2px', l: '2px 5px', xl: '2px 8px'}
-      // },
-      // '#main_icon': {
-      //   width: {s: '31px', l: '53px', xl: '75px'},
-      //   height: {s: '22px', l: '42px', xl: '64px'}
-      // },
       "#tools_top": {
         left: 50 + $("#main_button").width(),
         height: 72
@@ -1273,294 +1222,56 @@ editor.init = function() {
    * Setup SVG icons.
    * @returns {void}
    */
-  function setIcons() {
-    $.svgIcons(curConfig.imgPath + "svg_edit_icons.svg", {
-      w: 24,
-      h: 24,
-      id_match: false,
-      no_img: !isWebkit(), // Opera & Firefox 4 gives odd behavior w/images
-      fallback_path: curConfig.imgPath,
-      // Todo: Set `alts: {}` with keys as the IDs in fallback set to
-      //   `uiStrings` (localized) values
-      fallback: {
-        logo: "logo.png",
+  async function initUI() {
+    //editor.setIconSize("m");
 
-        select: "select.png",
-        select_node: "select_node.png",
-
-        square: "square.png",
-        rect: "rect.png",
-        fh_rect: "freehand-square.png",
-        circle: "circle.png",
-        ellipse: "ellipse.png",
-        fh_ellipse: "freehand-circle.png",
-        pencil: "fhpath.png",
-        pen: "line.png",
-        text: "text.png",
-        path: "path.png",
-        add_subpath: "add_subpath.png",
-        close_path: "closepath.png",
-        open_path: "openpath.png",
-
-        image: "image.png",
-        zoom: "zoom.png",
-
-        arrow_right: "flyouth.png",
-        arrow_right_big: "arrow_right_big.png",
-        arrow_down: "dropdown.gif",
-        fill: "fill.png",
-        stroke: "stroke.png",
-        opacity: "opacity.png",
-
-        new_image: "clear.png",
-        save: "save.png",
-        export: "export.png",
-        open: "open.png",
-        import: "import.png",
-        docprops: "document-properties.png",
-        source: "source.png",
-        wireframe: "wireframe.png",
-
-        undo: "undo.png",
-        redo: "redo.png",
-
-        clone: "clone.png",
-        delete: "delete.png",
-        go_up: "go-up.png",
-        go_down: "go-down.png",
-        context_menu: "context_menu.png",
-        move_bottom: "move_bottom.png",
-        move_top: "move_top.png",
-        to_path: "to_path.png",
-        link_controls: "link_controls.png",
-        reorient: "reorient.png",
-        group_elements: "shape_group_elements.png",
-
-        ungroup: "shape_ungroup.png",
-        unlink_use: "unlink_use.png",
-        width: "width.png",
-        height: "height.png",
-        c_radius: "c_radius.png",
-        angle: "angle.png",
-        blur: "blur.png",
-        fontsize: "fontsize.png",
-        align: "align.png",
-
-        align_left: "align-left.png",
-        align_center: "align-center.png",
-        align_right: "align-right.png",
-        align_top: "align-top.png",
-        align_middle: "align-middle.png",
-        align_bottom: "align-bottom.png",
-
-        linecap_butt: "linecap_butt.png",
-        linecap_square: "linecap_square.png",
-        linecap_round: "linecap_round.png",
-        linejoin_miter: "linejoin_miter.png",
-        linejoin_bevel: "linejoin_bevel.png",
-        linejoin_round: "linejoin_round.png",
-        eye: "eye.png",
-        no_color: "no_color.png",
-
-        ok: "save.png",
-        cancel: "cancel.png",
-        warning: "warning.png",
-
-        node_delete: "node_delete.png",
-        node_clone: "node_clone.png",
-
-        globe_link: "globe_link.png",
-        config: "config.png"
-      },
-      placement: {
-        "#logo": "logo",
-
-        "#tool_clear div,#layer_new": "new_image",
-        "#tool_save div": "save",
-        "#tool_export div": "export",
-        "#tool_open div": "open",
-        "#tool_import div": "import",
-        "#tool_source": "source",
-        "#tool_docprops > div": "docprops",
-        "#tool_editor_prefs > div": "config",
-        "#tool_editor_homepage > div": "globe_link",
-        "#tool_wireframe": "wireframe",
-
-        "#tool_undo": "undo",
-        "#tool_redo": "redo",
-
-        "#tool_select": "select",
-        "#tool_fhpath": "pencil",
-        "#tool_line": "pen",
-        "#tool_rect,#tools_rect_show": "rect",
-        "#tool_square": "square",
-        "#tool_fhrect": "fh_rect",
-        "#tool_ellipse,#tools_ellipse_show": "ellipse",
-        "#tool_circle": "circle",
-        "#tool_fhellipse": "fh_ellipse",
-        "#tool_path": "path",
-        "#tool_text,#layer_rename": "text",
-        "#tool_image": "image",
-        "#tool_zoom": "zoom",
-
-        "#tool_clone,#tool_clone_multi": "clone",
-        "#tool_node_clone": "node_clone",
-        "#layer_delete,#tool_delete,#tool_delete_multi": "delete",
-        "#tool_node_delete": "node_delete",
-        "#tool_add_subpath": "add_subpath",
-        "#tool_openclose_path": "open_path",
-        "#tool_move_top": "move_top",
-        "#tool_move_bottom": "move_bottom",
-        "#tool_topath": "to_path",
-        "#tool_node_link": "link_controls",
-        "#tool_reorient": "reorient",
-        "#tool_group_elements": "group_elements",
-        "#tool_ungroup": "ungroup",
-        "#tool_unlink_use": "unlink_use",
-
-        "#tool_alignleft, #tool_posleft": "align_left",
-        "#tool_aligncenter, #tool_poscenter": "align_center",
-        "#tool_alignright, #tool_posright": "align_right",
-        "#tool_aligntop, #tool_postop": "align_top",
-        "#tool_alignmiddle, #tool_posmiddle": "align_middle",
-        "#tool_alignbottom, #tool_posbottom": "align_bottom",
-        "#cur_position": "align",
-
-        "#linecap_butt,#cur_linecap": "linecap_butt",
-        "#linecap_round": "linecap_round",
-        "#linecap_square": "linecap_square",
-
-        "#linejoin_miter,#cur_linejoin": "linejoin_miter",
-        "#linejoin_round": "linejoin_round",
-        "#linejoin_bevel": "linejoin_bevel",
-
-        "#url_notice": "warning",
-
-        "#layer_up": "go_up",
-        "#layer_down": "go_down",
-        "#layer_moreopts": "context_menu",
-        "#layerlist td.layervis": "eye",
-
-        "#tool_source_save,#tool_docprops_save,#tool_prefs_save": "ok",
-        "#tool_source_cancel,#tool_docprops_cancel,#tool_prefs_cancel":
-          "cancel",
-
-        "#rwidthLabel, #iwidthLabel": "width",
-        "#rheightLabel, #iheightLabel": "height",
-        "#cornerRadiusLabel span": "c_radius",
-        "#angleLabel": "angle",
-        "#linkLabel,#tool_make_link,#tool_make_link_multi": "globe_link",
-        "#zoomLabel": "zoom",
-        "#tool_fill label": "fill",
-        "#tool_stroke .icon_label": "stroke",
-        "#group_opacityLabel": "opacity",
-        "#blurLabel": "blur",
-        "#font_sizeLabel": "fontsize",
-
-        ".flyout_arrow_horiz": "arrow_right",
-        ".dropdown button, #main_button .dropdown": "arrow_down",
-        "#palette .palette_item:first, #fill_bg, #stroke_bg": "no_color"
-      },
-      resize: {
-        "#logo .svg_icon": 28,
-        ".flyout_arrow_horiz .svg_icon": 5,
-        ".layer_button .svg_icon, #layerlist td.layervis .svg_icon": 14,
-        ".dropdown button .svg_icon": 7,
-        "#main_button .dropdown .svg_icon": 9,
-        ".palette_item:first .svg_icon": 15,
-        "#fill_bg .svg_icon, #stroke_bg .svg_icon": 16,
-        ".toolbar_button button .svg_icon": 16,
-        ".stroke_tool div div .svg_icon": 20,
-        "#tools_bottom label .svg_icon": 18
-      },
-      async callback(icons) {
-        $(".toolbar_button button > svg, .toolbar_button button > img").each(
-          function() {
-            $(this)
-              .parent()
-              .prepend(this);
-          }
-        );
-
-        const tleft = $("#tools_left");
-
-        let minHeight;
-        if (tleft.length) {
-          minHeight = tleft.offset().top + tleft.outerHeight();
+    /**
+     * Since stylesheets may be added out of order, we indicate the desired order
+     *   for defaults and others after them (in an indeterminate order).
+     * @param {string} stylesheetFile
+     * @returns {Integer|PositiveInfinity}
+     */
+    function getStylesheetPriority(stylesheetFile) {
+      switch (stylesheetFile) {
+        case "jgraduate/css/jPicker.css":
+          return 1;
+        case "jgraduate/css/jGraduate.css":
+          return 2;
+        case "svg-editor.css":
+          return 3;
+        case "spinbtn/jQuery.SpinButton.css":
+          return 4;
+        default:
+          return Infinity;
+      }
+    }
+    let stylesheets = $.loadingStylesheets.sort((a, b) => {
+      const priorityA = getStylesheetPriority(a);
+      const priorityB = getStylesheetPriority(b);
+      if (priorityA === priorityB) {
+        return 0;
+      }
+      return priorityA > priorityB;
+    });
+    if (curConfig.stylesheets.length) {
+      // Ensure a copy with unique items
+      stylesheets = [...new Set(curConfig.stylesheets)];
+      const idx = stylesheets.indexOf("@default");
+      if (idx > -1) {
+        stylesheets.splice(idx, 1, ...$.loadingStylesheets);
+      }
+    }
+    await loadStylesheets(stylesheets, {
+      acceptErrors({ stylesheetURL, reject, resolve }) {
+        if ($.loadingStylesheets.includes(stylesheetURL)) {
+          reject(new Error(`Missing expected stylesheet: ${stylesheetURL}`));
+          return;
         }
-
-        const size = editor.pref("iconsize");
-        editor.setIconSize(
-          size || ($(window).height() < minHeight ? "s" : "m")
-        );
-
-        // Look for any missing flyout icons from plugins
-        $(".tools_flyout").each(function() {
-          const shower = $("#" + this.id + "_show");
-          const sel = shower.attr("data-curopt");
-          // Check if there's an icon here
-          if (!shower.children("svg, img").length) {
-            const clone = $(sel)
-              .children()
-              .clone();
-            if (clone.length) {
-              clone[0].removeAttribute("style"); // Needed for Opera
-              shower.append(clone);
-            }
-          }
-        });
-
-        /**
-         * Since stylesheets may be added out of order, we indicate the desired order
-         *   for defaults and others after them (in an indeterminate order).
-         * @param {string} stylesheetFile
-         * @returns {Integer|PositiveInfinity}
-         */
-        function getStylesheetPriority(stylesheetFile) {
-          switch (stylesheetFile) {
-            case "jgraduate/css/jPicker.css":
-              return 1;
-            case "jgraduate/css/jGraduate.css":
-              return 2;
-            case "svg-editor.css":
-              return 3;
-            case "spinbtn/jQuery.SpinButton.css":
-              return 4;
-            default:
-              return Infinity;
-          }
-        }
-        let stylesheets = $.loadingStylesheets.sort((a, b) => {
-          const priorityA = getStylesheetPriority(a);
-          const priorityB = getStylesheetPriority(b);
-          if (priorityA === priorityB) {
-            return 0;
-          }
-          return priorityA > priorityB;
-        });
-        if (curConfig.stylesheets.length) {
-          // Ensure a copy with unique items
-          stylesheets = [...new Set(curConfig.stylesheets)];
-          const idx = stylesheets.indexOf("@default");
-          if (idx > -1) {
-            stylesheets.splice(idx, 1, ...$.loadingStylesheets);
-          }
-        }
-        await loadStylesheets(stylesheets, {
-          acceptErrors({ stylesheetURL, reject, resolve }) {
-            if ($.loadingStylesheets.includes(stylesheetURL)) {
-              reject(
-                new Error(`Missing expected stylesheet: ${stylesheetURL}`)
-              );
-              return;
-            }
-            resolve();
-          }
-        });
-        $("#svg_container")[0].style.visibility = "visible";
-        await editor.runCallbacks();
+        resolve();
       }
     });
+    $("#svg_container")[0].style.visibility = "visible";
+    await editor.runCallbacks();
   }
   /**
    * @name module:SVGEditor.canvas
@@ -4504,34 +4215,6 @@ editor.init = function() {
     - Just run its stuff
 
   */
-
-  // Unfocus text input when workarea is mousedowned.
-  (function() {
-    let inp;
-    /**
-     *
-     * @returns {void}
-     */
-    const unfocus = function() {
-      $(inp).blur();
-    };
-
-    $("#svg_editor")
-      .find("button, select, input:not(#text)")
-      .focus(function() {
-        inp = this; // eslint-disable-line consistent-this
-        uiContext = "toolbars";
-        workarea.mousedown(unfocus);
-      })
-      .blur(function() {
-        uiContext = "canvas";
-        workarea.unbind("mousedown", unfocus);
-        // Go back to selecting text if in textedit mode
-        if (svgCanvas.getMode() === "textedit") {
-          $("#text").focus();
-        }
-      });
-  })();
 
   /**
    *
