@@ -18,7 +18,7 @@ For default config and extensions (and available options) available to
 `setConfig()`, see the file `docs/tutorials/ConfigOptions.md`
 */
 
-import svgEditor from './editor/svg-editor.js';
+import svgEditor from "./editor/svg-editor.js";
 
 // URL OVERRIDE CONFIG
 svgEditor.setConfig({
@@ -41,12 +41,15 @@ svgEditor.setConfig({
   // lockExtensions: true,
 });
 
-svgEditor.setConfig({
-  /*
+svgEditor.setConfig(
+  {
+    /*
   Provide default values here which differ from that of the editor but
     which the URL can override
   */
-}, {allowInitialUserOverride: true});
+  },
+  { allowInitialUserOverride: true }
+);
 
 // EXTENSION CONFIG
 svgEditor.setConfig({
@@ -58,12 +61,12 @@ svgEditor.setConfig({
   ],
   // noDefaultExtensions can only be meaningfully used in
   //  `svgedit-config-es.js` or in the URL
-  noDefaultExtensions: false,
+  noDefaultExtensions: false
 });
 
 // STYLESHEET CONFIG
 svgEditor.setConfig({
-  stylesheets: ['@default', '../svgedit-custom.css']
+  stylesheets: ["@default"]
 });
 
 // OTHER CONFIG
@@ -143,12 +146,12 @@ svgEditor.setConfig({
   //  height and 'm' otherwise
   // iconsize: '',
   /**
-  * When showing the preferences dialog, svg-editor.js currently relies
-  * on `curPrefs` instead of `svgEditor.pref`, so allowing an override for
-  * `bkgd_color` means that this value won't have priority over block
-  * auto-detection as far as determining which color shows initially
-  * in the preferences dialog (though it can be changed and saved).
-  */
+   * When showing the preferences dialog, svg-editor.js currently relies
+   * on `curPrefs` instead of `svgEditor.pref`, so allowing an override for
+   * `bkgd_color` means that this value won't have priority over block
+   * auto-detection as far as determining which color shows initially
+   * in the preferences dialog (though it can be changed and saved).
+   */
   // bkgd_color: '#FFF',
   // bkgd_url: '',
   // img_save: 'embed',
@@ -163,5 +166,5 @@ svgEditor.setConfig(
     //   other config options have already explicitly prevented one or the
     //   other)
   },
-  {allowInitialUserOverride: true}
+  { allowInitialUserOverride: true }
 );

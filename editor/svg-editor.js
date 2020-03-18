@@ -2708,6 +2708,7 @@ editor.init = function() {
       ]("#group");
       // if (!Utils.isNullish(elem))
     } else if (multiselected) {
+      debugger;
       $("#multiselected_panel").show();
       menuItems
         .enableContextMenuItems("#group")
@@ -3086,27 +3087,6 @@ editor.init = function() {
 
   const flyoutFuncs = {};
 
-  /**
-   *
-   * @returns {void}
-   */
-  const setFlyoutTitles = function() {
-    $(".tools_flyout").each(function() {
-      const shower = $("#" + this.id + "_show");
-      if (shower.data("isLibrary")) {
-        return;
-      }
-
-      const tooltips = $(this)
-        .children()
-        .map(function() {
-          return this.title;
-        })
-        .get();
-      shower[0].title = tooltips.join(" / ");
-    });
-  };
-
   const allHolders = {};
   /**
    * @param {PlainObject<string, module:SVGEditor.ToolButton>} holders Key is a selector
@@ -3265,8 +3245,6 @@ editor.init = function() {
         });
       // $('#tools_rect').mouseleave(function () { $('#tools_rect').fadeOut(); });
     });
-    setFlyoutTitles();
-    setFlyoutPositions();
   };
 
   /**
@@ -3739,7 +3717,7 @@ editor.init = function() {
             const svgicon = btn.svgicon || btn.id;
             placementObj["#cur_" + btn.list] = svgicon;
           }
-        } else if (btn.includeWith) {
+        } else if (btn.includeWith && $(btn.includeWith.button).length > 0) {
           // Add to flyout menu / make flyout menu
           const opts = btn.includeWith;
           // opts.button, default, position
@@ -3830,36 +3808,11 @@ editor.init = function() {
             }
           });
         }
-
-        setupFlyouts(holders);
       });
 
       $.each(btnSelects, function() {
         addAltDropDown(this.elem, this.list, this.callback, { seticon: true });
       });
-
-      if (svgicons) {
-        return new Promise((resolve, reject) => {
-          // eslint-disable-line promise/avoid-new
-          $.svgIcons(svgicons, {
-            w: 24,
-            h: 24,
-            id_match: false,
-            no_img: !isWebkit(),
-            fallback: fallbackObj,
-            placement: placementObj,
-            callback(icons) {
-              // Non-ideal hack to make the icon match the current size
-              // if (curPrefs.iconsize && curPrefs.iconsize !== 'm') {
-              if (editor.pref("iconsize") !== "m") {
-                prepResize();
-              }
-              runCallback();
-              resolve();
-            }
-          });
-        });
-      }
     }
     return runCallback();
   };
@@ -5475,7 +5428,6 @@ editor.init = function() {
         (curval - val) / 2;
       winWh[type] = curval;
     });
-    setFlyoutPositions();
   });
 
   workarea.scroll(function() {
@@ -6744,7 +6696,7 @@ editor.init = function() {
     $("#rulers").toggle(Boolean(curConfig.showRulers));
 
     if (curConfig.showRulers) {
-      $("#show_rulers")[0].checked = true;
+      $("#show_rulers").attr("checked", true);
     }
 
     if (curConfig.baseUnit) {
@@ -6752,7 +6704,7 @@ editor.init = function() {
     }
 
     if (curConfig.gridSnapping) {
-      $("#grid_snapping_on")[0].checked = true;
+      $("#grid_snapping_on").attr("checked", true);
     }
 
     if (curConfig.snappingStep) {
@@ -7202,26 +7154,6 @@ editor.init = function() {
       "langChanged",
       /** @type {module:svgcanvas.SvgCanvas#event:ext_langChanged} */ lang
     );
-
-    // Update flyout tooltips
-    setFlyoutTitles();
-
-    // Copy title for certain tool elements
-    const elems = {
-      "#stroke_color": "#tool_stroke .icon_label, #tool_stroke .color_block",
-      "#fill_color": "#tool_fill label, #tool_fill .color_block",
-      "#linejoin_miter": "#cur_linejoin",
-      "#linecap_butt": "#cur_linecap"
-    };
-
-    $.each(elems, function(source, dest) {
-      $(dest).attr("title", $(source)[0].title);
-    });
-
-    // Copy alignment titles
-    $("#multiselected_panel div[id^=tool_align]").each(function() {
-      $("#tool_pos" + this.id.substr(10))[0].title = this.title;
-    });
   });
   localeInit(
     /**
