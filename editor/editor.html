@@ -10,7 +10,7 @@
       content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"
     />
 
-    <title>Sin título - Gravit Designer</title>
+    <title>Sin título - Designer</title>
     <meta
       name="description"
       content="Start designing with Gravit Designer today! Sign in or create an account here"
@@ -38,6 +38,9 @@
       property="og:image:secure_url"
       content="https://cloud.gravit.io/static/assets/cloud/img/gravit_logo.jpg"
     />
+
+    <!-- STYLESHEETS (others loaded dynamically) -->
+    <style id="styleoverrides" media="screen"></style>
 
     <script src="jquery.min.js"></script>
     <script src="jquery-ui/jquery-ui-1.8.17.custom.min.js"></script>
@@ -143,8 +146,9 @@
           <div class="section compound-section tool-section">
             <div class="toolbar-button dropdown">
               <button
-                class="action-button icon g-active"
+                class="action-button icon"
                 data-title="Seleccionar"
+                id="tool_select"
               >
                 <span class="icon gravit-icon-cursor-filled"></span></button
               ><button class="dropdown-button">
@@ -152,17 +156,23 @@
               </button>
             </div>
             <div class="toolbar-button dropdown">
-              <button class="action-button icon" data-title="Forma">
+              <button
+                class="action-button icon"
+                data-title="Forma"
+                id="tool_rect"
+              >
                 <span class="icon gravit-icon-shapes"></span></button
               ><button class="dropdown-button">
                 <span class="gravit-icon-down"></span>
               </button>
             </div>
-            <div class="toolbar-button dropdown">
-              <button class="action-button icon" data-title="Trayecto">
-                <span class="icon gravit-icon-pen"></span></button
-              ><button class="dropdown-button">
-                <span class="gravit-icon-down"></span>
+            <div class="toolbar-button">
+              <button
+                class="action-button icon"
+                id="tool_path"
+                data-title="Trayecto"
+              >
+                <span class="icon gravit-icon-pen"></span>
               </button>
             </div>
             <div class="toolbar-button dropdown">

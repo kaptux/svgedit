@@ -5985,7 +5985,7 @@ input.g-unitbox:not(:focus) {
 #toolbar
   > div.section
   > .toolbar-button
-  > .action-button:not(:disabled).g-active,
+  > .action-button:not(:disabled).tool_button_current,
 #toolbar > div.section > .toolbar-button > .action-button:not(:disabled):hover,
 #toolbar
   > div.section

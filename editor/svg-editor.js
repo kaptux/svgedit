@@ -851,8 +851,50 @@ editor.init = function() {
    */
   const setIcon = (editor.setIcon = function(elem, iconId, forcedSize) {
     //Todo: Update UI (Maybe!!)
-    console.log("update ui", iconId);
+    console.log("update ui:", elem, iconId);
   });
+
+  const loadExt = async (editor, extname) => {
+    const extName = extname.match(/^ext-(.+)\.js/);
+    // const {extName} = extname.match(/^ext-(?<extName>.+)\.js/).groups;
+    if (!extName) {
+      // Ensure URL cannot specify some other unintended file in the extPath
+      return undefined;
+    }
+    const url = curConfig.extPath + extname;
+    // Todo: Replace this with `return import(url);` when
+    //   `import()` widely supported
+    /**
+     * @tutorial ExtensionDocs
+     * @typedef {PlainObject} module:SVGEditor.ExtensionObject
+     * @property {string} [name] Name of the extension. Used internally; no need for i18n. Defaults to extension name without beginning "ext-" or ending ".js".
+     * @property {module:svgcanvas.ExtensionInitCallback} [init]
+     */
+    try {
+      /**
+       * @type {module:SVGEditor.ExtensionObject}
+       */
+      const imported = await importSetGlobalDefault(url, {
+        global: "svgEditorExtension_" + extName[1].replace(/-/g, "_")
+        // global: 'svgEditorExtension_' + extName.replace(/-/g, '_')
+      });
+      const { name = extName[1], init } = imported;
+      // const {name = extName, init} = imported;
+      const importLocale = getImportLocale({
+        defaultLang: langParam,
+        defaultName: name
+      });
+      return editor.addExtension(name, init && init.bind(editor), {
+        $,
+        importLocale
+      });
+    } catch (err) {
+      // Todo: Add config to alert any errors
+      console.log(err); // eslint-disable-line no-console
+      console.error("Extension failed to load: " + extname + "; " + err); // eslint-disable-line no-console
+      return undefined;
+    }
+  };
 
   /**
    * @fires module:svgcanvas.SvgCanvas#event:ext_addLangData
@@ -873,93 +915,48 @@ editor.init = function() {
     const { ok, cancel } = uiStrings.common;
     jQueryPluginDBox($, { ok, cancel });
 
-    initUI(); // Wait for dbox as needed for i18n
-
     try {
-      await Promise.all(
-        curConfig.extensions.map(async extname => {
-          const extName = extname.match(/^ext-(.+)\.js/);
-          // const {extName} = extname.match(/^ext-(?<extName>.+)\.js/).groups;
-          if (!extName) {
-            // Ensure URL cannot specify some other unintended file in the extPath
-            return undefined;
-          }
-          const url = curConfig.extPath + extname;
-          // Todo: Replace this with `return import(url);` when
-          //   `import()` widely supported
-          /**
-           * @tutorial ExtensionDocs
-           * @typedef {PlainObject} module:SVGEditor.ExtensionObject
-           * @property {string} [name] Name of the extension. Used internally; no need for i18n. Defaults to extension name without beginning "ext-" or ending ".js".
-           * @property {module:svgcanvas.ExtensionInitCallback} [init]
-           */
-          try {
-            /**
-             * @type {module:SVGEditor.ExtensionObject}
-             */
-            const imported = await importSetGlobalDefault(url, {
-              global: "svgEditorExtension_" + extName[1].replace(/-/g, "_")
-              // global: 'svgEditorExtension_' + extName.replace(/-/g, '_')
-            });
-            const { name = extName[1], init } = imported;
-            // const {name = extName, init} = imported;
-            const importLocale = getImportLocale({
-              defaultLang: langParam,
-              defaultName: name
-            });
-            return editor.addExtension(name, init && init.bind(editor), {
-              $,
-              importLocale
-            });
-          } catch (err) {
-            // Todo: Add config to alert any errors
-            console.log(err); // eslint-disable-line no-console
-            console.error("Extension failed to load: " + extname + "; " + err); // eslint-disable-line no-console
-            return undefined;
-          }
-        })
-      );
-      svgCanvas.bind(
-        "extensions_added",
-        /**
-         * @param {external:Window} win
-         * @param {module:svgcanvas.SvgCanvas#event:extensions_added} data
-         * @listens module:svgcanvas.SvgCanvas#event:extensions_added
-         * @returns {void}
-         */
-        (win, data) => {
-          extensionsAdded = true;
-          Actions.setAll();
-
-          $(".flyout_arrow_horiz:empty").each(function() {
-            $(this).append(
-              $.getSvgIcon("arrow_right", true)
-                .width(5)
-                .height(5)
-            );
-          });
-
-          if (editor.storagePromptState === "ignore") {
-            updateCanvas(true);
-          }
-
-          messageQueue.forEach(
-            /**
-             * @param {module:svgcanvas.SvgCanvas#event:message} messageObj
-             * @fires module:svgcanvas.SvgCanvas#event:message
-             * @returns {void}
-             */
-            messageObj => {
-              svgCanvas.call("message", messageObj);
-            }
-          );
-        }
-      );
-      svgCanvas.call("extensions_added");
+      await Promise.all([
+        initUI(),
+        ...curConfig.extensions.map(extname =>
+          loadExt(editor, langParam, extname)
+        )
+      ]);
     } catch (err) {
-      // Todo: Report errors through the UI
-      console.log(err); // eslint-disable-line no-console
+      console.log(`Error loading ext: ${err}`);
     }
+
+    svgCanvas.bind(
+      "extensions_added",
+      /**
+       * @param {external:Window} win
+       * @param {module:svgcanvas.SvgCanvas#event:extensions_added} data
+       * @listens module:svgcanvas.SvgCanvas#event:extensions_added
+       * @returns {void}
+       */
+      (win, data) => {
+        extensionsAdded = true;
+        Actions.setAll();
+
+        if (editor.storagePromptState === "ignore") {
+          updateCanvas(true);
+        }
+
+        messageQueue.forEach(
+          /**
+           * @param {module:svgcanvas.SvgCanvas#event:message} messageObj
+           * @fires module:svgcanvas.SvgCanvas#event:message
+           * @returns {void}
+           */
+          messageObj => {
+            svgCanvas.call("message", messageObj);
+          }
+        );
+
+        clickSelect();
+      }
+    );
+    svgCanvas.call("extensions_added");
   };
 
   const stateObj = { tool_scale: editor.tool_scale };
@@ -2198,257 +2195,178 @@ editor.init = function() {
     updateToolButtonState();
   };
 
-  /**
-   * Updates the context panel tools based on the selected element.
-   * @returns {void}
-   */
-  const updateContextPanel = function() {
-    let elem = selectedElement;
-    // If element has just been deleted, consider it null
-    if (!Utils.isNullish(elem) && !elem.parentNode) {
-      elem = null;
+  const getHref = function(elem) {
+    const { tagName } = elem;
+
+    let linkHref = null;
+    if (tagName === "a") {
+      linkHref = svgCanvas.getHref(elem);
+      $("#g_panel").show();
     }
-    const currentLayerName = svgCanvas
-      .getCurrentDrawing()
-      .getCurrentLayerName();
-    const currentMode = svgCanvas.getMode();
-    const unit = curConfig.baseUnit !== "px" ? curConfig.baseUnit : null;
 
-    const isNode = currentMode === "pathedit"; // elem ? (elem.id && elem.id.startsWith('pathpointgrip')) : false;
-    const menuItems = $("#cmenu_canvas li");
-    $(
-      "#selected_panel, #multiselected_panel, #g_panel, #rect_panel, #circle_panel," +
-        "#ellipse_panel, #line_panel, #text_panel, #image_panel, #container_panel," +
-        " #use_panel, #a_panel"
-    ).hide();
-    if (!Utils.isNullish(elem)) {
-      const elname = elem.nodeName;
-      // If this is a link with no transform and one child, pretend
-      // its child is selected
-      // if (elname === 'a') { // && !$(elem).attr('transform')) {
-      //   elem = elem.firstChild;
-      // }
-
-      const angle = svgCanvas.getRotationAngle(elem);
-      $("#angle").val(angle);
-
-      const blurval = svgCanvas.getBlur(elem);
-      $("#blur").val(blurval);
-      $("#blur_slider").slider("option", "value", blurval);
-
-      if (svgCanvas.addedNew) {
-        if (elname === "image" && svgCanvas.getMode() === "image") {
-          // Prompt for URL if not a data URL
-          if (!svgCanvas.getHref(elem).startsWith("data:")) {
-            /* await */ promptImgURL({ cancelDeletes: true });
-          }
-        }
-        /* else if (elname == 'text') {
-          // TODO: Do something here for new text
-        } */
+    if (elem.parentNode.tagName === "a") {
+      if (!$(elem).siblings().length) {
+        $("#a_panel").show();
+        linkHref = svgCanvas.getHref(elem.parentNode);
       }
+    }
 
-      if (!isNode && currentMode !== "pathedit") {
-        $("#selected_panel").show();
-        // Elements in this array already have coord fields
-        if (["line", "circle", "ellipse"].includes(elname)) {
-          $("#xy_panel").hide();
-        } else {
-          let x, y;
+    return linkHref;
+  };
 
-          // Get BBox vals for g, polyline and path
-          if (["g", "polyline", "path"].includes(elname)) {
-            const bb = svgCanvas.getStrokedBBox([elem]);
-            if (bb) {
-              ({ x, y } = bb);
-            }
-          } else {
-            x = elem.getAttribute("x");
-            y = elem.getAttribute("y");
-          }
-
-          if (unit) {
-            x = convertUnit(x);
-            y = convertUnit(y);
-          }
-
-          $("#selected_x").val(x || 0);
-          $("#selected_y").val(y || 0);
-          $("#xy_panel").show();
-        }
-
-        // Elements in this array cannot be converted to a path
-        const noPath = !["image", "text", "path", "g", "use"].includes(elname);
-        $("#tool_topath").toggle(noPath);
-        $("#tool_reorient").toggle(elname === "path");
-        $("#tool_reorient").toggleClass("disabled", angle === 0);
-      } else {
-        const point = path.getNodePoint();
-        $("#tool_add_subpath")
-          .removeClass("push_button_pressed")
-          .addClass("tool_button");
-        $("#tool_node_delete").toggleClass("disabled", !path.canDeleteNodes);
-
-        // Show open/close button based on selected point
-        setIcon(
-          "#tool_openclose_path",
-          path.closed_subpath ? "open_path" : "close_path"
-        );
-
-        if (point) {
-          const segType = $("#seg_type");
-          if (unit) {
-            point.x = convertUnit(point.x);
-            point.y = convertUnit(point.y);
-          }
-          $("#path_node_x").val(point.x);
-          $("#path_node_y").val(point.y);
-          if (point.type) {
-            segType.val(point.type).removeAttr("disabled");
-          } else {
-            segType.val(4).attr("disabled", "disabled");
-          }
-        }
-        return;
-      }
-
-      // update contextual tools here
-      const panels = {
-        g: [],
-        a: [],
-        rect: ["rx", "width", "height"],
-        image: ["width", "height"],
-        circle: ["cx", "cy", "r"],
-        ellipse: ["cx", "cy", "rx", "ry"],
-        line: ["x1", "y1", "x2", "y2"],
-        text: [],
-        use: []
+  const getBox = function(elem) {
+    let box = null;
+    if (["g", "polyline", "path"].includes(elem.nodeName)) {
+      box = svgCanvas.getStrokedBBox([elem]);
+    } else {
+      box = {
+        x: elem.getAttribute("x"),
+        y: elem.getAttribute("y")
       };
+    }
+    return box;
+  };
 
-      const { tagName } = elem;
+  const getPathPointType = function() {
+    let res = null;
 
-      // if ($(elem).data('gsvg')) {
-      //   $('#g_panel').show();
-      // }
+    const point = path.getNodePoint();
+    if (point) {
+      res = point.type;
+    }
 
-      let linkHref = null;
-      if (tagName === "a") {
-        linkHref = svgCanvas.getHref(elem);
-        $("#g_panel").show();
-      }
+    return res;
+  };
 
-      if (elem.parentNode.tagName === "a") {
-        if (!$(elem).siblings().length) {
-          $("#a_panel").show();
-          linkHref = svgCanvas.getHref(elem.parentNode);
+  const getCustomProps = function(tagName, elem) {
+    const propsMap = {
+      g: [
+        function title() {
+          svgCanvas.getTitle();
         }
-      }
+      ],
+      a: [
+        function href(e) {
+          getHref(e);
+        }
+      ],
+      rect: ["rx", "width", "height"],
+      image: [
+        "width",
+        "height",
+        function href(e) {
+          getHref(e);
+        }
+      ],
+      circle: ["cx", "cy", "r"],
+      circle_pathedit: [
+        "cx",
+        "cy",
+        "r",
+        function type() {
+          return getPathPointType();
+        },
+        function closed() {
+          return path.closed_subpath;
+        }
+      ],
+      ellipse: ["cx", "cy", "rx", "ry"],
+      line: ["x1", "y1", "x2", "y2"],
+      text: [
+        "font-family",
+        "font-size",
+        function isItalic() {
+          return svgCanvas.getItalic();
+        },
+        function isBold() {
+          return svgCanvas.getBold();
+        }
+      ],
+      use: [
+        function title() {
+          svgCanvas.getTitle();
+        }
+      ]
+    };
 
-      // Hide/show the make_link buttons
-      $("#tool_make_link, #tool_make_link").toggle(!linkHref);
+    const res = {};
+    const props = propsMap[tagName];
 
-      if (linkHref) {
-        $("#link_url").val(linkHref);
-      }
-
-      if (panels[tagName]) {
-        const curPanel = panels[tagName];
-
-        $("#" + tagName + "_panel").show();
-
-        $.each(curPanel, function(i, item) {
+    if (props) {
+      $.each(props, function(i, item) {
+        if (typeof item === "function") {
+          res[item.name] = item(elem);
+        } else {
           let attrVal = elem.getAttribute(item);
           if (curConfig.baseUnit !== "px" && elem[item]) {
             const bv = elem[item].baseVal.value;
             attrVal = convertUnit(bv);
           }
-          $("#" + tagName + "_" + item).val(attrVal || 0);
-        });
-
-        if (tagName === "text") {
-          $("#text_panel").css("display", "inline");
-          $("#tool_font_size").css("display", "inline");
-          if (svgCanvas.getItalic()) {
-            $("#tool_italic")
-              .addClass("push_button_pressed")
-              .removeClass("tool_button");
-          } else {
-            $("#tool_italic")
-              .removeClass("push_button_pressed")
-              .addClass("tool_button");
-          }
-          if (svgCanvas.getBold()) {
-            $("#tool_bold")
-              .addClass("push_button_pressed")
-              .removeClass("tool_button");
-          } else {
-            $("#tool_bold")
-              .removeClass("push_button_pressed")
-              .addClass("tool_button");
-          }
-          $("#font_family").val(elem.getAttribute("font-family"));
-          $("#font_size").val(elem.getAttribute("font-size"));
-          $("#text").val(elem.textContent);
-          if (svgCanvas.addedNew) {
-            // Timeout needed for IE9
-            setTimeout(function() {
-              $("#text")
-                .focus()
-                .select();
-            }, 100);
-          }
-          // text
-        } else if (tagName === "image" && svgCanvas.getMode() === "image") {
-          setImageURL(svgCanvas.getHref(elem));
-          // image
-        } else if (tagName === "g" || tagName === "use") {
-          $("#container_panel").show();
-          const title = svgCanvas.getTitle();
-          const label = $("#g_title")[0];
-          label.value = title;
-          setInputWidth(label);
-          $("#g_title").prop("disabled", tagName === "use");
+          res[item] = attrVal;
         }
-      }
-      menuItems[(tagName === "g" ? "en" : "dis") + "ableContextMenuItems"](
-        "#ungroup"
-      );
-      menuItems[
-        (tagName === "g" || !multiselected ? "dis" : "en") +
-          "ableContextMenuItems"
-      ]("#group");
-      // if (!Utils.isNullish(elem))
-    } else if (multiselected) {
-      debugger;
-      $("#multiselected_panel").show();
-      menuItems
-        .enableContextMenuItems("#group")
-        .disableContextMenuItems("#ungroup");
-    } else {
-      menuItems.disableContextMenuItems(
-        "#delete,#cut,#copy,#group,#ungroup,#move_front,#move_up,#move_down,#move_back"
-      );
+      });
     }
+
+    return res;
+  };
+
+  const getSelectedInfo = function() {
+    const elem = selectedElement;
+    const isNull = Utils.isNullish(elem);
+    const isDeleted = !isNull && !elem.parentNode;
+    const isNew = svgCanvas.addedNew;
+    const layerName = svgCanvas.getCurrentDrawing().getCurrentLayerName();
+    const unit = curConfig.baseUnit !== "px" ? curConfig.baseUnit : null;
+    const mode = svgCanvas.getMode();
+    let { nodeName: type, tagName } = elem || {
+      nodeName: null,
+      tagName: null
+    };
+
+    let angle,
+      blur = 0;
+    let box,
+      customProps = null;
+
+    if (!isNull) {
+      angle = svgCanvas.getRotationAngle(elem);
+      blur = svgCanvas.getBlur(elem);
+      box = getBox(elem);
+      if (mode === "pathedit") {
+        tagName = `${tagName}_${mode}`;
+      }
+      customProps = getCustomProps(tagName, elem);
+    }
+
+    return {
+      type,
+      mode,
+      isDeleted,
+      isNew,
+      layerName,
+      unit,
+      box,
+      blur,
+      angle,
+      pathInfo: path,
+      customProps,
+      multiselected
+    };
+  };
+
+  /**
+   * Updates the context panel tools based on the selected element.
+   * @returns {void}
+   */
+  const updateContextPanel = function() {
+    const info = getSelectedInfo();
+    console.log(info);
 
     // update history buttons
     $("#tool_undo").toggleClass("disabled", undoMgr.getUndoStackSize() === 0);
     $("#tool_redo").toggleClass("disabled", undoMgr.getRedoStackSize() === 0);
 
     svgCanvas.addedNew = false;
-
-    if ((elem && !isNode) || multiselected) {
-      // update the selected elements' layer
-      $("#selLayerNames")
-        .removeAttr("disabled")
-        .val(currentLayerName);
-
-      // Enable regular menu options
-      canvMenu.enableContextMenuItems(
-        "#delete,#cut,#copy,#move_front,#move_up,#move_down,#move_back"
-      );
-    } else {
-      $("#selLayerNames").attr("disabled", "disabled");
-    }
   };
 
   /**
