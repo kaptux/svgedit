@@ -6,11 +6,11 @@
  *
  */
 export default {
-  name: 'polygon',
-  async init (S) {
+  name: "polygon",
+  async init(S) {
     const svgEditor = this;
     const svgCanvas = svgEditor.canvas;
-    const {$, importLocale} = S, // {svgcontent}
+    const { $, importLocale } = S, // {svgcontent}
       // addElem = svgCanvas.addSVGElementFromJson,
       editingitex = false;
     const strings = await importLocale();
@@ -19,7 +19,8 @@ export default {
       // newFOG, newFOGParent, newDef, newImageName, newMaskID, modeChangeG,
       // edg = 0,
       // undoCommand = 'Not image';
-      started, newFO;
+      started,
+      newFO;
 
     // const ccZoom;
     // const wEl, hEl;
@@ -37,16 +38,16 @@ export default {
      }; */
 
     /**
-    * @param {boolean} on
-    * @returns {void}
-    */
-    function showPanel (on) {
-      let fcRules = $('#fc_rules');
+     * @param {boolean} on
+     * @returns {void}
+     */
+    function showPanel(on) {
+      let fcRules = $("#fc_rules");
       if (!fcRules.length) {
-        fcRules = $('<style id="fc_rules"></style>').appendTo('head');
+        fcRules = $('<style id="fc_rules"></style>').appendTo("head");
       }
-      fcRules.text(!on ? '' : ' #tool_topath { display: none !important; }');
-      $('#polygon_panel').toggle(on);
+      fcRules.text(!on ? "" : " #tool_topath { display: none !important; }");
+      $("#polygon_panel").toggle(on);
     }
 
     /*
@@ -57,38 +58,38 @@ export default {
     */
 
     /**
-    * @param {string} attr
-    * @param {string|Float} val
-    * @returns {void}
-    */
-    function setAttr (attr, val) {
+     * @param {string} attr
+     * @param {string|Float} val
+     * @returns {void}
+     */
+    function setAttr(attr, val) {
       svgCanvas.changeSelectedAttribute(attr, val);
-      svgCanvas.call('changed', selElems);
+      svgCanvas.call("changed", selElems);
     }
 
     /**
-    * @param {Float} n
-    * @returns {Float}
-    */
-    function cot (n) {
+     * @param {Float} n
+     * @returns {Float}
+     */
+    function cot(n) {
       return 1 / Math.tan(n);
     }
 
     /**
-    * @param {Float} n
-    * @returns {Float}
-    */
-    function sec (n) {
+     * @param {Float} n
+     * @returns {Float}
+     */
+    function sec(n) {
       return 1 / Math.cos(n);
     }
 
     /**
-    * Obtained from http://code.google.com/p/passenger-top/source/browse/instiki/public/svg-edit/editor/extensions/ext-itex.js?r=3
-    * This function sets the content of of the currently-selected foreignObject element,
-    *   based on the itex contained in string.
-    * @param {string} tex The itex text.
-    * @returns {boolean} This function returns false if the set was unsuccessful, true otherwise.
-    */
+     * Obtained from http://code.google.com/p/passenger-top/source/browse/instiki/public/svg-edit/editor/extensions/ext-itex.js?r=3
+     * This function sets the content of of the currently-selected foreignObject element,
+     *   based on the itex contained in string.
+     * @param {string} tex The itex text.
+     * @returns {boolean} This function returns false if the set was unsuccessful, true otherwise.
+     */
     /*
     function setItexString(tex) {
       const mathns = 'http://www.w3.org/1998/Math/MathML',
@@ -126,33 +127,38 @@ export default {
       return true;
     }
     */
-    const buttons = [{
-      id: 'tool_polygon',
-      icon: svgEditor.curConfig.extIconsPath + 'polygon.png',
-      type: 'mode',
-      position: 11,
-      events: {
-        click () {
-          svgCanvas.setMode('polygon');
-          showPanel(true);
+    const buttons = [
+      {
+        id: "tool_polygon",
+        icon: svgEditor.curConfig.extIconsPath + "polygon.png",
+        type: "mode",
+        position: 11,
+        events: {
+          click() {
+            debugger;
+            svgCanvas.setMode("polygon");
+            svgEditor.toolButtonClick("#tool_polygon");
+          }
         }
       }
-    }];
-    const contextTools = [{
-      type: 'input',
-      panel: 'polygon_panel',
-      id: 'polySides',
-      size: 3,
-      defval: 5,
-      events: {
-        change () {
-          setAttr('sides', this.value);
+    ];
+    const contextTools = [
+      {
+        type: "input",
+        panel: "polygon_panel",
+        id: "polySides",
+        size: 3,
+        defval: 5,
+        events: {
+          change() {
+            setAttr("sides", this.value);
+          }
         }
       }
-    }];
+    ];
     return {
       name: strings.name,
-      svgicons: svgEditor.curConfig.extIconsPath + 'polygon-icons.svg',
+      svgicons: svgEditor.curConfig.extIconsPath + "polygon-icons.svg",
       buttons: strings.buttons.map((button, i) => {
         return Object.assign(buttons[i], button);
       }),
@@ -160,22 +166,28 @@ export default {
         return Object.assign(contextTools[i], contextTool);
       }),
 
-      callback () {
-        $('#polygon_panel').hide();
+      callback() {
+        $("#polygon_panel").hide();
 
-        const endChanges = function () {
+        const endChanges = function() {
           // Todo: Missing?
         };
 
         // TODO: Needs to be done after orig icon loads
-        setTimeout(function () {
+        setTimeout(function() {
           // Create source save/cancel buttons
-          /* const save = */ $('#tool_source_save').clone().hide().attr('id', 'polygon_save').unbind().appendTo('#tool_source_back').click(function () {
-            if (!editingitex) {
-              return;
-            }
-            // Todo: Uncomment the setItexString() function above and handle ajaxEndpoint?
-            /*
+          /* const save = */ $("#tool_source_save")
+            .clone()
+            .hide()
+            .attr("id", "polygon_save")
+            .unbind()
+            .appendTo("#tool_source_back")
+            .click(function() {
+              if (!editingitex) {
+                return;
+              }
+              // Todo: Uncomment the setItexString() function above and handle ajaxEndpoint?
+              /*
             if (!setItexString($('#svg_source_textarea').val())) {
               const ok = await $.confirm('Errors found. Revert to original?', function (ok) {
               if (!ok) {
@@ -183,38 +195,44 @@ export default {
               }
               endChanges();
             } else { */
-            endChanges();
-            // }
-            // setSelectMode();
-          });
+              endChanges();
+              // }
+              // setSelectMode();
+            });
 
-          /* const cancel = */ $('#tool_source_cancel').clone().hide().attr('id', 'polygon_cancel').unbind().appendTo('#tool_source_back').click(function () {
-            endChanges();
-          });
+          /* const cancel = */ $("#tool_source_cancel")
+            .clone()
+            .hide()
+            .attr("id", "polygon_cancel")
+            .unbind()
+            .appendTo("#tool_source_back")
+            .click(function() {
+              endChanges();
+            });
         }, 3000);
       },
-      mouseDown (opts) {
-        if (svgCanvas.getMode() !== 'polygon') {
+      mouseDown(opts) {
+        if (svgCanvas.getMode() !== "polygon") {
           return undefined;
         }
         // const e = opts.event;
-        const rgb = svgCanvas.getColor('fill');
+        const rgb = svgCanvas.getColor("fill");
         // const ccRgbEl = rgb.substring(1, rgb.length);
-        const sRgb = svgCanvas.getColor('stroke');
+        const sRgb = svgCanvas.getColor("stroke");
         // ccSRgbEl = sRgb.substring(1, rgb.length);
         const sWidth = svgCanvas.getStrokeWidth();
 
         started = true;
 
         newFO = svgCanvas.addSVGElementFromJson({
-          element: 'polygon',
+          element: "polygon",
           attr: {
             cx: opts.start_x,
             cy: opts.start_y,
             id: svgCanvas.getNextId(),
-            shape: 'regularPoly',
-            sides: document.getElementById('polySides').value,
-            orient: 'x',
+            shape: "regularPoly",
+            sides: document.getElementById("polySides").value,
+            orient: "x",
             edge: 0,
             fill: rgb,
             strokecolor: sRgb,
@@ -226,34 +244,42 @@ export default {
           started: true
         };
       },
-      mouseMove (opts) {
-        if (!started || svgCanvas.getMode() !== 'polygon') {
+      mouseMove(opts) {
+        if (!started || svgCanvas.getMode() !== "polygon") {
           return undefined;
         }
         // const e = opts.event;
-        const c = $(newFO).attr(['cx', 'cy', 'sides', 'orient', 'fill', 'strokecolor', 'strokeWidth']);
+        const c = $(newFO).attr([
+          "cx",
+          "cy",
+          "sides",
+          "orient",
+          "fill",
+          "strokecolor",
+          "strokeWidth"
+        ]);
         let x = opts.mouse_x;
         let y = opts.mouse_y;
-        const {cx, cy, fill, strokecolor, strokeWidth, sides} = c, // {orient} = c,
-          edg = (Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy))) / 1.5;
-        newFO.setAttribute('edge', edg);
+        const { cx, cy, fill, strokecolor, strokeWidth, sides } = c, // {orient} = c,
+          edg = Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy)) / 1.5;
+        newFO.setAttribute("edge", edg);
 
         const inradius = (edg / 2) * cot(Math.PI / sides);
         const circumradius = inradius * sec(Math.PI / sides);
-        let points = '';
+        let points = "";
         for (let s = 0; sides >= s; s++) {
-          const angle = 2.0 * Math.PI * s / sides;
-          x = (circumradius * Math.cos(angle)) + cx;
-          y = (circumradius * Math.sin(angle)) + cy;
+          const angle = (2.0 * Math.PI * s) / sides;
+          x = circumradius * Math.cos(angle) + cx;
+          y = circumradius * Math.sin(angle) + cy;
 
-          points += x + ',' + y + ' ';
+          points += x + "," + y + " ";
         }
 
         // const poly = newFO.createElementNS(NS.SVG, 'polygon');
-        newFO.setAttribute('points', points);
-        newFO.setAttribute('fill', fill);
-        newFO.setAttribute('stroke', strokecolor);
-        newFO.setAttribute('stroke-width', strokeWidth);
+        newFO.setAttribute("points", points);
+        newFO.setAttribute("fill", fill);
+        newFO.setAttribute("stroke", strokecolor);
+        newFO.setAttribute("stroke-width", strokeWidth);
         // newFO.setAttribute('transform', 'rotate(-90)');
         // const shape = newFO.getAttribute('shape');
         // newFO.append(poly);
@@ -263,28 +289,28 @@ export default {
         };
       },
 
-      mouseUp (opts) {
-        if (svgCanvas.getMode() !== 'polygon') {
+      mouseUp(opts) {
+        if (svgCanvas.getMode() !== "polygon") {
           return undefined;
         }
-        const attrs = $(newFO).attr('edge');
-        const keep = (attrs.edge !== '0');
+        const attrs = $(newFO).attr("edge");
+        const keep = attrs.edge !== "0";
         // svgCanvas.addToSelection([newFO], true);
         return {
           keep,
           element: newFO
         };
       },
-      selectedChanged (opts) {
+      selectedChanged(opts) {
         // Use this to update the current selected elements
         selElems = opts.elems;
 
         let i = selElems.length;
         while (i--) {
           const elem = selElems[i];
-          if (elem && elem.getAttribute('shape') === 'regularPoly') {
+          if (elem && elem.getAttribute("shape") === "regularPoly") {
             if (opts.selectedElement && !opts.multiselected) {
-              $('#polySides').val(elem.getAttribute('sides'));
+              $("#polySides").val(elem.getAttribute("sides"));
 
               showPanel(true);
             } else {
@@ -295,7 +321,7 @@ export default {
           }
         }
       },
-      elementChanged (opts) {
+      elementChanged(opts) {
         // const elem = opts.elems[0];
       }
     };

@@ -77,11 +77,11 @@ svgEditor.setConfig({
   //   color: 'FF0000', // solid red
   //   opacity: 1
   // },
-  // initStroke: {
-  //   width: 5,
-  //   color: '000000', // solid black
-  //   opacity: 1
-  // },
+  initStroke: {
+    width: 2,
+    color: "000000", // solid black
+    opacity: 1
+  }
   // initOpacity: 1,
   // colorPickerCSS: null,
   // initTool: 'select',
