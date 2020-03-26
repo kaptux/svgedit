@@ -73,26 +73,26 @@
  * @function module:jQuerySpinButton.jQuerySpinButton
  * @param {external:jQuery} $ The jQuery object to which to add the plug-in
  * @returns {external:jQuery}
-*/
-export default function jQueryPluginSpinButton ($) {
+ */
+export default function jQueryPluginSpinButton($) {
   if (!$.loadingStylesheets) {
     $.loadingStylesheets = [];
   }
-  const stylesheet = 'spinbtn/jQuery.SpinButton.css';
+  const stylesheet = "spinbtn/jQuery.SpinButton.css";
   if (!$.loadingStylesheets.includes(stylesheet)) {
     $.loadingStylesheets.push(stylesheet);
   }
   /**
-  * @callback module:jQuerySpinButton.StepCallback
-  * @param {external:jQuery} thisArg Value of `this`
-  * @param {Float} i Value to adjust
-  * @returns {Float}
-  */
+   * @callback module:jQuerySpinButton.StepCallback
+   * @param {external:jQuery} thisArg Value of `this`
+   * @param {Float} i Value to adjust
+   * @returns {Float}
+   */
   /**
-  * @callback module:jQuerySpinButton.ValueCallback
-  * @param {external:jQuery.fn.SpinButton} thisArg Spin Button; check its `value` to see how it was changed.
-  * @returns {void}
-  */
+   * @callback module:jQuerySpinButton.ValueCallback
+   * @param {external:jQuery.fn.SpinButton} thisArg Spin Button; check its `value` to see how it was changed.
+   * @returns {void}
+   */
   /**
    * @typedef {PlainObject} module:jQuerySpinButton.SpinButtonConfig
    * @property {Float} min Set lower limit
@@ -110,14 +110,15 @@ export default function jQueryPluginSpinButton ($) {
    * @property {Float} reset Reset value when invalid value entered
    * @property {Float} delay Millisecond delay
    * @property {Float} interval Millisecond interval
-  */
+   */
   /**
-  * @function external:jQuery.fn.SpinButton
-  * @param {module:jQuerySpinButton.SpinButtonConfig} cfg
-  * @returns {external:jQuery}
-  */
-  $.fn.SpinButton = function (cfg) {
+   * @function external:jQuery.fn.SpinButton
+   * @param {module:jQuerySpinButton.SpinButtonConfig} cfg
+   * @returns {external:jQuery}
+   */
+  $.fn.SpinButton = function(cfg) {
     cfg = cfg || {};
+    let slider = null;
 
     /**
      *
@@ -125,12 +126,12 @@ export default function jQueryPluginSpinButton ($) {
      * @param {"offsetLeft"|"offsetTop"} prop
      * @returns {Integer}
      */
-    function coord (el, prop) {
+    function coord(el, prop) {
       const b = document.body;
 
       let c = el[prop];
-      while ((el = el.offsetParent) && (el !== b)) {
-        if (!$.browser.msie || (el.currentStyle.position !== 'relative')) {
+      while ((el = el.offsetParent) && el !== b) {
+        if (!$.browser.msie || el.currentStyle.position !== "relative") {
           c += el[prop];
         }
       }
@@ -138,7 +139,7 @@ export default function jQueryPluginSpinButton ($) {
       return c;
     }
 
-    return this.each(function () {
+    return this.each(function() {
       this.repeating = false;
 
       // Apply specified options or defaults:
@@ -151,11 +152,12 @@ export default function jQueryPluginSpinButton ($) {
         step: cfg.step ? Number(cfg.step) : 1,
         stepfunc: cfg.stepfunc || false,
         page: cfg.page ? Number(cfg.page) : 10,
-        upClass: cfg.upClass || 'up',
-        downClass: cfg.downClass || 'down',
+        upClass: cfg.upClass || "up",
+        downClass: cfg.downClass || "down",
         reset: cfg.reset || this.value,
         delay: cfg.delay ? Number(cfg.delay) : 500,
         interval: cfg.interval ? Number(cfg.interval) : 100,
+        slider: cfg.slider,
         _btn_width: 20,
         _direction: null,
         _delay: null,
@@ -166,28 +168,36 @@ export default function jQueryPluginSpinButton ($) {
       // if a smallStep isn't supplied, use half the regular step
       this.spinCfg.smallStep = cfg.smallStep || this.spinCfg.step / 2;
 
-      this.adjustValue = function (i) {
+      this.adjustValue = function(i, fromSlider) {
         let v;
         if (isNaN(this.value)) {
           v = this.spinCfg.reset;
-        } else if (typeof this.spinCfg.stepfunc === 'function') {
+        } else if (typeof this.spinCfg.stepfunc === "function") {
           v = this.spinCfg.stepfunc(this, i);
         } else {
           // weirdest JavaScript bug ever: 5.1 + 0.1 = 5.199999999
           v = Number((Number(this.value) + Number(i)).toFixed(5));
         }
-        if (this.spinCfg.min !== null) { v = Math.max(v, this.spinCfg.min); }
-        if (this.spinCfg.max !== null) { v = Math.min(v, this.spinCfg.max); }
+        if (this.spinCfg.min !== null) {
+          v = Math.max(v, this.spinCfg.min);
+        }
+        if (this.spinCfg.max !== null) {
+          v = Math.min(v, this.spinCfg.max);
+        }
         this.value = v;
-        if (typeof this.spinCfg.callback === 'function') {
+        if (typeof this.spinCfg.callback === "function") {
           this.spinCfg.callback(this);
+        }
+
+        if (!fromSlider && slider) {
+          $(slider).slider("value", v);
         }
       };
 
       $(this)
-        .addClass(cfg.spinClass || 'spin-button')
+        .addClass(cfg.spinClass || "spin-button")
 
-        .mousemove(function (e) {
+        .mousemove(function(e) {
           // Determine which button mouse is over, or not (spin direction):
           const x = e.pageX || e.x;
           const y = e.pageY || e.y;
@@ -196,22 +206,33 @@ export default function jQueryPluginSpinButton ($) {
           const height = $(el).height() / 2;
 
           const direction =
-            (x > coord(el, 'offsetLeft') +
-              el.offsetWidth * scale - this.spinCfg._btn_width)
-              ? ((y < coord(el, 'offsetTop') + height * scale) ? 1 : -1)
+            x >
+            coord(el, "offsetLeft") +
+              el.offsetWidth * scale -
+              this.spinCfg._btn_width
+              ? y < coord(el, "offsetTop") + height * scale
+                ? 1
+                : -1
               : 0;
 
           if (direction !== this.spinCfg._direction) {
             // Style up/down buttons:
             switch (direction) {
-            case 1: // Up arrow:
-              $(this).removeClass(this.spinCfg.downClass).addClass(this.spinCfg.upClass);
-              break;
-            case -1: // Down arrow:
-              $(this).removeClass(this.spinCfg.upClass).addClass(this.spinCfg.downClass);
-              break;
-            default: // Mouse is elsewhere in the textbox
-              $(this).removeClass(this.spinCfg.upClass).removeClass(this.spinCfg.downClass);
+              case 1: // Up arrow:
+                $(this)
+                  .removeClass(this.spinCfg.downClass)
+                  .addClass(this.spinCfg.upClass);
+                break;
+              case -1: // Down arrow:
+                $(this)
+                  .removeClass(this.spinCfg.upClass)
+                  .addClass(this.spinCfg.downClass);
+                break;
+              default:
+                // Mouse is elsewhere in the textbox
+                $(this)
+                  .removeClass(this.spinCfg.upClass)
+                  .removeClass(this.spinCfg.downClass);
             }
 
             // Set spin direction:
@@ -219,18 +240,22 @@ export default function jQueryPluginSpinButton ($) {
           }
         })
 
-        .mouseout(function () {
+        .mouseout(function() {
           // Reset up/down buttons to their normal appearance when mouse moves away:
-          $(this).removeClass(this.spinCfg.upClass).removeClass(this.spinCfg.downClass);
+          $(this)
+            .removeClass(this.spinCfg.upClass)
+            .removeClass(this.spinCfg.downClass);
           this.spinCfg._direction = null;
           window.clearInterval(this.spinCfg._repeat);
           window.clearTimeout(this.spinCfg._delay);
         })
 
-        .mousedown(function (e) {
+        .mousedown(function(e) {
           if (e.button === 0 && this.spinCfg._direction !== 0) {
             // Respond to click on one of the buttons:
-            const stepSize = e.shiftKey ? this.spinCfg.smallStep : this.spinCfg.step;
+            const stepSize = e.shiftKey
+              ? this.spinCfg.smallStep
+              : this.spinCfg.step;
 
             const adjust = () => {
               this.adjustValue(this.spinCfg._direction * stepSize);
@@ -242,30 +267,41 @@ export default function jQueryPluginSpinButton ($) {
             this.spinCfg._delay = window.setTimeout(() => {
               adjust();
               // Repeat adjust at regular intervals
-              this.spinCfg._repeat = window.setInterval(adjust, this.spinCfg.interval);
+              this.spinCfg._repeat = window.setInterval(
+                adjust,
+                this.spinCfg.interval
+              );
             }, this.spinCfg.delay);
           }
         })
 
-        .mouseup(function (e) {
+        .mouseup(function(e) {
           // Cancel repeating adjustment
           window.clearInterval(this.spinCfg._repeat);
           window.clearTimeout(this.spinCfg._delay);
         })
 
-        .dblclick(function (e) {
+        .dblclick(function(e) {
           if ($.browser.msie) {
             this.adjustValue(this.spinCfg._direction * this.spinCfg.step);
           }
         })
 
-        .keydown(function (e) {
+        .keydown(function(e) {
           // Respond to up/down arrow keys.
           switch (e.keyCode) {
-          case 38: this.adjustValue(this.spinCfg.step); break; // Up
-          case 40: this.adjustValue(-this.spinCfg.step); break; // Down
-          case 33: this.adjustValue(this.spinCfg.page); break; // PageUp
-          case 34: this.adjustValue(-this.spinCfg.page); break; // PageDown
+            case 38:
+              this.adjustValue(this.spinCfg.step);
+              break; // Up
+            case 40:
+              this.adjustValue(-this.spinCfg.step);
+              break; // Down
+            case 33:
+              this.adjustValue(this.spinCfg.page);
+              break; // PageUp
+            case 34:
+              this.adjustValue(-this.spinCfg.page);
+              break; // PageDown
           }
         })
 
@@ -275,34 +311,44 @@ export default function jQueryPluginSpinButton ($) {
         - Safari 3.1 changed their model so that keydown is reliably repeated going forward
         - Firefox and Opera still only repeat the keypress event, not the keydown
         */
-        .keypress(function (e) {
+        .keypress(function(e) {
           if (this.repeating) {
             // Respond to up/down arrow keys.
             switch (e.keyCode) {
-            case 38: this.adjustValue(this.spinCfg.step); break; // Up
-            case 40: this.adjustValue(-this.spinCfg.step); break; // Down
-            case 33: this.adjustValue(this.spinCfg.page); break; // PageUp
-            case 34: this.adjustValue(-this.spinCfg.page); break; // PageDown
+              case 38:
+                this.adjustValue(this.spinCfg.step);
+                break; // Up
+              case 40:
+                this.adjustValue(-this.spinCfg.step);
+                break; // Down
+              case 33:
+                this.adjustValue(this.spinCfg.page);
+                break; // PageUp
+              case 34:
+                this.adjustValue(-this.spinCfg.page);
+                break; // PageDown
             }
-          // we always ignore the first keypress event (use the keydown instead)
+            // we always ignore the first keypress event (use the keydown instead)
           } else {
             this.repeating = true;
           }
         })
 
         // clear the 'repeating' flag
-        .keyup(function (e) {
+        .keyup(function(e) {
           this.repeating = false;
           switch (e.keyCode) {
-          case 38: // Up
-          case 40: // Down
-          case 33: // PageUp
-          case 34: // PageDown
-          case 13: this.adjustValue(0); break; // Enter/Return
+            case 38: // Up
+            case 40: // Down
+            case 33: // PageUp
+            case 34: // PageDown
+            case 13:
+              this.adjustValue(0);
+              break; // Enter/Return
           }
         })
 
-        .bind('mousewheel', function (e) {
+        .bind("mousewheel", function(e) {
           // Respond to mouse wheel in IE. (It returns up/dn motion in multiples of 120)
           if (e.wheelDelta >= 120) {
             this.adjustValue(this.spinCfg.step);
@@ -313,13 +359,13 @@ export default function jQueryPluginSpinButton ($) {
           e.preventDefault();
         })
 
-        .change(function (e) {
-          this.adjustValue(0);
+        .change(function(e) {
+          const v = this.adjustValue(0);
         });
 
       if (this.addEventListener) {
         // Respond to mouse wheel in Firefox
-        this.addEventListener('DOMMouseScroll', function (e) {
+        this.addEventListener("DOMMouseScroll", function(e) {
           if (e.detail > 0) {
             this.adjustValue(-this.spinCfg.step);
           } else if (e.detail < 0) {
@@ -327,6 +373,21 @@ export default function jQueryPluginSpinButton ($) {
           }
 
           e.preventDefault();
+        });
+      }
+
+      if (this.spinCfg.slider) {
+        const { min, max, step, slider: sliderId } = this.spinCfg;
+        const spin = this;
+        slider = $(sliderId).slider({
+          min,
+          max,
+          step,
+          value: $(spin).val(),
+          slide(e, ui) {
+            $(spin)[0].value = ui.value;
+            spin.adjustValue(0, true);
+          }
         });
       }
     });

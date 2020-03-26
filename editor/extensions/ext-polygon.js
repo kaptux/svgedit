@@ -135,7 +135,6 @@ export default {
         position: 11,
         events: {
           click() {
-            debugger;
             svgCanvas.setMode("polygon");
             svgEditor.toolButtonClick("#tool_polygon");
           }
@@ -146,7 +145,7 @@ export default {
       {
         type: "input",
         panel: "polygon_panel",
-        id: "polySides",
+        id: "inputPoints",
         size: 3,
         defval: 5,
         events: {
@@ -231,7 +230,7 @@ export default {
             cy: opts.start_y,
             id: svgCanvas.getNextId(),
             shape: "regularPoly",
-            sides: document.getElementById("polySides").value,
+            sides: document.getElementById("inputPoints").value || "5",
             orient: "x",
             edge: 0,
             fill: rgb,

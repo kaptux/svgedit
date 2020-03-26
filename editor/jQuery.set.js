@@ -1,9 +1,10 @@
 function setProp(input, prop, info) {
-  console.log("setting ", prop);
   const tokens = prop.split(".");
   let current = info;
-  for (const p of tokens) {
-    current = current[p];
+  let i = 0;
+  while (current != null && i < tokens.length) {
+    current = current[tokens[i]];
+    i++;
   }
   $(input).val(current);
 }
@@ -14,7 +15,7 @@ export default function jQuerySet($) {
       $(panel)
         .find(".properties-panel input")
         .each(function(_, input) {
-          const prop = $(input).data("property");
+          const prop = $(input).data("attr");
           if (prop) {
             setProp(input, prop, info);
           }

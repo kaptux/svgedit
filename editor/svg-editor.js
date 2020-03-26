@@ -173,7 +173,6 @@ const callbacks = [],
     "ext-overview_window.js",
     "ext-panning.js",
     "ext-polygon.js",
-    "ext-shapes.js",
     "ext-star.js",
     "ext-storage.js"
   ],
@@ -1690,11 +1689,6 @@ editor.init = function() {
       return false;
     }
 
-    const fadeFlyouts = "normal";
-    if (!noHiding) {
-      $(".tools_flyout").fadeOut(fadeFlyouts);
-    }
-
     $("#styleoverrides").text("");
 
     workarea.css("cursor", "auto");
@@ -1704,6 +1698,8 @@ editor.init = function() {
     $(button)
       .addClass("tool_button_current")
       .removeClass("tool_button");
+
+    updateContextPanel();
     return true;
   });
 
@@ -2188,27 +2184,33 @@ editor.init = function() {
     return linkHref;
   };
 
-  const getBox = function(elem) {
-    let box = null;
+  const getBox = function(elem, mode) {
+    let box;
     if (!elem) {
-      const res = svgCanvas.getResolution();
-      if (curConfig.baseUnit !== "px") {
-        res.w = convertUnit(res.w) + curConfig.baseUnit;
-        res.h = convertUnit(res.h) + curConfig.baseUnit;
+      if (mode === "select") {
+        const res = svgCanvas.getResolution();
+        if (curConfig.baseUnit !== "px") {
+          res.w = convertUnit(res.w) + curConfig.baseUnit;
+          res.h = convertUnit(res.h) + curConfig.baseUnit;
+        }
+        box = {
+          width: res.w,
+          height: res.h
+        };
       }
-      box = {
-        width: res.w,
-        height: res.h
-      };
-    } else if (["g", "polyline", "path"].includes(elem.nodeName)) {
+    } else if (["g", "polyline", "path", "polygon"].includes(elem.nodeName)) {
       box = svgCanvas.getStrokedBBox([elem]);
     } else {
+      let width = getAttrValue(elem, "width");
+      let height = getAttrValue(elem, "height");
       box = {
         x: elem.getAttribute("x"),
-        y: elem.getAttribute("y")
+        y: elem.getAttribute("y"),
+        width,
+        height
       };
     }
-    return box;
+    return box || {};
   };
 
   const getPathPointType = function() {
@@ -2234,7 +2236,7 @@ editor.init = function() {
           getHref(e);
         }
       ],
-      rect: ["rx", "width", "height"],
+      rect: ["rx"],
       image: [
         "width",
         "height",
@@ -2256,6 +2258,7 @@ editor.init = function() {
       ],
       ellipse: ["cx", "cy", "rx", "ry"],
       line: ["x1", "y1", "x2", "y2"],
+      polygon: ["sides:points"],
       text: [
         "font-family",
         "font-size",
@@ -2281,18 +2284,26 @@ editor.init = function() {
         if (typeof item === "function") {
           res[item.name] = item(elem);
         } else {
-          let attrVal = elem.getAttribute(item);
-          if (curConfig.baseUnit !== "px" && elem[item]) {
-            const bv = elem[item].baseVal.value;
-            attrVal = convertUnit(bv);
+          let [prop, alias] = item.split(":");
+          if (!alias) {
+            alias = prop;
           }
-          res[item] = attrVal;
+          res[alias] = getAttrValue(elem, prop);
         }
       });
     }
 
     return res;
   };
+
+  function getAttrValue(elem, attr) {
+    let attrVal = elem.getAttribute(attr);
+    if (curConfig.baseUnit !== "px" && elem[attr]) {
+      const bv = elem[attr].baseVal.value;
+      attrVal = convertUnit(bv);
+    }
+    return attrVal;
+  }
 
   const getSelectedInfo = function() {
     const elem = selectedElement;
@@ -2302,11 +2313,15 @@ editor.init = function() {
     const layerName = svgCanvas.getCurrentDrawing().getCurrentLayerName();
     const unit = curConfig.baseUnit !== "px" ? curConfig.baseUnit : null;
     const mode = svgCanvas.getMode();
-    const box = getBox(elem);
+    const { x, y, width, height } = getBox(elem, mode);
     let { nodeName: type, tagName } = elem || {
       nodeName: null,
       tagName: null
     };
+
+    if (mode !== "select") {
+      type = mode;
+    }
 
     let angle,
       blur = 0;
@@ -2319,7 +2334,7 @@ editor.init = function() {
         tagName = `${tagName}_${mode}`;
       }
       customProps = getCustomProps(tagName, elem);
-    } else {
+    } else if (mode === "select") {
       type = "page";
 
       customProps.title = svgCanvas.getDocumentTitle();
@@ -2332,7 +2347,10 @@ editor.init = function() {
       isNew,
       layerName,
       unit,
-      box,
+      x,
+      y,
+      width,
+      height,
       blur,
       angle,
       pathInfo: path,
@@ -2350,21 +2368,29 @@ editor.init = function() {
 
     $(
       "#panel_position, #panel_tranformar, #panel_documento, #panel_apariencia, #panel_relleno, #panel_borde"
-    ).hide();
+    )
+      .find(".g-property-row")
+      .hide()
+      .end()
+      .hide();
 
     console.log(info);
 
     const panels = {
-      page: "#panel_documento"
+      page: "#panel_documento .g-property-row",
+      rect:
+        "#panel_position .g-property-row,.g-property-row.corner-radius,.g-property-row.opacity",
+      polygon:
+        "#panel_position .g-property-row, #panel_apariencia .g-property-row:eq(0)"
     }[info.type];
 
     if (panels) {
       $(panels)
+        .parents(".root-panel")
         .show()
-        .children("div")
-        .show()
+        .set(info)
         .end()
-        .set(info);
+        .show();
     }
 
     // update history buttons
@@ -2822,7 +2848,107 @@ editor.init = function() {
    * @listens module:svgcanvas.SvgCanvas#event:extension_added
    * @returns {Promise<void>|void} Resolves to `undefined`
    */
-  const extAdded = function(win, ext) {};
+  const extAdded = async function(win, ext) {
+    if (!ext) {
+      return undefined;
+    }
+    let cbCalled = false;
+    let resizeDone = false;
+
+    if (ext.langReady) {
+      if (editor.langChanged) {
+        // We check for this since the "lang" pref could have been set by storage
+        const lang = editor.pref("lang");
+        await ext.langReady({
+          lang,
+          uiStrings,
+          importLocale: getImportLocale({
+            defaultLang: lang,
+            defaultName: ext.name
+          })
+        });
+        loadedExtensionNames.push(ext.name);
+      } else {
+        extsPreLang.push(ext);
+      }
+    }
+
+    /**
+     * Clear resize timer if present and if not previously performed,
+     *   perform an icon resize.
+     * @returns {void}
+     */
+    function prepResize() {
+      if (resizeTimer) {
+        clearTimeout(resizeTimer);
+        resizeTimer = null;
+      }
+      if (!resizeDone) {
+        resizeTimer = setTimeout(function() {
+          resizeDone = true;
+          setIconSize(editor.pref("iconsize"));
+        }, 50);
+      }
+    }
+
+    /**
+     *
+     * @returns {void}
+     */
+    const runCallback = function() {
+      if (ext.callback && !cbCalled) {
+        cbCalled = true;
+        ext.callback.call(editor);
+      }
+    };
+
+    const btnSelects = [];
+
+    const { svgicons } = ext;
+    if (ext.buttons) {
+      const fallbackObj = {},
+        altsObj = {},
+        placementObj = {},
+        holders = {};
+
+      // Add buttons given by extension
+      $.each(ext.buttons, function(
+        i,
+        /** @type {module:SVGEditor.Button} */ btn
+      ) {
+        let { id } = btn;
+        const button = $(`#${id}`);
+
+        $.each(btn.events, function(name, func) {
+          if (name === "click" && btn.type === "mode") {
+            // `touch.js` changes `touchstart` to `mousedown`,
+            //   so we must map extension click events as well
+            if (isTouch() && name === "click") {
+              name = "mousedown";
+            }
+            if (btn.includeWith) {
+              button.bind(name, func);
+            } else {
+              button.bind(name, function() {
+                if (toolButtonClick(button)) {
+                  func();
+                }
+              });
+            }
+            if (btn.key) {
+              $(document).bind("keydown", btn.key, func);
+              if (btn.title) {
+                button.attr("title", btn.title + " [" + btn.key + "]");
+              }
+            }
+          } else {
+            button.bind(name, func);
+          }
+        });
+      });
+    }
+    return runCallback();
+  };
 
   /**
    * @param {string} color
@@ -2988,6 +3114,13 @@ editor.init = function() {
       $("#opac_slider").slider("option", "value", val);
     }
     svgCanvas.setOpacity(val / 100);
+  };
+
+  const changePoints = function(ctl, val) {
+    if (Utils.isNullish(val)) {
+      val = ctl.value;
+    }
+    $("#inputPoints").val(val);
   };
 
   /**
@@ -3498,6 +3631,14 @@ editor.init = function() {
     });
 
   $("#toolbarFigures").dropdown();
+  $("#slider-points").slider({
+    min: 3,
+    max: 25,
+    step: 1,
+    slide(e, ui) {
+      changePoints(ui);
+    }
+  });
 
   /*
 
@@ -3550,9 +3691,8 @@ editor.init = function() {
    * @returns {void}
    */
   const clickRect = function() {
-    if (toolButtonClick("#tool_rect")) {
-      svgCanvas.setMode("rect");
-    }
+    svgCanvas.setMode("rect");
+    toolButtonClick("#tool_rect");
   };
 
   /**
@@ -5725,7 +5865,8 @@ editor.init = function() {
     max: 100,
     step: 5,
     stateObj,
-    callback: changeOpacity
+    callback: changeOpacity,
+    slider: "#group_opacity_slider"
   });
   $("#blur").SpinButton({
     min: 0,

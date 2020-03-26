@@ -5,6 +5,7 @@ export default function jQueryDropdown($) {
       .each(function(_, button) {
         const caption = $(button).data("title");
         const icon = $(button).data("icon");
+        const trigger = $(button).data("trigger");
 
         $(`<li class="g-menu-item has-icon" data-id="${button.id}">
       <span class="g-menu-item-icon"><i class="${icon}"></i></span>
@@ -20,19 +21,22 @@ export default function jQueryDropdown($) {
             function() {
               $(this).removeClass("g-hover");
             }
-          );
+          )
+          .data("trigger", trigger);
       });
   }
 
   function addClickEvent(rootPanel, container) {
     container.children("li").click(function() {
       const buttonId = $(this).data("id");
+      const event = $(this).data("trigger") || "click";
+
       $(rootPanel)
         .children(".action-button")
         .hide();
       $(`#${buttonId}`)
         .show()
-        .trigger("click");
+        .trigger(event);
     });
   }
 
