@@ -165,15 +165,15 @@ const callbacks = [],
    * @type {string[]}
    */
   defaultExtensions = [
-    "ext-connector.js",
-    "ext-eyedropper.js",
-    "ext-grid.js",
-    "ext-imagelib.js",
-    "ext-markers.js",
-    "ext-overview_window.js",
-    "ext-panning.js",
-    "ext-polygon.js",
-    "ext-star.js",
+    // "ext-connector.js",
+    // "ext-eyedropper.js",
+    // "ext-grid.js",
+    // "ext-imagelib.js",
+    // "ext-markers.js",
+    // "ext-overview_window.js",
+    // "ext-panning.js",
+    // "ext-polygon.js",
+    // "ext-star.js",
     "ext-storage.js"
   ],
   /**
@@ -919,12 +919,10 @@ editor.init = function() {
     jQueryPluginDBox($, { ok, cancel });
 
     try {
-      await Promise.all([
-        initUI(),
-        ...curConfig.extensions.map(extname =>
-          loadExt(editor, langParam, extname)
-        )
-      ]);
+      await initUI();
+      for (const extname of curConfig.extensions) {
+        const res = await loadExt(editor, langParam, extname);
+      }
     } catch (err) {
       console.log(`Error loading ext: ${err}`);
     }
@@ -2641,7 +2639,9 @@ editor.init = function() {
       return;
     }
 
-    $("#zoom").val((zoomlevel * 100).toFixed(1));
+    $("#zoom_dropdown")
+      .find(".caption")
+      .text((zoomlevel * 100).toFixed(1));
 
     if (autoCenter) {
       updateCanvas();
@@ -2859,13 +2859,14 @@ editor.init = function() {
       if (editor.langChanged) {
         // We check for this since the "lang" pref could have been set by storage
         const lang = editor.pref("lang");
+        const locale = await getImportLocale({
+          defaultLang: lang,
+          defaultName: ext.name
+        });
         await ext.langReady({
           lang,
           uiStrings,
-          importLocale: getImportLocale({
-            defaultLang: lang,
-            defaultName: ext.name
-          })
+          importLocale: locale
         });
         loadedExtensionNames.push(ext.name);
       } else {
@@ -3482,76 +3483,43 @@ editor.init = function() {
    * @returns {void}
    */
   editor.addDropDown = function(elem, callback, dropUp) {
-    if (!$(elem).length) {
-      return;
-    } // Quit if called on non-existent element
-    const button = $(elem).find("button");
-    const list = $(elem)
-      .find("ul")
-      .attr("id", $(elem)[0].id + "-list");
-    if (dropUp) {
-      $(elem).addClass("dropup");
-    } else {
-      // Move list to place where it can overflow container
-      $("#option_lists").append(list);
-    }
-    list.find("li").bind("mouseup", callback);
-
-    let onButton = false;
-    $(window).mouseup(function(evt) {
-      if (!onButton) {
-        button.removeClass("down");
-        list.hide();
-      }
-      onButton = false;
-    });
-
-    button
-      .bind("mousedown", function() {
-        if (!button.hasClass("down")) {
-          if (!dropUp) {
-            const pos = $(elem).position();
-            list.css({
-              top: pos.top + 24,
-              left: pos.left - 10
-            });
-          }
-          list.show();
-          onButton = true;
-        } else {
-          list.hide();
-        }
-        button.toggleClass("down");
-      })
-      .hover(function() {
-        onButton = true;
-      })
-      .mouseout(function() {
-        onButton = false;
-      });
+    console.log("addDropDown ", elem);
   };
 
-  editor.addDropDown("#font_family_dropdown", function() {
-    $("#font_family")
-      .val($(this).text())
-      .change();
-  });
+  editor.buildMenu = function(rootPanel, items, cb) {
+    const menuDropDown = $("#menuDropDown");
+    $(rootPanel).click(function(e) {
+      e.stopPropagation();
+      const left = $(rootPanel).data("left");
+      const top = $(rootPanel).data("top");
+      menuDropDown.children("li").remove();
 
-  editor.addDropDown(
-    "#opacity_dropdown",
-    function() {
-      if ($(this).find("div").length) {
-        return;
+      for (const item of items) {
+        const { value, text } = item;
+        $(`<li class="g-menu-item has-icon">
+      <span class="g-menu-item-icon"></span>
+      <span class="g-menu-item-caption">${text}</span>
+      <span class="g-menu-item-info"></span>
+      <span class="g-menu-item-tail"></span>
+      </li>`)
+          .appendTo(menuDropDown)
+          .hover(
+            function() {
+              $(this).addClass("g-hover");
+            },
+            function() {
+              $(this).removeClass("g-hover");
+            }
+          )
+          .data("value", value)
+          .click(function() {
+            cb({ value, text });
+          });
       }
-      const perc = parseInt(
-        $(this)
-          .text()
-          .split("%")[0]
-      );
-      changeOpacity(false, perc);
-    },
-    true
-  );
+
+      menuDropDown.css({ top, left }).show();
+    });
+  };
 
   // For slider usage, see: http://jqueryui.com/demos/slider/
   $("#opac_slider").slider({
@@ -3566,8 +3534,6 @@ editor.init = function() {
       changeOpacity(ui);
     }
   });
-
-  editor.addDropDown("#blur_dropdown", $.noop);
 
   let slideStart = false;
   $("#blur_slider").slider({
@@ -3587,19 +3553,32 @@ editor.init = function() {
     }
   });
 
-  editor.addDropDown(
+  editor.buildMenu(
     "#zoom_dropdown",
-    function() {
-      const item = $(this);
-      const val = item.data("val");
-      if (val) {
-        zoomChanged(window, val);
+    [
+      { text: "1000%", value: "1000" },
+      { text: "400%", value: "400" },
+      { text: "200%", value: "200" },
+      { text: "100%", value: "100" },
+      { text: "50%", value: "50" },
+      { text: "25%", value: "25" },
+      { text: "Fit to canvas", value: "canvas" },
+      { text: "Fit to selection", value: "selection" },
+      { text: "Fit to all", value: "content" }
+    ],
+    function({ value: v, text }) {
+      const value = Number.parseFloat(v);
+      if (Number.isNaN(value)) {
+        zoomChanged(window, v);
       } else {
-        changeZoom({ value: parseFloat(item.text()) });
+        changeZoom({ value });
       }
-    },
-    true
+    }
   );
+
+  const clickFitCanvas = function() {
+    zoomChanged(window, "canvas");
+  };
 
   addAltDropDown(
     "#stroke_linecap",
@@ -5327,10 +5306,15 @@ editor.init = function() {
         parent: "#tools_ellipse",
         icon: "fh_ellipse"
       },
+      {
+        sel: "#tool_fit_canvas",
+        fn: clickFitCanvas,
+        evt: "click",
+        key: ["Z", true]
+      },
       { sel: "#tool_path", fn: clickPath, evt: "click", key: ["P", true] },
       { sel: "#tool_text", fn: clickText, evt: "click", key: ["T", true] },
       { sel: "#tool_image", fn: clickImage, evt: "mouseup" },
-      { sel: "#tool_zoom", fn: clickZoom, evt: "mouseup", key: ["Z", true] },
       { sel: "#tool_clear", fn: clickClear, evt: "mouseup", key: ["N", true] },
       {
         sel: "#tool_save",
@@ -5638,7 +5622,6 @@ editor.init = function() {
        */
       setAll() {
         const flyouts = {};
-
         $.each(toolButtons, function(i, opts) {
           // Bind function to button
           let btn;
@@ -5875,17 +5858,14 @@ editor.init = function() {
     stateObj,
     callback: changeBlur
   });
-  $("#zoom")
-    .SpinButton({
-      min: 0.001,
-      max: 10000,
-      step: 50,
-      stepfunc: stepZoom,
-      stateObj,
-      callback: changeZoom
-      // Set default zoom
-    })
-    .val(svgCanvas.getZoom() * 100);
+
+  $("#zoom_dropdown")
+    .siblings("button")
+    .click(function() {
+      const step = $(this).hasClass("left-attached") ? -5 : 5;
+      const current = svgCanvas.getZoom() * 100;
+      changeZoom({ value: Math.ceil(current + step) });
+    });
 
   $("#workarea").contextMenu(
     {

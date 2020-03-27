@@ -107,12 +107,11 @@
               >
                 -
               </button>
-              <div class="gravit-zoom-manual-input" style="display: none;">
-                <input type="number" min="6" max="25600" /><span>%</span>
-              </div>
               <button
+                id="zoom_dropdown"
                 class="action-button menu left-attached right-attached"
-                data-title="Zoom"
+                data-top="38px"
+                data-left="108px"
               >
                 <span class="gravit-icon-zoom-in icon"></span
                 ><span class="caption">100%</span></button
@@ -124,7 +123,11 @@
               </button>
             </div>
             <div class="toolbar-button">
-              <button class="action-button icon" data-title="Encajar todo">
+              <button
+                id="tool_fit_canvas"
+                class="action-button icon"
+                data-title="Encajar todo"
+              >
                 <span class="icon gravit-icon-expand"></span>
               </button>
             </div>
@@ -2084,9 +2087,7 @@
                     </div>
                     <div class="g-property-row corner-radius">
                       <label
-                        ><span class="vertical-align"
-                          >Borde Esquinas</span
-                        ></label
+                        ><span class="vertical-align">Esquinas</span></label
                       >
                       <div class="columns">
                         <div class="column" style="width: 44%">
