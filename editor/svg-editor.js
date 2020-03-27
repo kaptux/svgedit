@@ -2377,7 +2377,7 @@ editor.init = function() {
     const panels = {
       page: "#panel_documento .g-property-row",
       rect:
-        "#panel_position .g-property-row,.g-property-row.corner-radius,.g-property-row.opacity",
+        "#panel_position .g-property-row,.g-property-row.corner-radius,.g-property-row.opacity,.g-property-row.blur",
       polygon:
         "#panel_position .g-property-row, #panel_apariencia .g-property-row:eq(0)"
     }[info.type];
@@ -3532,24 +3532,6 @@ editor.init = function() {
     },
     slide(evt, ui) {
       changeOpacity(ui);
-    }
-  });
-
-  let slideStart = false;
-  $("#blur_slider").slider({
-    max: 10,
-    step: 0.1,
-    stop(evt, ui) {
-      slideStart = false;
-      changeBlur(ui);
-      $("#blur_dropdown li").show();
-      $(window).mouseup();
-    },
-    start() {
-      slideStart = true;
-    },
-    slide(evt, ui) {
-      changeBlur(ui, null, slideStart);
     }
   });
 
@@ -5851,12 +5833,13 @@ editor.init = function() {
     callback: changeOpacity,
     slider: "#group_opacity_slider"
   });
-  $("#blur").SpinButton({
+  $("#group_blur").SpinButton({
     min: 0,
     max: 10,
     step: 0.1,
     stateObj,
-    callback: changeBlur
+    callback: changeBlur,
+    slider: "#group_blur_slider"
   });
 
   $("#zoom_dropdown")
