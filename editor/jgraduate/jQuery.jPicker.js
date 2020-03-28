@@ -1935,47 +1935,61 @@ const jPicker = function ($) {
         const all = color.active.val('all');
         if (win.alphaPrecision < 0) win.alphaPrecision = 0;
         else if (win.alphaPrecision > 2) win.alphaPrecision = 2;
-        const controlHtml = `<table class="jPicker" cellpadding="0" cellspacing="0">
-          <tbody>
-            ${win.expandable ? '<tr><td class="Move" colspan="5">&nbsp;</td></tr>' : ''}
-            <tr>
-              <td rowspan="9"><h2 class="Title">${win.title || localization.text.title}</h2><div class="Map"><span class="Map1">&nbsp;</span><span class="Map2">&nbsp;</span><span class="Map3">&nbsp;</span><img src="${images.clientPath + images.colorMap.arrow.file}" class="Arrow"/></div></td>
-              <td rowspan="9"><div class="Bar"><span class="Map1">&nbsp;</span><span class="Map2">&nbsp;</span><span class="Map3">&nbsp;</span><span class="Map4">&nbsp;</span><span class="Map5">&nbsp;</span><span class="Map6">&nbsp;</span><img src="${images.clientPath + images.colorBar.arrow.file}" class="Arrow"/></div></td>
-              <td colspan="2" class="Preview">${localization.text.newColor}<div><span class="Active" title="${localization.tooltips.colors.newColor}">&nbsp;</span><span class="Current" title="${localization.tooltips.colors.currentColor}">&nbsp;</span></div>${localization.text.currentColor}</td>
-              <td rowspan="9" class="Button"><input type="button" class="Ok" value="${localization.text.ok}" title="${localization.tooltips.buttons.ok}"/><input type="button" class="Cancel" value="${localization.text.cancel}" title="${localization.tooltips.buttons.cancel}"/><hr/><div class="Grid">&nbsp;</div></td>
-            </tr>
-            <tr class="Hue">
-              <td class="Radio"><label title="${localization.tooltips.hue.radio}"><input type="radio" value="h"${settings.color.mode === 'h' ? ' checked="checked"' : ''}/>H:</label></td>
-              <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.h : ''}" title="${localization.tooltips.hue.textbox}"/>&nbsp;&deg;</td>
-            </tr>
-            <tr class="Saturation">
-              <td class="Radio"><label title="${localization.tooltips.saturation.radio}"><input type="radio" value="s"${settings.color.mode === 's' ? ' checked="checked"' : ''}/>S:</label></td>
-              <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.s : ''}" title="${localization.tooltips.saturation.textbox}"/>&nbsp;%</td>
-            </tr>
-            <tr class="Value">
-              <td class="Radio"><label title="${localization.tooltips.value.radio}"><input type="radio" value="v"${settings.color.mode === 'v' ? ' checked="checked"' : ''}/>V:</label><br/><br/></td>
-              <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.v : ''}" title="${localization.tooltips.value.textbox}"/>&nbsp;%<br/><br/></td>
-            </tr>
-            <tr class="Red">
-              <td class="Radio"><label title="${localization.tooltips.red.radio}"><input type="radio" value="r"${settings.color.mode === 'r' ? ' checked="checked"' : ''}/>R:</label></td>
-              <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.r : ''}" title="${localization.tooltips.red.textbox}"/></td>
-            </tr>
-            <tr class="Green">
-              <td class="Radio"><label title="${localization.tooltips.green.radio}"><input type="radio" value="g"${settings.color.mode === 'g' ? ' checked="checked"' : ''}/>G:</label></td>
-              <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.g : ''}" title="${localization.tooltips.green.textbox}"/></td>
-            </tr>
-            <tr class="Blue">
-              <td class="Radio"><label title="${localization.tooltips.blue.radio}"><input type="radio" value="b"${settings.color.mode === 'b' ? ' checked="checked"' : ''}/>B:</label></td>
-              <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.b : ''}" title="${localization.tooltips.blue.textbox}"/></td>
-            </tr>
-            <tr class="Alpha">
-              <td class="Radio">${win.alphaSupport ? `<label title="${localization.tooltips.alpha.radio}"><input type="radio" value="a"${settings.color.mode === 'a' ? ' checked="checked"' : ''}/>A:</label>` : '&nbsp;'}</td>
-              <td class="Text">${win.alphaSupport ? `<input type="text" maxlength="${3 + win.alphaPrecision}" value="${!isNullish(all) ? toFixedNumeric((all.a * 100) / 255, win.alphaPrecision) : ''}" title="${localization.tooltips.alpha.textbox}"/>&nbsp;%` : '&nbsp;'}</td>
-            </tr>
-            <tr class="Hex">
-              <td colspan="2" class="Text"><label title="${localization.tooltips.hex.textbox}">#:<input type="text" maxlength="6" class="Hex" value="${!isNullish(all) ? all.hex : ''}"/></label>${win.alphaSupport ? `<input type="text" maxlength="2" class="AHex" value="${!isNullish(all) ? all.ahex.substring(6) : ''}" title="${localization.tooltips.hex.alpha}"/></td>` : '&nbsp;'}
-            </tr>
-          </tbody></table>`;
+        const controlHtml =`<div class="jPicker">
+          <div style="display:flex;flex-direction:row">
+            <div>
+              <div class="Map"><span class="Map1">&nbsp;</span><span class="Map2">&nbsp;</span><span class="Map3">&nbsp;</span><img src="${images.clientPath + images.colorMap.arrow.file}" class="Arrow"/></div>
+            </div>
+            <div>
+              <div class="Bar"><span class="Map1">&nbsp;</span><span class="Map2">&nbsp;</span><span class="Map3">&nbsp;</span><span class="Map4">&nbsp;</span><span class="Map5">&nbsp;</span><span class="Map6">&nbsp;</span><img src="${images.clientPath + images.colorBar.arrow.file}" class="Arrow"/></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:row; margin-top: 5px">
+            <div class="Preview">
+              <br />
+              <table>
+                <tbody>
+                  <tr class="Hue">
+                    <td class="Radio"><label title="${localization.tooltips.hue.radio}"><input type="radio" value="h"${settings.color.mode === 'h' ? ' checked="checked"' : ''}/>H:</label></td>
+                    <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.h : ''}" title="${localization.tooltips.hue.textbox}"/>&nbsp;&deg;</td>
+                  </tr>
+                  <tr class="Saturation">
+                    <td class="Radio"><label title="${localization.tooltips.saturation.radio}"><input type="radio" value="s"${settings.color.mode === 's' ? ' checked="checked"' : ''}/>S:</label></td>
+                    <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.s : ''}" title="${localization.tooltips.saturation.textbox}"/>&nbsp;%</td>
+                  </tr>
+                  <tr class="Value">
+                    <td class="Radio"><label title="${localization.tooltips.value.radio}"><input type="radio" value="v"${settings.color.mode === 'v' ? ' checked="checked"' : ''}/>V:</label><br/><br/></td>
+                    <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.v : ''}" title="${localization.tooltips.value.textbox}"/>&nbsp;%<br/><br/></td>
+                  </tr>
+                  <tr class="Red">
+                    <td class="Radio"><label title="${localization.tooltips.red.radio}"><input type="radio" value="r"${settings.color.mode === 'r' ? ' checked="checked"' : ''}/>R:</label></td>
+                    <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.r : ''}" title="${localization.tooltips.red.textbox}"/></td>
+                  </tr>
+                  <tr class="Green">
+                    <td class="Radio"><label title="${localization.tooltips.green.radio}"><input type="radio" value="g"${settings.color.mode === 'g' ? ' checked="checked"' : ''}/>G:</label></td>
+                    <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.g : ''}" title="${localization.tooltips.green.textbox}"/></td>
+                  </tr>
+                  <tr class="Blue">
+                    <td class="Radio"><label title="${localization.tooltips.blue.radio}"><input type="radio" value="b"${settings.color.mode === 'b' ? ' checked="checked"' : ''}/>B:</label></td>
+                    <td class="Text"><input type="text" maxlength="3" value="${!isNullish(all) ? all.b : ''}" title="${localization.tooltips.blue.textbox}"/></td>
+                  </tr>
+                  <tr class="Alpha">
+                    <td class="Radio">${win.alphaSupport ? `<label title="${localization.tooltips.alpha.radio}"><input type="radio" value="a"${settings.color.mode === 'a' ? ' checked="checked"' : ''}/>A:</label>` : '&nbsp;'}</td>
+                    <td class="Text">${win.alphaSupport ? `<input type="text" maxlength="${3 + win.alphaPrecision}" value="${!isNullish(all) ? toFixedNumeric((all.a * 100) / 255, win.alphaPrecision) : ''}" title="${localization.tooltips.alpha.textbox}"/>&nbsp;%` : '&nbsp;'}</td>
+                  </tr>
+                  <tr class="Hex">
+                    <td colspan="2" class="Text"><label title="${localization.tooltips.hex.textbox}">#:<input type="text" maxlength="6" class="Hex" value="${!isNullish(all) ? all.hex : ''}"/></label>${win.alphaSupport ? `<input type="text" maxlength="2" class="AHex" value="${!isNullish(all) ? all.ahex.substring(6) : ''}" title="${localization.tooltips.hex.alpha}"/></td>` : '&nbsp;'}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="Grid">&nbsp;</div>
+            <div class="Button">
+              ${localization.text.newColor}<div><span class="Active" title="${localization.tooltips.colors.newColor}">&nbsp;</span><span class="Current" title="${localization.tooltips.colors.currentColor}">&nbsp;</span></div>${localization.text.currentColor}
+              <input type="button" class="Ok" value="${localization.text.ok}" title="${localization.tooltips.buttons.ok}"/><input type="button" class="Cancel" value="${localization.text.cancel}" title="${localization.tooltips.buttons.cancel}"/>
+            </div>
+            </div>
+        </div>`;
         if (win.expandable) {
           container.html(controlHtml);
           if (!$(document.body).children('div.jPicker.Container').length) {
@@ -1991,24 +2005,9 @@ const jPicker = function ($) {
           );
           container.css( // positions must be set and display set to absolute before source code injection or IE will size the container to fit the window
             {
-              left:
-                win.position.x === 'left'
-                  ? (popup.offset().left - 530 - (win.position.y === 'center' ? 25 : 0)) + 'px'
-                  : win.position.x === 'center'
-                    ? (popup.offset().left - 260) + 'px'
-                    : win.position.x === 'right'
-                      ? (popup.offset().left - 10 + (win.position.y === 'center' ? 25 : 0)) + 'px'
-                      : win.position.x === 'screenCenter'
-                        ? (($(document).width() >> 1) - 260) + 'px'
-                        : (popup.offset().left + parseInt(win.position.x)) + 'px',
-              position: 'absolute',
-              top: win.position.y === 'top'
-                ? (popup.offset().top - 312) + 'px'
-                : win.position.y === 'center'
-                  ? (popup.offset().top - 156) + 'px'
-                  : win.position.y === 'bottom'
-                    ? (popup.offset().top + 25) + 'px'
-                    : (popup.offset().top + parseInt(win.position.y)) + 'px'
+              left: 0,
+              top: 0,
+              position: 'absolute'
             }
           );
         } else {
@@ -2016,7 +2015,7 @@ const jPicker = function ($) {
           container.html(controlHtml);
         }
         // initialize the objects to the source code just injected
-        const tbody = container.find('tbody:first');
+        const tbody = container;
         colorMapDiv = tbody.find('div.Map:first');
         colorBarDiv = tbody.find('div.Bar:first');
         const MapMaps = colorMapDiv.find('span');
@@ -2070,12 +2069,12 @@ const jPicker = function ($) {
         const hex = !isNullish(all) ? all.hex : null,
           preview = tbody.find('.Preview'),
           button = tbody.find('.Button');
-        activePreview = preview.find('.Active:first').css({backgroundColor: (hex && '#' + hex) || 'transparent'});
-        currentPreview = preview.find('.Current:first').css({backgroundColor: (hex && '#' + hex) || 'transparent'}).bind('click', currentClicked);
+        activePreview = button.find('.Active:first').css({backgroundColor: (hex && '#' + hex) || 'transparent'});
+        currentPreview = button.find('.Current:first').css({backgroundColor: (hex && '#' + hex) || 'transparent'}).bind('click', currentClicked);
         setAlpha.call(that, currentPreview, toFixedNumeric((color.current.val('a') * 100) / 255, 4));
         okButton = button.find('.Ok:first').bind('click', okClicked);
         cancelButton = button.find('.Cancel:first').bind('click', cancelClicked);
-        grid = button.find('.Grid:first');
+        grid = tbody.find('.Grid:first');
         setTimeout(function () {
           setImg.call(that, colorMapL1, images.clientPath + 'Maps.png');
           setImg.call(that, colorMapL2, images.clientPath + 'Maps.png');
@@ -2359,7 +2358,7 @@ const jPicker = function ($) {
       expandable: false,
       liveUpdate: true,
       alphaSupport: false,
-      alphaPrecision: 0,
+        alphaPrecision: 0,
       updateInputColor: true
     },
     color: {
@@ -2522,3 +2521,5 @@ const jPicker = function ($) {
 };
 
 export default jPicker;
+
+

@@ -930,6 +930,7 @@
         >
           <div class="sidebar-container sidebar-inspector">
             <div class="panels scrolling-panels">
+              <div id="color_picker"></div>
               <hr style="display: none;" />
               <div class="toolbar main-toolbar" id="tool_position">
                 <button
@@ -3154,7 +3155,7 @@
               </div>
               <div id="panel_relleno" class="root-panel">
                 <div class="toolbar list-toolbar accordion empty-list">
-                  <label>Rellenos</label
+                  <label>Relleno</label
                   ><button class="g-accordion">
                     <span class="gravit-icon-down"></span>
                   </button>
@@ -3172,17 +3173,7 @@
                       >
                         <div class="content">
                           <div data-property="_pt" class="g-pattern-chooser">
-                            <span
-                              class="preview g-button"
-                              draggable="true"
-                              style='height: 26px; min-width: 20px; background: linear-gradient(rgb(255, 255, 255), rgb(255, 255, 255)), url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IndoaXRlIi8+PHJlY3Qgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0iI0NEQ0RDRCIvPjxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNDRENEQ0QiLz48L3N2Zz4=");'
-                              ><div
-                                id="fill_color"
-                                class="eyedropper"
-                                data-title="Elija un color de cualquier parte del lienzo."
-                              >
-                                <span class="gravit-icon-picker"></span></div
-                            ></span>
+                            <span id="fill_color"></span>
                           </div>
                         </div>
                       </div>

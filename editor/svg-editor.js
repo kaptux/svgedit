@@ -165,15 +165,15 @@ const callbacks = [],
    * @type {string[]}
    */
   defaultExtensions = [
-    // "ext-connector.js",
-    // "ext-eyedropper.js",
-    // "ext-grid.js",
-    // "ext-imagelib.js",
-    // "ext-markers.js",
-    // "ext-overview_window.js",
-    // "ext-panning.js",
-    // "ext-polygon.js",
-    // "ext-star.js",
+    "ext-connector.js",
+    "ext-eyedropper.js",
+    "ext-grid.js",
+    "ext-imagelib.js",
+    "ext-markers.js",
+    "ext-overview_window.js",
+    "ext-panning.js",
+    "ext-polygon.js",
+    "ext-star.js",
     "ext-storage.js"
   ],
   /**
@@ -2377,7 +2377,7 @@ editor.init = function() {
     const panels = {
       page: "#panel_documento .g-property-row",
       rect:
-        "#panel_position .g-property-row,.g-property-row.corner-radius,.g-property-row.opacity,.g-property-row.blur",
+        "#panel_position .g-property-row,.g-property-row.corner-radius,.g-property-row.opacity,.g-property-row.blur, #panel_relleno .g-property-row, #panel_borde .g-property-row",
       polygon:
         "#panel_position .g-property-row, #panel_apariencia .g-property-row:eq(0)"
     }[info.type];
@@ -4616,12 +4616,14 @@ editor.init = function() {
     const pos = elem.offset();
     let { paint } = paintBox[picker];
     $("#color_picker")
-      .draggable({
-        cancel:
-          ".jGraduate_tabs, .jGraduate_colPick, .jGraduate_gradPick, .jPicker",
-        containment: "window"
+      .css({
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        position: "absolute",
+        zIndex: 100
       })
-      .css(curConfig.colorPickerCSS || { left: pos.left - 140, bottom: 40 })
       .jGraduate(
         {
           paint,
@@ -4654,8 +4656,11 @@ editor.init = function() {
       // set up gradients to be used for the buttons
       const svgdocbox = new DOMParser().parseFromString(
         `<svg xmlns="http://www.w3.org/2000/svg">
-          <rect width="16.5" height="16.5"
-            fill="#${cur.color}" opacity="${cur.opacity}"/>
+          <ellipse fill="#${
+            cur.color
+          }" stroke="#dfdfdf" stroke-width="2" cx="13" cy="14" rx="12" ry="12" opacity="${
+          cur.opacity
+        }"></ellipse>
           <defs><linearGradient id="gradbox_${PaintBox.ctr++}"/></defs>
         </svg>`,
         "text/xml"
@@ -4663,7 +4668,7 @@ editor.init = function() {
 
       let docElem = svgdocbox.documentElement;
       docElem = $(container)[0].appendChild(document.importNode(docElem, true));
-      docElem.setAttribute("width", 16.5);
+      docElem.setAttribute("width", 28);
 
       this.rect = docElem.firstElementChild;
       this.defs = docElem.getElementsByTagName("defs")[0];
