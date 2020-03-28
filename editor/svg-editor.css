@@ -5900,6 +5900,21 @@ input.g-unitbox:not(:focus) {
 .ui-toolbar-center #toolbar > div.section > .toolbar-button {
   margin-right: 3px;
 }
+.toolbar-button.group {
+  position: relative;
+}
+.toolbar-button.group button {
+  overflow: hidden;
+  margin: 0px;
+}
+.toolbar-button.group > div {
+  display: inline-block;
+  margin-left: 10px;
+}
+
+li.tool_button.current {
+  display: none;
+}
 
 #toolbar {
   box-sizing: border-box;

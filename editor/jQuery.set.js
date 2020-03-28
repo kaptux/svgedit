@@ -6,7 +6,9 @@ function setProp(input, prop, info) {
     current = current[tokens[i]];
     i++;
   }
-  $(input).val(current);
+  if (current != undefined) {
+    $(input).val(current);
+  }
 }
 
 export default function jQuerySet($) {

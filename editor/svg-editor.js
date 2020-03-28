@@ -853,8 +853,17 @@ editor.init = function() {
    * @returns {void}
    */
   const setIcon = (editor.setIcon = function(elem, iconId, forcedSize) {
-    //Todo: Update UI (Maybe!!)
-    console.log("update ui:", elem, iconId);
+    let icon =
+      typeof iconId === "string" ? $.getSvgIcon(iconId, true) : iconId.clone();
+    if (!icon) {
+      const iconEl = $(`#${iconId}`);
+      if (iconEl.length > 0 && iconEl[0].tagName === "LI") {
+        icon = iconEl.children().clone();
+      }
+    }
+    $(elem)
+      .empty()
+      .append(icon);
   });
 
   const loadExt = async (editor, langParam, extname) => {
@@ -1522,15 +1531,10 @@ editor.init = function() {
       $("#tool_select")
         .addClass("tool_button_current")
         .removeClass("tool_button");
-      setIcon("#tool_select", "select_node");
       multiselected = false;
       if (elems.length) {
         selectedElement = elems[0];
       }
-    } else {
-      setTimeout(() => {
-        setIcon("#tool_select", "select");
-      }, 1000);
     }
   };
 
@@ -2311,6 +2315,7 @@ editor.init = function() {
     const layerName = svgCanvas.getCurrentDrawing().getCurrentLayerName();
     const unit = curConfig.baseUnit !== "px" ? curConfig.baseUnit : null;
     const mode = svgCanvas.getMode();
+    const stroke_color = null;
     const { x, y, width, height } = getBox(elem, mode);
     let { nodeName: type, tagName } = elem || {
       nodeName: null,
@@ -2808,12 +2813,14 @@ editor.init = function() {
     // const height = list.height(); // Currently unused
     button
       .bind("mousedown", function() {
-        const off = button.offset();
-        if (dropUp) {
-          off.top -= list.height();
-          off.left += 8;
-        } else {
-          off.top += button.height();
+        const off = { top: 40, left: 0 };
+        const left = list.data("left");
+        if (left) {
+          off.left = parseFloat(left);
+        }
+        const top = list.data("top");
+        if (top) {
+          off.top = parseFloat(top);
         }
         list.offset(off);
 
@@ -3563,7 +3570,7 @@ editor.init = function() {
   };
 
   addAltDropDown(
-    "#stroke_linecap",
+    "#cur_linecap",
     "#linecap_opts",
     function() {
       setStrokeOpt(this, true);
@@ -3572,7 +3579,7 @@ editor.init = function() {
   );
 
   addAltDropDown(
-    "#stroke_linejoin",
+    "#cur_linejoin",
     "#linejoin_opts",
     function() {
       setStrokeOpt(this, true);

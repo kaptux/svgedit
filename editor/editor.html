@@ -3207,7 +3207,7 @@
                 </div>
                 <hr />
               </div>
-              <div id="panel_borde">
+              <div id="panel_borde" class="root-panel">
                 <div class="toolbar list-toolbar accordion empty-list">
                   <label>Bordes</label
                   ><button class="g-accordion">
@@ -3215,7 +3215,7 @@
                   </button>
                   <div class="g-accordion-ghost"></div>
                 </div>
-                <div class="properties-panel border-properties-panel">
+                <div class="properties-panel fill-properties-panel">
                   <div
                     class="fill-block g-cursor-hand-open g-property-row no-label"
                     draggable="true"
@@ -3227,38 +3227,158 @@
                       >
                         <div class="content">
                           <div data-property="_pt" class="g-pattern-chooser">
-                            <span
-                              class="preview g-button"
-                              draggable="true"
-                              style='height: 26px; min-width: 20px; background: linear-gradient(rgb(255, 255, 255), rgb(255, 255, 255)), url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IndoaXRlIi8+PHJlY3Qgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0iI0NEQ0RDRCIvPjxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNDRENEQ0QiLz48L3N2Zz4=");'
-                              ><div
-                                id="stroke_color"
-                                class="eyedropper"
-                                data-title="Elija un color de cualquier parte del lienzo."
-                              >
-                                <span class="gravit-icon-picker"></span></div
-                            ></span>
+                            <span id="stroke_color"></span>
                           </div>
                         </div>
                       </div>
-                      <label class="column auto-grow g-cursor-hand-open"
-                        ><div class="content">
-                          <select data-property="_bl"
-                            ><option value="normal">Normal</option></select
+                      <div
+                        class="column auto-grow g-cursor-hand-open"
+                        style="text-align: center"
+                      >
+                        <label class="stroke_tool">
+                          <select
+                            id="stroke_style"
+                            title="Change stroke dash style"
+                            autocomplete="off"
+                            style="margin-right: 24px;"
                           >
+                            <option selected="selected" value="none"
+                              >&#9473;&#9473;&#9473;&#9473;</option
+                            >
+                            <option value="2,2">.........</option>
+                            <option value="5,5">- - - - - -</option>
+                            <option value="5,2,2,2">- .- .- .</option>
+                            <option value="5,2,2,2,2,2">- ..- ..- ..</option>
+                          </select>
+                        </label>
+                        <div class="toolbar-button group">
+                          <div
+                            class="stroke_tool dropdown dropup"
+                            id="stroke_linecap"
+                          >
+                            <div id="cur_linecap" title="Linecap: Butt">
+                              <img
+                                class="svg_icon"
+                                src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6c2U9Imh0dHA6Ly9zdmctZWRpdC5nb29nbGVjb2RlLmNvbSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KIDwhLS0gQ3JlYXRlZCB3aXRoIFNWRy1lZGl0IC0gaHR0cHM6Ly9naXRodWIuY29tL1NWRy1FZGl0L3N2Z2VkaXQgLS0+CiA8ZGVmcz4KICA8bGluZWFyR3JhZGllbnQgaWQ9InN2Z184IiB4MT0iMC44IiB5MT0iMSIgeDI9IjAuMiIgeTI9IjEiPgogICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMSIvPgogICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMCIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiA8L2RlZnM+CiA8Zz4KICA8cmVjdCBmaWxsPSJ1cmwoI3N2Z184KSIgc3Ryb2tlPSIjYTBhMGEwIiBzdHJva2Utd2lkdGg9IjIiIHg9Ii0xNS4yMDE5NiIgeT0iNDMuNTk3NCIgd2lkdGg9Ijk0LjgzNzMiIGhlaWdodD0iNTAuMzcyOCIgaWQ9InN2Z18zIiB0cmFuc2Zvcm09InJvdGF0ZSgtNDUsIDMyLjIxNDgsIDY4Ljc4MzIpIi8+CiAgPHBhdGggaWQ9InN2Z18xIiBkPSJtNi42MzEzMyw5NS4wNzc1NWw1OS4xNzUxNCwtNTkuMTc1MTQiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlPSIjMDBmZmZmIiBmaWxsPSJub25lIi8+CiAgPHBhdGggaWQ9InN2Z18yIiBkPSJtNTEuNjI4OTMsMzYuMTA3NDJsMTMuMDU2NjIsLTEzLjA1NjYybDEzLjA1NjYxLDEzLjA1NjYybC0xMy4wNTY2MSwxMy4wNTY2MmwtMTMuMDU2NjIsLTEzLjA1NjYyeiIgc3Ryb2tlPSJub25lIiBmaWxsPSIjMDBmZmZmIi8+CiA8L2c+Cjwvc3ZnPjwvc3ZnPg=="
+                                alt="icon"
+                              />
+                            </div>
+
+                            <ul
+                              id="linecap_opts"
+                              style="position:absolute; display: none;"
+                              data-top="-52"
+                              data-left="11"
+                            >
+                              <li
+                                class="tool_button current"
+                                id="linecap_butt"
+                                title="Linecap: Butt"
+                              >
+                                <img
+                                  class="svg_icon"
+                                  src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6c2U9Imh0dHA6Ly9zdmctZWRpdC5nb29nbGVjb2RlLmNvbSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KIDwhLS0gQ3JlYXRlZCB3aXRoIFNWRy1lZGl0IC0gaHR0cHM6Ly9naXRodWIuY29tL1NWRy1FZGl0L3N2Z2VkaXQgLS0+CiA8ZGVmcz4KICA8bGluZWFyR3JhZGllbnQgaWQ9InN2Z184IiB4MT0iMC44IiB5MT0iMSIgeDI9IjAuMiIgeTI9IjEiPgogICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMSIvPgogICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMCIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiA8L2RlZnM+CiA8Zz4KICA8cmVjdCBmaWxsPSJ1cmwoI3N2Z184KSIgc3Ryb2tlPSIjYTBhMGEwIiBzdHJva2Utd2lkdGg9IjIiIHg9Ii0xNS4yMDE5NiIgeT0iNDMuNTk3NCIgd2lkdGg9Ijk0LjgzNzMiIGhlaWdodD0iNTAuMzcyOCIgaWQ9InN2Z18zIiB0cmFuc2Zvcm09InJvdGF0ZSgtNDUsIDMyLjIxNDgsIDY4Ljc4MzIpIi8+CiAgPHBhdGggaWQ9InN2Z18xIiBkPSJtNi42MzEzMyw5NS4wNzc1NWw1OS4xNzUxNCwtNTkuMTc1MTQiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlPSIjMDBmZmZmIiBmaWxsPSJub25lIi8+CiAgPHBhdGggaWQ9InN2Z18yIiBkPSJtNTEuNjI4OTMsMzYuMTA3NDJsMTMuMDU2NjIsLTEzLjA1NjYybDEzLjA1NjYxLDEzLjA1NjYybC0xMy4wNTY2MSwxMy4wNTY2MmwtMTMuMDU2NjIsLTEzLjA1NjYyeiIgc3Ryb2tlPSJub25lIiBmaWxsPSIjMDBmZmZmIi8+CiA8L2c+Cjwvc3ZnPjwvc3ZnPg=="
+                                  alt="icon"
+                                />
+                              </li>
+                              <li
+                                class="tool_button"
+                                id="linecap_square"
+                                title="Linecap: Square"
+                              >
+                                <img
+                                  class="svg_icon"
+                                  src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6c2U9Imh0dHA6Ly9zdmctZWRpdC5nb29nbGVjb2RlLmNvbSIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KIDwhLS0gQ3JlYXRlZCB3aXRoIFNWRy1lZGl0IC0gaHR0cHM6Ly9naXRodWIuY29tL1NWRy1FZGl0L3N2Z2VkaXQgLS0+CiA8ZGVmcz4KICA8bGluZWFyR3JhZGllbnQgaWQ9InN2Z184IiB4MT0iMC44IiB5MT0iMSIgeDI9IjAuMiIgeTI9IjEiPgogICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMSIvPgogICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwMDAwMDAiIHN0b3Atb3BhY2l0eT0iMCIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiA8L2RlZnM+CiA8Zz4KICA8cmVjdCBmaWxsPSJ1cmwoI3N2Z184KSIgc3Ryb2tlPSJub25lIiB4PSItMTguNTE1NjgiIHk9IjM1LjU5NzQiIHdpZHRoPSIxMTcuNDY0NjkiIGhlaWdodD0iNTAuMzcyOCIgaWQ9InN2Z18zIiB0cmFuc2Zvcm09InJvdGF0ZSgtNDUsIDQwLjIxNjgsIDYwLjc4MzIpIi8+CiAgPHBhdGggaWQ9InN2Z18xIiBkPSJtNi42MzEzMyw5NS4wNzc1NWw1OS4xNzUxNCwtNTkuMTc1MTQiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlPSIjMDBmZmZmIiBmaWxsPSJub25lIi8+CiAgPHBhdGggaWQ9InN2Z18yIiBkPSJtNTEuNjI4OTMsMzYuMTA3NDJsMTMuMDU2NjIsLTEzLjA1NjYybDEzLjA1NjYxLDEzLjA1NjYybC0xMy4wNTY2MSwxMy4wNTY2MmwtMTMuMDU2NjIsLTEzLjA1NjYyeiIgc3Ryb2tlPSJub25lIiBmaWxsPSIjMDBmZmZmIi8+CiA8L2c+Cjwvc3ZnPjwvc3ZnPg=="
+                                  alt="icon"
+                                />
+                              </li>
+                              <li
+                                class="tool_button"
+                                id="linecap_round"
+                                title="Linecap: Round"
+                              >
+                                <img
+                                  class="svg_icon"
+                                  src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNlPSJodHRwOi8vc3ZnLWVkaXQuZ29vZ2xlY29kZS5jb20iIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KIDwhLS0gQ3JlYXRlZCB3aXRoIFNWRy1lZGl0IC0gaHR0cHM6Ly9naXRodWIuY29tL1NWRy1FZGl0L3N2Z2VkaXQgLS0+CiA8ZGVmcz4KICA8bGluZWFyR3JhZGllbnQgeTI9IjEiIHgyPSIwLjIiIHkxPSIxIiB4MT0iMC44IiBpZD0ic3ZnXzgiPgogICA8c3RvcCBzdG9wLW9wYWNpdHk9IjEiIHN0b3AtY29sb3I9IiMwMDAwMDAiIG9mZnNldD0iMCIvPgogICA8c3RvcCBzdG9wLW9wYWNpdHk9IjAiIHN0b3AtY29sb3I9IiMwMDAwMDAiIG9mZnNldD0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiA8L2RlZnM+CiA8Zz4KICA8cGF0aCB0cmFuc2Zvcm09InJvdGF0ZSgtNDUsIDQxLjUxMTcsIDU5LjQ2NDgpIiBpZD0ic3ZnXzMiIGQ9Im0tMTkuMDY3OSwzNC4yOTQ2bDk0LjgzNTksMGMzNi40OTksLTEuNDE0MiAzMy42NzEwMSw0OC45NTY5IDAsNTAuMzcxMWwtOTQuODM1OSwwbDAsLTUwLjM3MTF6IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iI2EwYTBhMCIgZmlsbD0idXJsKCNzdmdfOCkiLz4KICA8cGF0aCBpZD0ic3ZnXzEiIGQ9Im02LjYzMTMzLDk1LjA3NzU1bDU5LjE3NTE1LC01OS4xNzUxNSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2U9IiMwMGZmZmYiIGZpbGw9Im5vbmUiLz4KICA8cGF0aCBpZD0ic3ZnXzIiIGQ9Im01MS42Mjg5MywzNi4xMDc0MmwxMy4wNTY2MiwtMTMuMDU2NjJsMTMuMDU2NjEsMTMuMDU2NjJsLTEzLjA1NjYxLDEzLjA1NjYybC0xMy4wNTY2MiwtMTMuMDU2NjJ6IiBzdHJva2U9Im5vbmUiIGZpbGw9IiMwMGZmZmYiLz4KIDwvZz4KPC9zdmc+PC9zdmc+"
+                                  alt="icon"
+                                />
+                              </li>
+                            </ul>
+                          </div>
+                          <div
+                            class="stroke_tool dropdown dropup"
+                            id="stroke_linejoin"
+                          >
+                            <div id="cur_linejoin">
+                              <img
+                                class="svg_icon"
+                                src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNlPSJodHRwOi8vc3ZnLWVkaXQuZ29vZ2xlY29kZS5jb20iIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KIDwhLS0gQ3JlYXRlZCB3aXRoIFNWRy1lZGl0IC0gaHR0cHM6Ly9naXRodWIuY29tL1NWRy1FZGl0L3N2Z2VkaXQgLS0+CiA8ZGVmcz4KICA8bGluZWFyR3JhZGllbnQgeTI9IjEiIHgyPSIwLjIiIHkxPSIxIiB4MT0iMC44IiBpZD0ic3ZnXzgiPgogICA8c3RvcCBzdG9wLW9wYWNpdHk9IjEiIHN0b3AtY29sb3I9IiMwMDAwMDAiIG9mZnNldD0iMCIvPgogICA8c3RvcCBzdG9wLW9wYWNpdHk9IjAiIHN0b3AtY29sb3I9IiMwMDAwMDAiIG9mZnNldD0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiA8L2RlZnM+CiA8Zz4KICA8cGF0aCBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjc3ZnXzgpIiBzdHJva2Utd2lkdGg9IjQ5IiBkPSJtLTE1LC0zNWw3NSw4NWwtNzUsNzUiIGlkPSJzdmdfNiIvPgogIDxwYXRoIHRyYW5zZm9ybT0icm90YXRlKDkwLCA1Ny44OTI1LCA1MC4yNTE5KSIgZmlsbD0iIzAwZmZmZiIgc3Ryb2tlPSJub25lIiBkPSJtNDQuODM1OTIsNTAuMjUxODdsMTMuMDU2NjEsLTEzLjA1NjYzbDEzLjA1NjYxLDEzLjA1NjYzbC0xMy4wNTY2MSwxMy4wNTY2MmwtMTMuMDU2NjEsLTEzLjA1NjYyeiIgaWQ9InN2Z18yIi8+CiAgPHBhdGggaWQ9InN2Z180IiBkPSJtLTE1LC0zNWw3NSw4NWwtNzUsNzUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlPSIjMDBmZmZmIiBmaWxsPSJub25lIi8+CiA8L2c+Cjwvc3ZnPjwvc3ZnPg=="
+                                alt="icon"
+                              />
+                            </div>
+                            <ul
+                              id="linejoin_opts"
+                              style="position:absolute; display:none"
+                              data-top="-52"
+                              data-left="47"
+                            >
+                              <li
+                                class="tool_button"
+                                id="linejoin_miter"
+                                title="Linejoin: Miter"
+                              >
+                                <img
+                                  class="svg_icon"
+                                  src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNlPSJodHRwOi8vc3ZnLWVkaXQuZ29vZ2xlY29kZS5jb20iIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KIDwhLS0gQ3JlYXRlZCB3aXRoIFNWRy1lZGl0IC0gaHR0cHM6Ly9naXRodWIuY29tL1NWRy1FZGl0L3N2Z2VkaXQgLS0+CiA8ZGVmcz4KICA8bGluZWFyR3JhZGllbnQgeTI9IjEiIHgyPSIwLjIiIHkxPSIxIiB4MT0iMC44IiBpZD0ic3ZnXzgiPgogICA8c3RvcCBzdG9wLW9wYWNpdHk9IjEiIHN0b3AtY29sb3I9IiMwMDAwMDAiIG9mZnNldD0iMCIvPgogICA8c3RvcCBzdG9wLW9wYWNpdHk9IjAiIHN0b3AtY29sb3I9IiMwMDAwMDAiIG9mZnNldD0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiA8L2RlZnM+CiA8Zz4KICA8cGF0aCBmaWxsPSJub25lIiBzdHJva2U9InVybCgjc3ZnXzgpIiBzdHJva2Utd2lkdGg9IjQ5IiBkPSJtLTE1LC0zNWw3NSw4NWwtNzUsNzUiIGlkPSJzdmdfNiIvPgogIDxwYXRoIHRyYW5zZm9ybT0icm90YXRlKDkwLCA1Ny44OTI1LCA1MC4yNTE5KSIgZmlsbD0iIzAwZmZmZiIgc3Ryb2tlPSJub25lIiBkPSJtNDQuODM1OTIsNTAuMjUxODdsMTMuMDU2NjEsLTEzLjA1NjYzbDEzLjA1NjYxLDEzLjA1NjYzbC0xMy4wNTY2MSwxMy4wNTY2MmwtMTMuMDU2NjEsLTEzLjA1NjYyeiIgaWQ9InN2Z18yIi8+CiAgPHBhdGggaWQ9InN2Z180IiBkPSJtLTE1LC0zNWw3NSw4NWwtNzUsNzUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlPSIjMDBmZmZmIiBmaWxsPSJub25lIi8+CiA8L2c+Cjwvc3ZnPjwvc3ZnPg=="
+                                  alt="icon"
+                                />
+                              </li>
+                              <li
+                                class="tool_button current"
+                                id="linejoin_round"
+                                title="Linejoin: Round"
+                              >
+                                <img
+                                  class="svg_icon"
+                                  src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNlPSJodHRwOi8vc3ZnLWVkaXQuZ29vZ2xlY29kZS5jb20iIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KIDwhLS0gQ3JlYXRlZCB3aXRoIFNWRy1lZGl0IC0gaHR0cHM6Ly9naXRodWIuY29tL1NWRy1FZGl0L3N2Z2VkaXQgLS0+CiA8ZGVmcz4KICA8bGluZWFyR3JhZGllbnQgeTI9IjEiIHgyPSIwLjIiIHkxPSIxIiB4MT0iMC44IiBpZD0ic3ZnXzgiPgogICA8c3RvcCBzdG9wLW9wYWNpdHk9IjEiIHN0b3AtY29sb3I9IiMwMDAwMDAiIG9mZnNldD0iMCIvPgogICA8c3RvcCBzdG9wLW9wYWNpdHk9IjAiIHN0b3AtY29sb3I9IiMwMDAwMDAiIG9mZnNldD0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiA8L2RlZnM+CiA8Zz4KICA8cGF0aCBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjc3ZnXzgpIiBzdHJva2Utd2lkdGg9IjQ5IiBkPSJtLTE1LC0zNWw3NSw4NWwtNzUsNzUiIGlkPSJzdmdfNiIvPgogIDxwYXRoIHRyYW5zZm9ybT0icm90YXRlKDkwLCA1Ny44OTI1LCA1MC4yNTE5KSIgZmlsbD0iIzAwZmZmZiIgc3Ryb2tlPSJub25lIiBkPSJtNDQuODM1OTIsNTAuMjUxODdsMTMuMDU2NjEsLTEzLjA1NjYzbDEzLjA1NjYxLDEzLjA1NjYzbC0xMy4wNTY2MSwxMy4wNTY2MmwtMTMuMDU2NjEsLTEzLjA1NjYyeiIgaWQ9InN2Z18yIi8+CiAgPHBhdGggaWQ9InN2Z180IiBkPSJtLTE1LC0zNWw3NSw4NWwtNzUsNzUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlPSIjMDBmZmZmIiBmaWxsPSJub25lIi8+CiA8L2c+Cjwvc3ZnPjwvc3ZnPg=="
+                                  alt="icon"
+                                />
+                              </li>
+                              <li
+                                class="tool_button"
+                                id="linejoin_bevel"
+                                title="Linejoin: Bevel"
+                              >
+                                <img
+                                  class="svg_icon"
+                                  src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbG5zOnNlPSJodHRwOi8vc3ZnLWVkaXQuZ29vZ2xlY29kZS5jb20iIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj4KIDwhLS0gQ3JlYXRlZCB3aXRoIFNWRy1lZGl0IC0gaHR0cHM6Ly9naXRodWIuY29tL1NWRy1FZGl0L3N2Z2VkaXQgLS0+CiA8ZGVmcz4KICA8bGluZWFyR3JhZGllbnQgeTI9IjEiIHgyPSIwLjIiIHkxPSIxIiB4MT0iMC44IiBpZD0ic3ZnXzgiPgogICA8c3RvcCBzdG9wLW9wYWNpdHk9IjEiIHN0b3AtY29sb3I9IiMwMDAwMDAiIG9mZnNldD0iMCIvPgogICA8c3RvcCBzdG9wLW9wYWNpdHk9IjAiIHN0b3AtY29sb3I9IiMwMDAwMDAiIG9mZnNldD0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiA8L2RlZnM+CiA8Zz4KICA8cGF0aCBzdHJva2UtbGluZWpvaW49ImJldmVsIiBmaWxsPSJub25lIiBzdHJva2U9InVybCgjc3ZnXzgpIiBzdHJva2Utd2lkdGg9IjQ5IiBkPSJtLTE1LC0zNWw3NSw4NWwtNzUsNzUiIGlkPSJzdmdfNiIvPgogIDxwYXRoIHRyYW5zZm9ybT0icm90YXRlKDkwLCA1Ny44OTI1LCA1MC4yNTE5KSIgZmlsbD0iIzAwZmZmZiIgc3Ryb2tlPSJub25lIiBkPSJtNDQuODM1OTIsNTAuMjUxODdsMTMuMDU2NjEsLTEzLjA1NjYzbDEzLjA1NjYxLDEzLjA1NjYzbC0xMy4wNTY2MSwxMy4wNTY2MmwtMTMuMDU2NjEsLTEzLjA1NjYyeiIgaWQ9InN2Z18yIi8+CiAgPHBhdGggaWQ9InN2Z180IiBkPSJtLTE1LC0zNWw3NSw4NWwtNzUsNzUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlPSIjMDBmZmZmIiBmaWxsPSJub25lIi8+CiA8L2c+Cjwvc3ZnPjwvc3ZnPg=="
+                                  alt="icon"
+                                />
+                              </li>
+                            </ul>
+                          </div>
                         </div>
-                      </label>
-                      <label
-                        class="column g-cursor-hand-open"
-                        style="width: 45px;"
-                        ><div class="content">
-                          <input data-property="_op" type="text" /></div
-                      ></label>
+                      </div>
                       <div
                         class="column g-cursor-hand-open"
-                        style="width: 20px;"
+                        style="width: 65px;"
                       >
                         <div class="content">
+                          <label
+                            class="stroke_label"
+                            style="margin-right: 5px;"
+                          >
+                            <input
+                              id="stroke_width"
+                              title="Change stroke width by 1, shift-click to change by 0.1"
+                              size="2"
+                              value="5"
+                              type="text"
+                              data-attr="Stroke Width"
+                              autocomplete="off"
+                              class="spin-button"
+                            />
+                          </label>
                           <span
                             data-property="_vs"
                             class="fill-action fill-visibility gravit-icon-display"
@@ -3469,5 +3589,637 @@
       class="g-menu g-menu-bottom"
       style="display: none"
     ></ul>
+    <div id="option_lists" class="dropdown" style="display:none">
+      <ul
+        id="position_opts"
+        class="optcols3"
+        style="display: none; top: 0px; left: 0px;"
+      >
+        <li class="push_button" id="tool_posleft" title="Align Left">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiI+CiAgICA8cmVjdCBzdHJva2U9IiM2MDYwNjAiIGZpbGw9IiNmZmZmZmYiIGlkPSJzdmdfNCIgaGVpZ2h0PSI3IiB3aWR0aD0iMTIiIHk9IjIuNSIgeD0iMi41Ii8+CiAgICA8cmVjdCBzdHJva2U9Im5vbmUiIGZpbGw9IiNjMGMwYzAiIGlkPSJzdmdfNSIgaGVpZ2h0PSI0IiB3aWR0aD0iMTEiIHk9IjQiIHg9IjIiLz4KICAgIDxyZWN0IGlkPSJzdmdfNiIgc3Ryb2tlPSIjNjA2MDYwIiBmaWxsPSIjZmZmZmZmIiBoZWlnaHQ9IjciIHdpZHRoPSIxOCIgeT0iMTIuNSIgeD0iMi41Ii8+CiAgICA8cmVjdCBpZD0ic3ZnXzciIHN0cm9rZT0ibm9uZSIgZmlsbD0iI2MwYzBjMCIgaGVpZ2h0PSI0IiB3aWR0aD0iMTciIHk9IjE0IiB4PSIyIi8+CiAgICA8cmVjdCBzdHJva2U9IiNjMTU5MDkiIGZpbGw9IiNlZjlhMjMiIGlkPSJzdmdfMiIgaGVpZ2h0PSI0MCIgd2lkdGg9IjIiIHk9Ii0xMCIgeD0iMS41Ii8+CiAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li class="push_button" id="tool_poscenter" title="Align Center">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZpZXdCb3g9IjAgMCAyMiAyMiI+CiAgICA8cmVjdCB4PSIxLjUiIHk9IjEyLjUiIHdpZHRoPSIxOCIgaGVpZ2h0PSI3IiBmaWxsPSIjYzBjMGMwIiBzdHJva2U9IiM2MDYwNjAiIGlkPSJzdmdfNiIvPgogICAgPHJlY3QgeD0iNC41IiB5PSIyLjUiIHdpZHRoPSIxMiIgaGVpZ2h0PSI3IiBpZD0ic3ZnXzQiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0iIzYwNjA2MCIvPgogICAgPHJlY3QgeD0iOS41IiB5PSItMTAiIHdpZHRoPSIyIiBoZWlnaHQ9IjQwIiBpZD0ic3ZnXzIiIGZpbGw9IiNlZjlhMjMiIHN0cm9rZT0iI2MxNTkwOSIvPgogICAgPHJlY3QgeD0iMi41IiB5PSIxMy41IiB3aWR0aD0iMTYiIGhlaWdodD0iNSIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBpZD0ic3ZnXzciLz4KICAgIDxyZWN0IHg9IjUuNSIgeT0iMy41IiB3aWR0aD0iMTAiIGhlaWdodD0iNSIgaWQ9InN2Z181IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiLz4KICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li class="push_button" id="tool_posright" title="Align Right">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZpZXdCb3g9IjAgMCAyMiAyMiI+CiAgICA8cmVjdCB4PSI3LjUiIHk9IjIuNSIgd2lkdGg9IjEyIiBoZWlnaHQ9IjciIGlkPSJzdmdfNCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjNjA2MDYwIi8+CiAgICA8cmVjdCB4PSI5IiB5PSI0IiB3aWR0aD0iMTEiIGhlaWdodD0iNCIgaWQ9InN2Z181IiBmaWxsPSIjYzBjMGMwIiBzdHJva2U9Im5vbmUiLz4KICAgIDxyZWN0IHg9IjEuNSIgeT0iMTIuNSIgd2lkdGg9IjE4IiBoZWlnaHQ9IjciIGZpbGw9IiNmZmZmZmYiIHN0cm9rZT0iIzYwNjA2MCIgaWQ9InN2Z182Ii8+CiAgICA8cmVjdCB4PSIzIiB5PSIxNCIgd2lkdGg9IjE3IiBoZWlnaHQ9IjQiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0ibm9uZSIgaWQ9InN2Z183Ii8+CiAgICA8cmVjdCB4PSIxOC41IiB5PSItMTAiIHdpZHRoPSIyIiBoZWlnaHQ9IjQwIiBpZD0ic3ZnXzIiIGZpbGw9IiNlZjlhMjMiIHN0cm9rZT0iI2MxNTkwOSIvPgogIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li class="push_button" id="tool_postop" title="Align Top">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHZpZXdCb3g9IjAgMCAyMiAyMiI+CiAgICA8ZyB0cmFuc2Zvcm09InJvdGF0ZSg5MCwgMTEsIDExKSIgaWQ9InN2Z18xIj4KICAgICA8cmVjdCB4PSIyLjUiIHk9IjMuNSIgd2lkdGg9IjEyIiBoZWlnaHQ9IjciIGlkPSJzdmdfNCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjNjA2MDYwIi8+CiAgICAgPHJlY3QgeD0iMiIgeT0iNSIgd2lkdGg9IjExIiBoZWlnaHQ9IjQiIGlkPSJzdmdfNSIgZmlsbD0iI2MwYzBjMCIgc3Ryb2tlPSJub25lIi8+CiAgICAgPHJlY3QgeD0iMi41IiB5PSIxMy41IiB3aWR0aD0iMTgiIGhlaWdodD0iNyIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjNjA2MDYwIiBpZD0ic3ZnXzYiLz4KICAgICA8cmVjdCB4PSIyIiB5PSIxNSIgd2lkdGg9IjE3IiBoZWlnaHQ9IjQiIGZpbGw9IiNjMGMwYzAiIHN0cm9rZT0ibm9uZSIgaWQ9InN2Z183Ii8+CiAgICAgPHJlY3QgeD0iMS41IiB5PSItOSIgd2lkdGg9IjIiIGhlaWdodD0iNDAiIGlkPSJzdmdfMiIgZmlsbD0iI2VmOWEyMyIgc3Ryb2tlPSIjYzE1OTA5Ii8+CiAgICA8L2c+CiAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li class="push_button" id="tool_posmiddle" title="Align Middle">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiI+CiAgPGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAsIDEyLCAxMS41KSIgaWQ9InN2Z18xIj4KICAgPHJlY3QgaWQ9InN2Z182IiBzdHJva2U9IiM2MDYwNjAiIGZpbGw9IiNjMGMwYzAiIGhlaWdodD0iNyIgd2lkdGg9IjE4IiB5PSIxNCIgeD0iMyIvPgogICA8cmVjdCBzdHJva2U9IiM2MDYwNjAiIGZpbGw9IiNjMGMwYzAiIGlkPSJzdmdfNCIgaGVpZ2h0PSI3IiB3aWR0aD0iMTIiIHk9IjQiIHg9IjYiLz4KICAgPHJlY3Qgc3Ryb2tlPSIjYzE1OTA5IiBmaWxsPSIjZWY5YTIzIiBpZD0ic3ZnXzIiIGhlaWdodD0iNDAiIHdpZHRoPSIyIiB5PSItOC41IiB4PSIxMSIvPgogICA8cmVjdCBpZD0ic3ZnXzciIHN0cm9rZT0iI2ZmZmZmZiIgZmlsbD0ibm9uZSIgaGVpZ2h0PSI1IiB3aWR0aD0iMTYiIHk9IjE1IiB4PSI0Ii8+CiAgIDxyZWN0IHN0cm9rZT0iI2ZmZmZmZiIgZmlsbD0ibm9uZSIgaWQ9InN2Z181IiBoZWlnaHQ9IjUiIHdpZHRoPSIxMCIgeT0iNSIgeD0iNyIvPgogICA8L2c+Cjwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li class="push_button" id="tool_posbottom" title="Align Bottom">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMiAyMiI+CiAgPGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAsIDExLCAxMSkiIGlkPSJzdmdfMSI+CiAgIDxyZWN0IHN0cm9rZT0iIzYwNjA2MCIgZmlsbD0iI2ZmZmZmZiIgaWQ9InN2Z180IiBoZWlnaHQ9IjciIHdpZHRoPSIxMiIgeT0iMi41IiB4PSI3LjUiLz4KICAgPHJlY3Qgc3Ryb2tlPSJub25lIiBmaWxsPSIjYzBjMGMwIiBpZD0ic3ZnXzUiIGhlaWdodD0iNCIgd2lkdGg9IjExIiB5PSI0IiB4PSI5Ii8+CiAgIDxyZWN0IGlkPSJzdmdfNiIgc3Ryb2tlPSIjNjA2MDYwIiBmaWxsPSIjZmZmZmZmIiBoZWlnaHQ9IjciIHdpZHRoPSIxOCIgeT0iMTIuNSIgeD0iMS41Ii8+CiAgIDxyZWN0IGlkPSJzdmdfNyIgc3Ryb2tlPSJub25lIiBmaWxsPSIjYzBjMGMwIiBoZWlnaHQ9IjQiIHdpZHRoPSIxNyIgeT0iMTQiIHg9IjMiLz4KICAgPHJlY3Qgc3Ryb2tlPSIjYzE1OTA5IiBmaWxsPSIjZWY5YTIzIiBpZD0ic3ZnXzIiIGhlaWdodD0iNDAiIHdpZHRoPSIyIiB5PSItMTAiIHg9IjE4LjUiLz4KICAgPC9nPgo8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+      </ul>
+      <ul id="font_family_dropdown-list" style="display: none;">
+        <li style="font-family:serif">Serif</li>
+        i
+        <li style="font-family:sans-serif">Sans-serif</li>
+        <li style="font-family:cursive">Cursive</li>
+        <li style="font-family:fantasy">Fantasy</li>
+        <li style="font-family:monospace">Monospace</li>
+      </ul>
+      <ul id="blur_dropdown-list" style="display: none;">
+        <li class="special">
+          <div
+            id="blur_slider"
+            class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all"
+          >
+            <a
+              class="ui-slider-handle ui-state-default ui-corner-all"
+              href="#"
+              style="left: 0%;"
+            ></a>
+          </div>
+        </li>
+      </ul>
+      <ul
+        id="start_marker_list_opts"
+        class="optcols3"
+        style="display: none; top: 0px; left: 0px;"
+      >
+        <li
+          id="mkr_start_nomarker"
+          title="No Marker"
+          class="tool_button push_button current"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTUwLDBsMTAwLDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_leftarrow"
+          title="Left Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTUwLDBsMTAwLDQwbC0zMCwtNDBsMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_rightarrow"
+          title="Right Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtNTAsMGwtMTAwLDQwbDMwLC00MGwtMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_textmarker"
+          title="Text Marker"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgPHRleHQgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjEyMCIgeT0iNDAiIHg9IjAiIHN0cm9rZS13aWR0aD0iMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIj5UPC90ZXh0PgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_forwardslash"
+          title="Forward Slash"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTIwLDUwbDQwLC0xMDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_reverseslash"
+          title="Reverse Slash"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTIwLC01MGw0MCwxMDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_verticalslash"
+          title="Vertical Slash"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtMCwtNTBsMCwxMDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_start_box" title="Box" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTMwLC0zMGwwLDYwbDYwLDBsMCwtNjB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_start_star" title="Star" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTQwLC0yMGw4MCwwbC03MCw2MGwzMCwtODBsMzAsODB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_start_xmark" title="X" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTMwLDMwbDYwLC02MG0wLDYwbC02MCwtNjAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_triangle"
+          title="Triangle"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJNLTMwLDMwIEwwLC0zMCBMMzAsMzAgWiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_mcircle"
+          title="Circle"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPGNpcmNsZSBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2U9IiNmZjdmMDAiIGZpbGw9IiNmZjdmMDAiIGN5PSIwIiBjeD0iMCIgcj0iMzAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_leftarrow_o"
+          title="Open Left Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTUwLDBsMTAwLDQwbC0zMCwtNDBsMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_rightarrow_o"
+          title="Open Right Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtNTAsMGwtMTAwLDQwbDMwLC00MGwtMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_box_o"
+          title="Open Box"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTMwLC0zMGwwLDYwbDYwLDBsMCwtNjB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_star_o"
+          title="Open Star"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTQwLC0yMGw4MCwwbC03MCw2MGwzMCwtODBsMzAsODB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_mcircle_o"
+          title="Open Circle"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPGNpcmNsZSBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2U9IiNmZjdmMDAiIGZpbGw9Im5vbmUiIGN5PSIwIiBjeD0iMCIgcj0iMzAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_start_triangle_o"
+          title="Open Triangle"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJNLTMwLDMwIEwwLC0zMCBMMzAsMzAgWiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+      </ul>
+      <ul
+        id="mid_marker_list_opts"
+        class="optcols3"
+        style="display: none; top: 0px; left: 0px;"
+      >
+        <li
+          id="mkr_mid_nomarker"
+          title="No Marker"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTUwLDBsMTAwLDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_leftarrow"
+          title="Left Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTUwLDBsMTAwLDQwbC0zMCwtNDBsMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_rightarrow"
+          title="Right Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtNTAsMGwtMTAwLDQwbDMwLC00MGwtMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_textmarker"
+          title="Text Marker"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgPHRleHQgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjEyMCIgeT0iNDAiIHg9IjAiIHN0cm9rZS13aWR0aD0iMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIj5UPC90ZXh0PgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_forwardslash"
+          title="Forward Slash"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTIwLDUwbDQwLC0xMDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_reverseslash"
+          title="Reverse Slash"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTIwLC01MGw0MCwxMDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_verticalslash"
+          title="Vertical Slash"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtMCwtNTBsMCwxMDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_mid_box" title="Box" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTMwLC0zMGwwLDYwbDYwLDBsMCwtNjB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_mid_star" title="Star" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTQwLC0yMGw4MCwwbC03MCw2MGwzMCwtODBsMzAsODB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_mid_xmark" title="X" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTMwLDMwbDYwLC02MG0wLDYwbC02MCwtNjAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_triangle"
+          title="Triangle"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJNLTMwLDMwIEwwLC0zMCBMMzAsMzAgWiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_mid_mcircle" title="Circle" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPGNpcmNsZSBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2U9IiNmZjdmMDAiIGZpbGw9IiNmZjdmMDAiIGN5PSIwIiBjeD0iMCIgcj0iMzAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_leftarrow_o"
+          title="Open Left Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTUwLDBsMTAwLDQwbC0zMCwtNDBsMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_rightarrow_o"
+          title="Open Right Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtNTAsMGwtMTAwLDQwbDMwLC00MGwtMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_mid_box_o" title="Open Box" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTMwLC0zMGwwLDYwbDYwLDBsMCwtNjB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_star_o"
+          title="Open Star"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTQwLC0yMGw4MCwwbC03MCw2MGwzMCwtODBsMzAsODB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_mcircle_o"
+          title="Open Circle"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPGNpcmNsZSBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2U9IiNmZjdmMDAiIGZpbGw9Im5vbmUiIGN5PSIwIiBjeD0iMCIgcj0iMzAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_mid_triangle_o"
+          title="Open Triangle"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJNLTMwLDMwIEwwLC0zMCBMMzAsMzAgWiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+      </ul>
+      <ul
+        id="end_marker_list_opts"
+        class="optcols3"
+        style="display: none; top: 0px; left: 0px;"
+      >
+        <li
+          id="mkr_end_nomarker"
+          title="No Marker"
+          class="tool_button push_button current"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTUwLDBsMTAwLDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_leftarrow"
+          title="Left Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTUwLDBsMTAwLDQwbC0zMCwtNDBsMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_rightarrow"
+          title="Right Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtNTAsMGwtMTAwLDQwbDMwLC00MGwtMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_textmarker"
+          title="Text Marker"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgPHRleHQgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNlcmlmIiBmb250LXNpemU9IjEyMCIgeT0iNDAiIHg9IjAiIHN0cm9rZS13aWR0aD0iMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIj5UPC90ZXh0PgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_forwardslash"
+          title="Forward Slash"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTIwLDUwbDQwLC0xMDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_reverseslash"
+          title="Reverse Slash"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTIwLC01MGw0MCwxMDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_verticalslash"
+          title="Vertical Slash"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtMCwtNTBsMCwxMDAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_end_box" title="Box" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTMwLC0zMGwwLDYwbDYwLDBsMCwtNjB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_end_star" title="Star" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTQwLC0yMGw4MCwwbC03MCw2MGwzMCwtODBsMzAsODB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_end_xmark" title="X" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtLTMwLDMwbDYwLC02MG0wLDYwbC02MCwtNjAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_triangle"
+          title="Triangle"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJNLTMwLDMwIEwwLC0zMCBMMzAsMzAgWiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_end_mcircle" title="Circle" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPGNpcmNsZSBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2U9IiNmZjdmMDAiIGZpbGw9IiNmZjdmMDAiIGN5PSIwIiBjeD0iMCIgcj0iMzAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_leftarrow_o"
+          title="Open Left Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTUwLDBsMTAwLDQwbC0zMCwtNDBsMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_rightarrow_o"
+          title="Open Right Arrow"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtNTAsMGwtMTAwLDQwbDMwLC00MGwtMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+        <li id="mkr_end_box_o" title="Open Box" class="tool_button push_button">
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTMwLC0zMGwwLDYwbDYwLDBsMCwtNjB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_star_o"
+          title="Open Star"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJtLTQwLC0yMGw4MCwwbC03MCw2MGwzMCwtODBsMzAsODB6Ii8+CiAgICAgICAgPC9zdmc+PC9zdmc+"
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_mcircle_o"
+          title="Open Circle"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPGNpcmNsZSBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2U9IiNmZjdmMDAiIGZpbGw9Im5vbmUiIGN5PSIwIiBjeD0iMCIgcj0iMzAiLz4KICAgICAgICA8L3N2Zz48L3N2Zz4="
+            alt="icon"
+          />
+        </li>
+        <li
+          id="mkr_end_triangle_o"
+          title="Open Triangle"
+          class="tool_button push_button"
+        >
+          <img
+            class="svg_icon"
+            src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSJub25lIiBkPSJNLTMwLDMwIEwwLC0zMCBMMzAsMzAgWiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
+            alt="icon"
+          />
+        </li>
+      </ul>
+    </div>
   </body>
 </html>
