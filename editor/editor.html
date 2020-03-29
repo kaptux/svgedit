@@ -293,15 +293,19 @@
           </div>
           <div class="section compound-section group-section">
             <div class="toolbar-button" data-action="modify.group">
-              <button class="action-button icon" data-title="Agrupar">
+              <button
+                id="tool_group_elements"
+                class="action-button icon"
+                data-title="Agrupar"
+              >
                 <span class="icon gravit-icon-group"></span>
               </button>
             </div>
             <div class="toolbar-button" data-action="modify.split">
               <button
+                id="tool_ungroup"
                 class="action-button icon"
                 data-title="Desagrupar"
-                disabled=""
               >
                 <span class="icon gravit-icon-ungroup"></span>
               </button>
@@ -332,7 +336,11 @@
               class="toolbar-button"
               data-action="arrange.order.bring-forward"
             >
-              <button class="action-button icon" data-title="Traer adelante">
+              <button
+                id="tool_move_top"
+                class="action-button icon"
+                data-title="Traer adelante"
+              >
                 <span class="icon gravit-icon-bring-front"></span>
               </button>
             </div>
@@ -340,7 +348,11 @@
               class="toolbar-button"
               data-action="arrange.order.send-backward"
             >
-              <button class="action-button icon" data-title="Enviar atrás">
+              <button
+                id="tool_move_bottom"
+                class="action-button icon"
+                data-title="Enviar atrás"
+              >
                 <span class="icon gravit-icon-bring-back"></span>
               </button>
             </div>
@@ -353,6 +365,7 @@
             </div>
             <div class="toolbar-button" data-action="modify.converttopath">
               <button
+                id="tool_topath"
                 class="action-button icon"
                 data-title="Convertir en trayecto"
               >
