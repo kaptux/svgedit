@@ -2369,9 +2369,7 @@ editor.init = function() {
   const updateContextPanel = function() {
     const info = getSelectedInfo();
 
-    $(
-      "#panel_position, #panel_tranformar, #panel_documento, #panel_apariencia, #panel_relleno, #panel_borde"
-    )
+    $("#panel_position, #panel_tranformar, #panel_documento, #panel_apariencia")
       .find(".g-property-row")
       .hide()
       .end()
@@ -2382,7 +2380,7 @@ editor.init = function() {
     const panels = {
       page: "#panel_documento .g-property-row",
       rect:
-        "#panel_position .g-property-row,.g-property-row.corner-radius,.g-property-row.opacity,.g-property-row.blur, #panel_relleno .g-property-row, #panel_borde .g-property-row",
+        "#panel_position .g-property-row,.g-property-row.corner-radius,.g-property-row.opacity,.g-property-row.blur",
       polygon:
         "#panel_position .g-property-row, #panel_apariencia .g-property-row:eq(0)"
     }[info.type];
@@ -4673,6 +4671,10 @@ editor.init = function() {
         "text/xml"
       );
 
+      this.noColor = $(
+        "<div class='no-color' style='display:none'></div>"
+      ).appendTo(container);
+
       let docElem = svgdocbox.documentElement;
       docElem = $(container)[0].appendChild(document.importNode(docElem, true));
       docElem.setAttribute("width", 28);
@@ -4695,24 +4697,32 @@ editor.init = function() {
       const ptype = paint.type;
       const opac = paint.alpha / 100;
 
-      let fillAttr = "none";
-      switch (ptype) {
-        case "solidColor":
-          fillAttr =
-            paint[ptype] !== "none" ? "#" + paint[ptype] : paint[ptype];
-          break;
-        case "linearGradient":
-        case "radialGradient": {
-          this.grad.remove();
-          this.grad = this.defs.appendChild(paint[ptype]);
-          const id = (this.grad.id = "gradbox_" + this.type);
-          fillAttr = "url(#" + id + ")";
-          break;
-        }
-      }
+      if (opac) {
+        this.noColor.hide();
+        $(this.rect).show();
 
-      this.rect.setAttribute("fill", fillAttr);
-      this.rect.setAttribute("opacity", opac);
+        let fillAttr = "none";
+        switch (ptype) {
+          case "solidColor":
+            fillAttr =
+              paint[ptype] !== "none" ? "#" + paint[ptype] : paint[ptype];
+            break;
+          case "linearGradient":
+          case "radialGradient": {
+            this.grad.remove();
+            this.grad = this.defs.appendChild(paint[ptype]);
+            const id = (this.grad.id = "gradbox_" + this.type);
+            fillAttr = "url(#" + id + ")";
+            break;
+          }
+        }
+
+        this.rect.setAttribute("fill", fillAttr);
+        this.rect.setAttribute("opacity", opac);
+      } else {
+        this.noColor.show();
+        $(this.rect).hide();
+      }
 
       if (apply) {
         svgCanvas.setColor(this.type, this._paintColor, true);

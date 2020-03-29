@@ -169,13 +169,13 @@ table.jPicker {
 .jPicker .Button .Active {
   border-bottom-width: 0;
   display: block;
-  margin: 0 5px;
+  margin: 0 8px;
   height: 40px;
 }
 .jPicker .Button .Current {
   border-top-width: 0;
   display: block;
-  margin: 0 5px;
+  margin: 0 8px;
   height: 40px;
   cursor: pointer;
 }
@@ -231,7 +231,7 @@ table.jPicker {
   width: 114px;
 }
 .jPicker .Grid span.QuickColor {
-  border: 1px inset #aaa;
+  border: 1px solid white;
   cursor: pointer;
   display: inline-block;
   height: 15px;

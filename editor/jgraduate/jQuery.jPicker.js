@@ -2101,7 +2101,7 @@ const jPicker = function ($) {
             if (!win.alphaSupport && ahex) ahex = ahex.substring(0, 6) + 'ff';
             const quickHex = color.quickList[i].val('hex');
             if (!ahex) ahex = '00000000';
-            html += '<span class="QuickColor"' + (' title="#' + ahex + '"') + ' style="background-color:' + ((quickHex && '#' + quickHex) || '') + ';' + (quickHex ? '' : 'background-image:url(' + images.clientPath + 'NoColor.png)') + (win.alphaSupport && alpha && alpha < 255 ? ';opacity:' + toFixedNumeric(alpha / 255, 4) + ';filter:Alpha(opacity=' + toFixedNumeric(alpha / 2.55, 4) + ')' : '') + '">&nbsp;</span>';
+            html += '<span class="QuickColor"' + (' title="#' + ahex + '"') + ' style="background-position:center;background-color:' + ((quickHex && '#' + quickHex) || 'white') + ';' + (quickHex ? '' : 'background-image:url(' + images.clientPath + 'NoColor.svg)') + (win.alphaSupport && alpha && alpha < 255 ? ';opacity:' + toFixedNumeric(alpha / 255, 4) + ';filter:Alpha(opacity=' + toFixedNumeric(alpha / 2.55, 4) + ')' : '') + '">&nbsp;</span>';
           }
           setImg.call(that, grid, images.clientPath + 'bar-opacity.png');
           grid.html(html);

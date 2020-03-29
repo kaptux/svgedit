@@ -194,6 +194,16 @@ video {
   overflow: hidden;
 }
 
+.no-color {
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  border: solid 2px #dfdfdf;
+  background-color: white;
+  background-position: center;
+  background-image: url(./jgraduate/images/NoColor.svg);
+}
+
 /* HTML5 display-role reset for older browsers */
 article,
 aside,
