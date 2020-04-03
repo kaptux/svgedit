@@ -165,7 +165,7 @@ const callbacks = [],
    * @type {string[]}
    */
   defaultExtensions = [
-    "ext-connector.js",
+    // "ext-connector.js",
     "ext-eyedropper.js",
     "ext-grid.js",
     "ext-imagelib.js",
@@ -6473,7 +6473,6 @@ editor.addExtension = function(name, init, initArgs) {
   if (!svgCanvas) {
     throw new Error("Extension added too early");
   }
-  console.log("extension ", name, " added");
   return svgCanvas.addExtension.call(this, name, init, initArgs);
   // });
 };

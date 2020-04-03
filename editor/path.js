@@ -12,6 +12,7 @@ import { NS } from "./namespaces.js";
 import { getTransformList } from "./svgtransformlist.js";
 import { shortFloat } from "./units.js";
 import { ChangeElementCommand, BatchCommand } from "./history.js";
+import paper from "./paper-core.js";
 import {
   transformPoint,
   getMatrix,
@@ -37,6 +38,8 @@ import {
 } from "./browser.js";
 
 const $ = jQuery;
+
+paper.setup();
 
 const segData = {
   2: ["x", "y"], // PATHSEG_MOVETO_ABS
@@ -412,6 +415,78 @@ export const addPointGrip = function(index, x, y) {
       display: "inline"
     });
   }
+  return pointGrip;
+};
+
+export const addNearestPointGrip = function(x, y) {
+  // create the container of all the point grips
+  const pointGripContainer = getGripContainer();
+  const id = "nearestpointgrip";
+
+  let pointGrip = getElem(id);
+  // create it
+  if (!pointGrip) {
+    pointGrip = document.createElementNS(NS.SVG, "circle");
+    const atts = {
+      id,
+      display: "none",
+      r: 4,
+      fill: "#0FF",
+      stroke: "#00F",
+      "stroke-width": 2,
+      cursor: "none",
+      style: "pointer-events:none"
+    };
+    assignAttributes(pointGrip, atts);
+    pointGripContainer.prepend(pointGrip);
+  }
+  if (x && y) {
+    // set up the point grip element and display it
+    assignAttributes(pointGrip, {
+      cx: x,
+      cy: y,
+      display: "inline"
+    });
+  } else {
+    assignAttributes(pointGrip, { display: "none" });
+  }
+
+  return pointGrip;
+};
+
+export const addCursorPointGrip = function(x, y) {
+  // create the container of all the point grips
+  const pointGripContainer = getGripContainer();
+  const id = "cursorpointgrip";
+
+  let pointGrip = getElem(id);
+  // create it
+  if (!pointGrip) {
+    pointGrip = document.createElementNS(NS.SVG, "circle");
+    const atts = {
+      id,
+      display: "none",
+      r: 4,
+      fill: "#0FF",
+      stroke: "#00F",
+      "stroke-width": 2,
+      cursor: "none",
+      style: "pointer-events:none"
+    };
+    assignAttributes(pointGrip, atts);
+    pointGripContainer.prepend(pointGrip);
+  }
+  if (x && y) {
+    // set up the point grip element and display it
+    assignAttributes(pointGrip, {
+      cx: x,
+      cy: y,
+      display: "inline"
+    });
+  } else {
+    assignAttributes(pointGrip, { display: "none" });
+  }
+
   return pointGrip;
 };
 
@@ -963,6 +1038,7 @@ export class Path {
     this.segs = [];
     this.selected_pts = [];
     this.first_seg = null;
+    this.ppath = new paper.Path().importSVG(this.elem.outerHTML);
 
     // Set up segs array
     for (let i = 0; i < len; i++) {
@@ -1031,16 +1107,21 @@ export class Path {
     return this;
   }
 
-  /**
-   * @callback module:path.PathEachSegCallback
-   * @this module:path.Segment
-   * @param {Integer} i The index of the seg being iterated
-   * @returns {boolean|void} Will stop execution of `eachSeg` if returns `false`
-   */
-  /**
-   * @param {module:path.PathEachSegCallback} fn
-   * @returns {void}
-   */
+  getNearestPoint(pt, currentZoom) {
+    const zoom = currentZoom || 1;
+    const out = this.ppath.getNearestPoint(pt);
+    return new paper.Point(out.x * zoom, out.y * zoom);
+  }
+
+  divideAt(x, y, currentZoom) {
+    const zoom = currentZoom || 1;
+    const segment = this.findSeg({ x, y });
+
+    if (segment) {
+      this.addSeg(segment.index, { x: x / zoom, y: y / zoom });
+    }
+  }
+
   eachSeg(fn) {
     const len = this.segs.length;
     for (let i = 0; i < len; i++) {
@@ -1051,11 +1132,24 @@ export class Path {
     }
   }
 
+  findSeg(pt) {
+    for (let i = 0; i < this.segs.length; i++) {
+      const current = this.segs[i];
+      const outerHtml = current.segsel.outerHTML;
+      const ppath = new paper.Path().importSVG(outerHtml);
+      const loc = ppath.getLocationOf(pt);
+      if (loc) {
+        return current;
+      }
+    }
+    return null;
+  }
+
   /**
    * @param {Integer} index
    * @returns {void}
    */
-  addSeg(index) {
+  addSeg(index, pt) {
     // Adds a new segment
     const seg = this.segs[index];
     if (!seg.prev) {
@@ -1063,12 +1157,15 @@ export class Path {
     }
 
     const { prev } = seg;
-    let newseg, newX, newY;
+    let newseg;
+    let { x: newX, y: newY } = pt || {};
     switch (seg.item.pathSegType) {
       case 4: {
-        newX = (seg.item.x + prev.item.x) / 2;
-        newY = (seg.item.y + prev.item.y) / 2;
-        newseg = this.elem.createSVGPathSegLinetoAbs(newX, newY);
+        if (!pt) {
+          newX = (seg.item.x + prev.item.x) / 2;
+          newY = (seg.item.y + prev.item.y) / 2;
+        }
+        newseg = this.elem.createSVGPathSegLinetoAbs(pt.x, pt.y);
         break;
       }
       case 6: {
@@ -1079,16 +1176,18 @@ export class Path {
         const p2x = (seg.item.x2 + seg.item.x) / 2;
         const p01x = (p0x + p1x) / 2;
         const p12x = (p1x + p2x) / 2;
-        newX = (p01x + p12x) / 2;
         const p0y = (prev.item.y + seg.item.y1) / 2;
         const p1y = (seg.item.y1 + seg.item.y2) / 2;
         const p2y = (seg.item.y2 + seg.item.y) / 2;
         const p01y = (p0y + p1y) / 2;
         const p12y = (p1y + p2y) / 2;
-        newY = (p01y + p12y) / 2;
+        if (!pt) {
+          newX = (p01x + p12x) / 2;
+          newY = (p01y + p12y) / 2;
+        }
         newseg = this.elem.createSVGPathSegCurvetoCubicAbs(
-          newX,
-          newY,
+          pt.x,
+          pt.y,
           p0x,
           p0y,
           p01x,
@@ -1324,6 +1423,7 @@ export class Path {
       this.update();
     });
 
+    this.ppath = new paper.Path().importSVG(this.elem.outerHTML);
     return this;
   }
 
@@ -1916,6 +2016,12 @@ export const pathActions = (function() {
   };
 
   return /** @lends module:path.pathActions */ {
+    addSegment(x, y) {
+      const currentZoom = editorContext_.getCurrentZoom();
+      path.divideAt(x, y, currentZoom);
+      path.init();
+      path.endChanges("Add path node(s)");
+    },
     /**
      * @param {MouseEvent} evt
      * @param {Element} mouseTarget
@@ -2189,6 +2295,27 @@ export const pathActions = (function() {
         );
       }
       return undefined;
+    },
+    drawNearestPoint() {
+      if (arguments.length == 0) {
+        addNearestPointGrip();
+        return null;
+      }
+      const [mouseX, mouseY] = arguments;
+      const currentZoom = editorContext_.getCurrentZoom();
+      const cursor = new paper.Point(
+        mouseX / currentZoom,
+        mouseY / currentZoom
+      );
+      const point = path.getNearestPoint(cursor, currentZoom);
+      const distance = point.getDistance({ x: mouseX, y: mouseY });
+      if (distance <= 8) {
+        addNearestPointGrip(point.x, point.y);
+        return { x: point.x, y: point.y };
+      } else {
+        addNearestPointGrip();
+        return null;
+      }
     },
     /**
      * @param {Float} mouseX
