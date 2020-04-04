@@ -35,14 +35,14 @@ import {
   mergeLayer,
   mergeAllLayers,
   leaveContext,
-  setContext
+  setContext,
 } from "./draw.js";
 import * as pathModule from "./path.js";
 import { sanitizeSvg } from "./sanitize.js";
 import { getReverseNS, NS } from "./namespaces.js";
 import {
   importSetGlobal,
-  importScript
+  importScript,
 } from "./external/dynamic-import-polyfill/importModule.js";
 import {
   text2xml,
@@ -72,7 +72,7 @@ import {
   init as utilsInit,
   getBBox as utilsGetBBox,
   getStrokedBBoxDefaultVisible,
-  isNullish
+  isNullish,
 } from "./utilities.js";
 import * as hstry from "./history.js";
 import {
@@ -84,7 +84,7 @@ import {
   snapToAngle,
   isIdentity,
   rectsIntersect,
-  transformBox
+  transformBox,
 } from "./math.js";
 import {
   convertToNum,
@@ -92,7 +92,7 @@ import {
   convertUnit,
   shortFloat,
   getTypeMap,
-  init as unitsInit
+  init as unitsInit,
 } from "./units.js";
 import {
   isGecko,
@@ -100,17 +100,17 @@ import {
   isIE,
   isWebkit,
   supportsNonScalingStroke,
-  supportsGoodTextCharPos
+  supportsGoodTextCharPos,
 } from "./browser.js"; // , supportsEditableText
 import {
   getTransformList,
   resetListMap,
-  SVGTransformList as SVGEditTransformList
+  SVGTransformList as SVGEditTransformList,
 } from "./svgtransformlist.js";
 import { remapElement, init as coordsInit } from "./coords.js";
 import {
   recalculateDimensions,
-  init as recalculateInit
+  init as recalculateInit,
 } from "./recalculate.js";
 import { getSelectorManager, Selector, init as selectInit } from "./select.js";
 
@@ -122,26 +122,28 @@ const {
   ChangeElementCommand,
   BatchCommand,
   UndoManager,
-  HistoryEventTypes
+  HistoryEventTypes,
 } = hstry;
 
 let nearestPoint = null;
+let isOverPathPointGrip = false;
+let isOverCtrlPointGrip = false;
 
 if (!window.console) {
   window.console = {};
-  window.console.log = function(str) {
+  window.console.log = function (str) {
     /* */
   };
-  window.console.dir = function(str) {
+  window.console.dir = function (str) {
     /* */
   };
 }
 
 if (window.opera) {
-  window.console.log = function(str) {
+  window.console.log = function (str) {
     window.opera.postError(str);
   };
-  window.console.dir = function(str) {
+  window.console.dir = function (str) {
     /* */
   };
 }
@@ -187,7 +189,7 @@ class SvgCanvas {
     const curConfig = {
       show_outside_canvas: true,
       selectNew: true,
-      dimensions: [640, 480]
+      dimensions: [640, 480],
     };
 
     // Update config with new one if given
@@ -253,7 +255,7 @@ class SvgCanvas {
      * @function module:svgcanvas.SvgCanvas#clearSvgContentElement
      * @returns {void}
      */
-    const clearSvgContentElement = (canvas.clearSvgContentElement = function() {
+    const clearSvgContentElement = (canvas.clearSvgContentElement = function () {
       $(svgcontent).empty();
 
       // TODO: Clear out all other attributes first?
@@ -267,7 +269,7 @@ class SvgCanvas {
           overflow: curConfig.show_outside_canvas ? "visible" : "hidden",
           xmlns: NS.SVG,
           "xmlns:se": NS.SE,
-          "xmlns:xlink": NS.XLINK
+          "xmlns:xlink": NS.XLINK,
         })
         .appendTo(svgroot);
 
@@ -288,7 +290,7 @@ class SvgCanvas {
      * @param {string} p - String with the new prefix
      * @returns {void}
      */
-    canvas.setIdPrefix = function(p) {
+    canvas.setIdPrefix = function (p) {
       idprefix = p;
     };
 
@@ -304,7 +306,7 @@ class SvgCanvas {
      * @name module:svgcanvas.SvgCanvas#getCurrentDrawing
      * @type {module:draw.DrawCanvasInit#getCurrentDrawing}
      */
-    const getCurrentDrawing = (canvas.getCurrentDrawing = function() {
+    const getCurrentDrawing = (canvas.getCurrentDrawing = function () {
       return canvas.current_drawing_;
     });
 
@@ -332,8 +334,8 @@ class SvgCanvas {
         stroke_dasharray: "none",
         stroke_linejoin: "miter",
         stroke_linecap: "butt",
-        opacity: curConfig.initOpacity
-      }
+        opacity: curConfig.initOpacity,
+      },
     };
 
     allProperties.text = $.extend(true, {}, allProperties.shape);
@@ -341,7 +343,7 @@ class SvgCanvas {
       fill: "#000000",
       stroke_width: curConfig.text && curConfig.text.stroke_width,
       font_size: curConfig.text && curConfig.text.font_size,
-      font_family: curConfig.text && curConfig.text.font_family
+      font_family: curConfig.text && curConfig.text.font_family,
     });
 
     // Current shape style properties
@@ -363,7 +365,9 @@ class SvgCanvas {
      * @param {Text|Element} data
      * @returns {module:svgcanvas.SVGAsJSON}
      */
-    const getJsonFromSvgElement = (this.getJsonFromSvgElement = function(data) {
+    const getJsonFromSvgElement = (this.getJsonFromSvgElement = function (
+      data
+    ) {
       // Text node
       if (data.nodeType === 3) return data.nodeValue;
 
@@ -371,7 +375,7 @@ class SvgCanvas {
         element: data.tagName,
         // namespace: nsMap[data.namespaceURI],
         attr: {},
-        children: []
+        children: [],
       };
 
       // Iterate attributes
@@ -392,7 +396,9 @@ class SvgCanvas {
      * @name module:svgcanvas.SvgCanvas#addSVGElementFromJson
      * @type {module:utilities.EditorContext#addSVGElementFromJson|module:path.EditorContext#addSVGElementFromJson}
      */
-    const addSVGElementFromJson = (this.addSVGElementFromJson = function(data) {
+    const addSVGElementFromJson = (this.addSVGElementFromJson = function (
+      data
+    ) {
       if (typeof data === "string") return svgdoc.createTextNode(data);
 
       let shape = getElem(data.attr.id);
@@ -422,7 +428,7 @@ class SvgCanvas {
             "stroke-opacity": curShape.stroke_opacity,
             "fill-opacity": curShape.fill_opacity,
             opacity: curShape.opacity / 2,
-            style: "pointer-events:inherit"
+            style: "pointer-events:inherit",
           },
           100
         );
@@ -432,7 +438,7 @@ class SvgCanvas {
 
       // Children
       if (data.children) {
-        data.children.forEach(child => {
+        data.children.forEach((child) => {
           shape.append(addSVGElementFromJson(child));
         });
       }
@@ -472,7 +478,7 @@ class SvgCanvas {
         },
         getRoundDigits() {
           return saveOptions.round_digits;
-        }
+        },
       }
     );
 
@@ -491,7 +497,7 @@ class SvgCanvas {
      * @name module:svgcanvas.SvgCanvas#getSelectedElements
      * @type {module:utilities.EditorContext#getSelectedElements|module:draw.DrawCanvasInit#getSelectedElements|module:path.EditorContext#getSelectedElements}
      */
-    const getSelectedElements = (this.getSelectedElems = function() {
+    const getSelectedElements = (this.getSelectedElems = function () {
       return selectedElements;
     });
 
@@ -523,7 +529,7 @@ class SvgCanvas {
         getBaseUnit,
         getSnappingStep() {
           return curConfig.snappingStep;
-        }
+        },
       }
     );
 
@@ -556,7 +562,7 @@ class SvgCanvas {
           return getCurrentDrawing();
         },
         getSVGRoot,
-        getGridSnapping
+        getGridSnapping,
       }
     );
     this.remapElement = remapElement;
@@ -572,7 +578,7 @@ class SvgCanvas {
         },
         setStartTransform(transform) {
           startTransform = transform;
-        }
+        },
       }
     );
     this.recalculateDimensions = recalculateDimensions;
@@ -661,7 +667,7 @@ class SvgCanvas {
             // }
           }
         }
-      }
+      },
     }));
 
     /**
@@ -669,7 +675,7 @@ class SvgCanvas {
      * @name module:svgcanvas~addCommandToHistory
      * @type {module:path.EditorContext#addCommandToHistory|module:draw.DrawCanvasInit#addCommandToHistory}
      */
-    const addCommandToHistory = function(cmd) {
+    const addCommandToHistory = function (cmd) {
       canvas.undoMgr.addCommandToHistory(cmd);
     };
 
@@ -678,7 +684,7 @@ class SvgCanvas {
      * @name module:svgcanvas.SvgCanvas#getZoom
      * @type {module:path.EditorContext#getCurrentZoom|module:select.SVGFactory#getCurrentZoom}
      */
-    const getCurrentZoom = (this.getZoom = function() {
+    const getCurrentZoom = (this.getZoom = function () {
       return currentZoom;
     });
 
@@ -687,7 +693,7 @@ class SvgCanvas {
      * @name module:svgcanvas.SvgCanvas#round
      * @type {module:path.EditorContext#round}
      */
-    const round = (this.round = function(val) {
+    const round = (this.round = function (val) {
       return parseInt(val * currentZoom) / currentZoom;
     });
 
@@ -707,7 +713,7 @@ class SvgCanvas {
         svgContent() {
           return svgcontent;
         },
-        getCurrentZoom
+        getCurrentZoom,
       }
     );
     /**
@@ -721,7 +727,7 @@ class SvgCanvas {
      * @name module:svgcanvas.SvgCanvas#getNextId
      * @type {module:path.EditorContext#getNextId}
      */
-    const getNextId = (canvas.getNextId = function() {
+    const getNextId = (canvas.getNextId = function () {
       return getCurrentDrawing().getNextId();
     });
 
@@ -729,7 +735,7 @@ class SvgCanvas {
      * @name module:svgcanvas.SvgCanvas#getId
      * @type {module:path.EditorContext#getId}
      */
-    const getId = (canvas.getId = function() {
+    const getId = (canvas.getId = function () {
       return getCurrentDrawing().getId();
     });
 
@@ -738,7 +744,7 @@ class SvgCanvas {
      * @name module:svgcanvas.SvgCanvas#call
      * @type {module:draw.DrawCanvasInit#call|module:path.EditorContext#call}
      */
-    const call = function(ev, arg) {
+    const call = function (ev, arg) {
       if (events[ev]) {
         return events[ev](window, arg);
       }
@@ -752,8 +758,8 @@ class SvgCanvas {
      * @type {module:draw.DrawCanvasInit#clearSelection|module:path.EditorContext#clearSelection}
      * @fires module:svgcanvas.SvgCanvas#event:selected
      */
-    const clearSelection = (this.clearSelection = function(noCall) {
-      selectedElements.forEach(elem => {
+    const clearSelection = (this.clearSelection = function (noCall) {
+      selectedElements.forEach((elem) => {
         if (isNullish(elem)) {
           return;
         }
@@ -772,7 +778,7 @@ class SvgCanvas {
      * @type {module:path.EditorContext#addToSelection}
      * @fires module:svgcanvas.SvgCanvas#event:selected
      */
-    const addToSelection = (this.addToSelection = function(
+    const addToSelection = (this.addToSelection = function (
       elemsToAdd,
       showGrips
     ) {
@@ -834,7 +840,7 @@ class SvgCanvas {
       // make sure the elements are in the correct order
       // See: https://www.w3.org/TR/DOM-Level-3-Core/core.html#Node3-compareDocumentPosition
 
-      selectedElements.sort(function(a, b) {
+      selectedElements.sort(function (a, b) {
         if (a && b && a.compareDocumentPosition) {
           return 3 - (b.compareDocumentPosition(a) & 6); // eslint-disable-line no-bitwise
         }
@@ -853,15 +859,27 @@ class SvgCanvas {
     /**
      * @type {module:path.EditorContext#getOpacity}
      */
-    const getOpacity = function() {
+    const getOpacity = function () {
       return curShape.opacity;
+    };
+
+    const setIsOverPathPointGrip = function (v) {
+      if (!started) {
+        isOverPathPointGrip = v;
+      }
+    };
+
+    const setIsOverCtrlPointGrip = function (v) {
+      if (!started) {
+        isOverCtrlPointGrip = v;
+      }
     };
 
     /**
      * @name module:svgcanvas.SvgCanvas#getMouseTarget
      * @type {module:path.EditorContext#getMouseTarget}
      */
-    const getMouseTarget = (this.getMouseTarget = function(evt) {
+    const getMouseTarget = (this.getMouseTarget = function (evt) {
       if (isNullish(evt)) {
         return null;
       }
@@ -952,6 +970,8 @@ class SvgCanvas {
         getGridSnapping,
         getOpacity,
         getSelectedElements,
+        setIsOverPathPointGrip,
+        setIsOverCtrlPointGrip,
         getContainer() {
           return container;
         },
@@ -1009,7 +1029,7 @@ class SvgCanvas {
           drawnPath = dp;
           return drawnPath;
         },
-        getSVGRoot
+        getSVGRoot,
       }
     );
 
@@ -1026,7 +1046,7 @@ class SvgCanvas {
       "marker-mid",
       "marker-start",
       "mask",
-      "stroke"
+      "stroke",
     ];
 
     const elData = $.data;
@@ -1038,14 +1058,14 @@ class SvgCanvas {
         attributeName: "opacity",
         begin: "indefinite",
         dur: 1,
-        fill: "freeze"
+        fill: "freeze",
       })
       .appendTo(svgroot);
 
-    const restoreRefElems = function(elem) {
+    const restoreRefElems = function (elem) {
       // Look for missing reference elements, restore any found
       const attrs = $(elem).attr(refAttrs);
-      Object.values(attrs).forEach(val => {
+      Object.values(attrs).forEach((val) => {
         if (val && val.startsWith("url(")) {
           const id = getUrlFromAttr(val).substr(1);
           const ref = getElem(id);
@@ -1121,8 +1141,8 @@ class SvgCanvas {
       // Canvas point for the most recent right click
       lastClickPoint = null;
 
-    this.runExtension = function(name, action, vars) {
-      return this.runExtensions(action, vars, false, n => n === name);
+    this.runExtension = function (name, action, vars) {
+      return this.runExtensions(action, vars, false, (n) => n === name);
     };
     /**
      * @typedef {module:svgcanvas.ExtensionMouseDownStatus|module:svgcanvas.ExtensionMouseUpStatus|module:svgcanvas.ExtensionIDsUpdatedStatus|module:locale.ExtensionLocaleData[]|void} module:svgcanvas.ExtensionStatus
@@ -1148,14 +1168,14 @@ class SvgCanvas {
      * @param {module:svgcanvas.ExtensionNameFilter} nameFilter
      * @returns {GenericArray<module:svgcanvas.ExtensionStatus>|module:svgcanvas.ExtensionStatus|false} See {@tutorial ExtensionDocs} on the ExtensionStatus.
      */
-    const runExtensions = (this.runExtensions = function(
+    const runExtensions = (this.runExtensions = function (
       action,
       vars,
       returnArray,
       nameFilter
     ) {
       let result = returnArray ? [] : false;
-      $.each(extensions, function(name, ext) {
+      $.each(extensions, function (name, ext) {
         if (nameFilter && !nameFilter(name)) {
           return;
         }
@@ -1298,7 +1318,7 @@ class SvgCanvas {
      *   if extension of supplied name already exists
      * @returns {Promise<void>} Resolves to `undefined`
      */
-    this.addExtension = async function(
+    this.addExtension = async function (
       name,
       extInitFunc,
       { $: jq, importLocale }
@@ -1334,7 +1354,7 @@ class SvgCanvas {
         svgroot,
         svgcontent,
         nonce: getCurrentDrawing().getNonce(),
-        selectorManager
+        selectorManager,
       });
       const extObj = await extInitFunc(argObj);
       if (extObj) {
@@ -1357,7 +1377,7 @@ class SvgCanvas {
      * @param {SVGRect} rect
      * @returns {Element[]|NodeList} Bbox elements
      */
-    const getIntersectionList = (this.getIntersectionList = function(rect) {
+    const getIntersectionList = (this.getIntersectionList = function (rect) {
       if (isNullish(rubberBox)) {
         return null;
       }
@@ -1370,7 +1390,7 @@ class SvgCanvas {
         const bb = svgcontent.createSVGRect();
 
         ["x", "y", "width", "height", "top", "right", "bottom", "left"].forEach(
-          o => {
+          (o) => {
             bb[o] = rubberBBox[o] / currentZoom;
           }
         );
@@ -1436,7 +1456,7 @@ class SvgCanvas {
      * @param {Element} parent - The parent DOM element to search within
      * @returns {ElementAndBBox[]} An array with objects that include:
      */
-    const getVisibleElementsAndBBoxes = (this.getVisibleElementsAndBBoxes = function(
+    const getVisibleElementsAndBBoxes = (this.getVisibleElementsAndBBoxes = function (
       parent
     ) {
       if (!parent) {
@@ -1445,11 +1465,11 @@ class SvgCanvas {
       const contentElems = [];
       $(parent)
         .children()
-        .each(function(i, elem) {
+        .each(function (i, elem) {
           if (elem.getBBox) {
             contentElems.push({
               elem,
-              bbox: getStrokedBBoxDefaultVisible([elem])
+              bbox: getStrokedBBoxDefaultVisible([elem]),
             });
           }
         });
@@ -1462,12 +1482,10 @@ class SvgCanvas {
      * @param {Element} elem - SVG element to wrap
      * @returns {void}
      */
-    const groupSvgElem = (this.groupSvgElem = function(elem) {
+    const groupSvgElem = (this.groupSvgElem = function (elem) {
       const g = document.createElementNS(NS.SVG, "g");
       elem.replaceWith(g);
-      $(g)
-        .append(elem)
-        .data("gsvg", elem)[0].id = getNextId();
+      $(g).append(elem).data("gsvg", elem)[0].id = getNextId();
     });
 
     // Set scope for these functions
@@ -1603,7 +1621,7 @@ class SvgCanvas {
      * @param {module:svgcanvas.EventHandler} f - The callback function to bind to the event
      * @returns {module:svgcanvas.EventHandler} The previous event
      */
-    canvas.bind = function(ev, f) {
+    canvas.bind = function (ev, f) {
       const old = events[ev];
       events[ev] = f;
       return old;
@@ -1615,12 +1633,12 @@ class SvgCanvas {
      * @param {XMLDocument} newDoc - The SVG DOM document
      * @returns {void}
      */
-    this.prepareSvg = function(newDoc) {
+    this.prepareSvg = function (newDoc) {
       this.sanitizeSvg(newDoc.documentElement);
 
       // convert paths into absolute commands
       const paths = [...newDoc.getElementsByTagNameNS(NS.SVG, "path")];
-      paths.forEach(path => {
+      paths.forEach((path) => {
         path.setAttribute("d", pathActions.convertPath(path));
         pathActions.fixEnd(path);
       });
@@ -1636,7 +1654,7 @@ class SvgCanvas {
      * @param {Element} elem - The (text) DOM element to clone
      * @returns {Element} Cloned element
      */
-    const ffClone = function(elem) {
+    const ffClone = function (elem) {
       if (!isGecko()) {
         return elem;
       }
@@ -1665,7 +1683,7 @@ class SvgCanvas {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.setRotationAngle = function(val, preventUndo) {
+    this.setRotationAngle = function (val, preventUndo) {
       // ensure val is the proper type
       val = parseFloat(val);
       const elem = selectedElements[0];
@@ -1724,7 +1742,7 @@ class SvgCanvas {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    const recalculateAllSelectedDimensions = (this.recalculateAllSelectedDimensions = function() {
+    const recalculateAllSelectedDimensions = (this.recalculateAllSelectedDimensions = function () {
       const text = currentResizeMode === "none" ? "position" : "size";
       const batchCmd = new BatchCommand(text);
 
@@ -1750,7 +1768,7 @@ class SvgCanvas {
      * @param {SVGMatrix} m The matrix
      * @returns {void}
      */
-    const logMatrix = function(m) {
+    const logMatrix = function (m) {
       console.log([m.a, m.b, m.c, m.d, m.e, m.f]); // eslint-disable-line no-console
     };
 
@@ -1770,7 +1788,7 @@ class SvgCanvas {
      * @param {boolean} showGrips - Indicates whether the resize grips should be shown
      * @returns {void}
      */
-    const selectOnly = (this.selectOnly = function(elems, showGrips) {
+    const selectOnly = (this.selectOnly = function (elems, showGrips) {
       clearSelection(true);
       addToSelection(elems, showGrips);
     });
@@ -1784,7 +1802,7 @@ class SvgCanvas {
      * @param {Element[]} elemsToRemove - An array of elements to remove from selection
      * @returns {void}
      */
-    /* const removeFromSelection = */ this.removeFromSelection = function(
+    /* const removeFromSelection = */ this.removeFromSelection = function (
       elemsToRemove
     ) {
       if (isNullish(selectedElements[0])) {
@@ -1818,7 +1836,7 @@ class SvgCanvas {
      * @function module:svgcanvas.SvgCanvas#selectAllInCurrentLayer
      * @returns {void}
      */
-    this.selectAllInCurrentLayer = function() {
+    this.selectAllInCurrentLayer = function () {
       const currentLayer = getCurrentDrawing().getCurrentLayer();
       if (currentLayer) {
         currentMode = "select";
@@ -1829,12 +1847,12 @@ class SvgCanvas {
     let drawnPath = null;
 
     // Mouse events
-    (function() {
+    (function () {
       const freehand = {
         minx: null,
         miny: null,
         maxx: null,
-        maxy: null
+        maxy: null,
       };
       const THRESHOLD_DIST = 0.8,
         STEP_COUNT = 10;
@@ -1854,7 +1872,7 @@ class SvgCanvas {
         parameter,
         nextParameter;
 
-      const getBsplinePoint = function(t) {
+      const getBsplinePoint = function (t) {
         const spline = { x: 0, y: 0 },
           p0 = controllPoint2,
           p1 = controllPoint1,
@@ -1868,7 +1886,7 @@ class SvgCanvas {
           [-1, 3, -3, 1],
           [3, -6, 3, 0],
           [-3, 0, 3, 0],
-          [1, 4, 1, 0]
+          [1, 4, 1, 0],
         ];
 
         spline.x =
@@ -1910,7 +1928,7 @@ class SvgCanvas {
 
         return {
           x: spline.x,
-          y: spline.y
+          y: spline.y,
         };
       };
       /**
@@ -1923,7 +1941,7 @@ class SvgCanvas {
        * @fires module:svgcanvas.SvgCanvas#event:ext_mouseDown
        * @returns {void}
        */
-      const mouseDown = function(evt) {
+      const mouseDown = function (evt) {
         if (canvas.spaceKey || evt.button === 1) {
           return;
         }
@@ -1935,9 +1953,7 @@ class SvgCanvas {
           canvas.cloneSelectedElements(0, 0);
         }
 
-        rootSctm = $("#svgcontent g")[0]
-          .getScreenCTM()
-          .inverse();
+        rootSctm = $("#svgcontent g")[0].getScreenCTM().inverse();
 
         const pt = transformPoint(evt.pageX, evt.pageY, rootSctm),
           mouseX = pt.x * currentZoom,
@@ -2060,7 +2076,7 @@ class SvgCanvas {
                   y: rStartY,
                   width: 0,
                   height: 0,
-                  display: "inline"
+                  display: "inline",
                 },
                 100
               );
@@ -2078,7 +2094,7 @@ class SvgCanvas {
                 y: realX * currentZoom,
                 width: 0,
                 height: 0,
-                display: "inline"
+                display: "inline",
               },
               100
             );
@@ -2092,7 +2108,7 @@ class SvgCanvas {
             // want to orient around it
             initBbox = utilsGetBBox($("#selectedBox0")[0]);
             const bb = {};
-            $.each(initBbox, function(key, val) {
+            $.each(initBbox, function (key, val) {
               bb[key] = val / currentZoom;
             });
             initBbox = bb;
@@ -2119,12 +2135,12 @@ class SvgCanvas {
 
                 let delayedStroke;
                 if (iswebkit) {
-                  delayedStroke = function(ele) {
+                  delayedStroke = function (ele) {
                     const stroke_ = ele.getAttribute("stroke");
                     ele.removeAttribute("stroke");
                     // Re-apply stroke after delay. Anything higher than 1 seems to cause flicker
                     if (stroke_ !== null)
-                      setTimeout(function() {
+                      setTimeout(function () {
                         ele.setAttribute("stroke", stroke_);
                       }, 0);
                   };
@@ -2170,8 +2186,8 @@ class SvgCanvas {
                 fill: "none",
                 opacity: curShape.opacity / 2,
                 "stroke-linecap": "round",
-                style: "pointer-events:none"
-              }
+                style: "pointer-events:none",
+              },
             });
             freehand.minx = realX;
             freehand.maxx = realX;
@@ -2189,8 +2205,8 @@ class SvgCanvas {
                 height: 0,
                 id: getNextId(),
                 opacity: curShape.opacity / 2,
-                style: "pointer-events:inherit"
-              }
+                style: "pointer-events:inherit",
+              },
             });
             setHref(newImage, lastGoodImgUrl);
             preventClickDefault(newImage);
@@ -2213,8 +2229,8 @@ class SvgCanvas {
                 width: 0,
                 height: 0,
                 id: getNextId(),
-                opacity: curShape.opacity / 2
-              }
+                opacity: curShape.opacity / 2,
+              },
             });
             break;
           case "line": {
@@ -2238,8 +2254,8 @@ class SvgCanvas {
                 "stroke-opacity": curShape.stroke_opacity,
                 fill: "none",
                 opacity: curShape.opacity / 2,
-                style: "pointer-events:none"
-              }
+                style: "pointer-events:none",
+              },
             });
             break;
           }
@@ -2253,8 +2269,8 @@ class SvgCanvas {
                 cy: y,
                 r: 0,
                 id: getNextId(),
-                opacity: curShape.opacity / 2
-              }
+                opacity: curShape.opacity / 2,
+              },
             });
             break;
           case "ellipse":
@@ -2268,8 +2284,8 @@ class SvgCanvas {
                 rx: 0,
                 ry: 0,
                 id: getNextId(),
-                opacity: curShape.opacity / 2
-              }
+                opacity: curShape.opacity / 2,
+              },
             });
             break;
           case "text":
@@ -2287,8 +2303,8 @@ class SvgCanvas {
                 "font-family": curText.font_family,
                 "text-anchor": "middle",
                 "xml:space": "preserve",
-                opacity: curShape.opacity
-              }
+                opacity: curShape.opacity,
+              },
             });
             // newText.textContent = 'text';
             break;
@@ -2297,12 +2313,20 @@ class SvgCanvas {
           case "pathedit":
             if (nearestPoint && evt.shiftKey) {
               pathActions.addSegment(nearestPoint.x, nearestPoint.y);
-              nearestPoint = pathActions.drawNearestPoint(0, 0);
+              nearestPoint = pathActions.drawNearestPoint();
             } else {
               startX *= currentZoom;
               startY *= currentZoom;
+              const isShiftKey = evt.shiftKey;
+              evt.shiftKey = isShiftKey && !isOverPathPointGrip; //avoid multiple selection
               pathActions.mouseDown(evt, mouseTarget, startX, startY);
               started = true;
+
+              if (isShiftKey && isOverPathPointGrip) {
+                pathActions.deletePathNode();
+                started = false;
+              }
+              isOverPathPointGrip = false;
             }
             break;
           case "textedit":
@@ -2336,12 +2360,12 @@ class SvgCanvas {
             event: evt,
             start_x: startX,
             start_y: startY,
-            selectedElements
+            selectedElements,
           },
           true
         );
 
-        $.each(extResult, function(i, r) {
+        $.each(extResult, function (i, r) {
           if (r && r.started) {
             started = true;
           }
@@ -2357,13 +2381,18 @@ class SvgCanvas {
        * @fires module:svgcanvas.SvgCanvas#event:ext_mouseMove
        * @returns {void}
        */
-      const mouseMove = function(evt) {
+      const mouseMove = function (evt) {
         if (!started && !evt.shiftKey) {
           if (nearestPoint) {
-            nearestPoint = pathActions.drawNearestPoint();
+            nearestPoint = pathActions.drawNearestPoint(); //reset
           }
           return;
         }
+
+        if ((isOverCtrlPointGrip || isOverPathPointGrip) && nearestPoint) {
+          nearestPoint = pathActions.drawNearestPoint(); //reset
+        }
+
         if (evt.button === 1 || canvas.spaceKey) {
           return;
         }
@@ -2464,7 +2493,7 @@ class SvgCanvas {
                 x: Math.min(rStartX, realX),
                 y: Math.min(rStartY, realY),
                 width: Math.abs(realX - rStartX),
-                height: Math.abs(realY - rStartY)
+                height: Math.abs(realY - rStartY),
               },
               100
             );
@@ -2613,7 +2642,7 @@ class SvgCanvas {
                 x: Math.min(rStartX * currentZoom, realX),
                 y: Math.min(rStartY * currentZoom, realY),
                 width: Math.abs(realX - rStartX * currentZoom),
-                height: Math.abs(realY - rStartY * currentZoom)
+                height: Math.abs(realY - rStartY * currentZoom),
               },
               100
             );
@@ -2624,7 +2653,7 @@ class SvgCanvas {
               shape,
               {
                 x,
-                y
+                y,
               },
               1000
             );
@@ -2682,7 +2711,7 @@ class SvgCanvas {
                 width: w,
                 height: h,
                 x: newX,
-                y: newY
+                y: newY,
               },
               1000
             );
@@ -2757,7 +2786,7 @@ class SvgCanvas {
           case "path":
           // fall through
           case "pathedit": {
-            if (started) {
+            if (started || isOverCtrlPointGrip || isOverPathPointGrip) {
               x *= currentZoom;
               y *= currentZoom;
 
@@ -2770,7 +2799,7 @@ class SvgCanvas {
                     x: Math.min(rStartX * currentZoom, realX),
                     y: Math.min(rStartY * currentZoom, realY),
                     width: Math.abs(realX - rStartX * currentZoom),
-                    height: Math.abs(realY - rStartY * currentZoom)
+                    height: Math.abs(realY - rStartY * currentZoom),
                   },
                   100
                 );
@@ -2842,7 +2871,7 @@ class SvgCanvas {
             event: evt,
             mouse_x: mouseX,
             mouse_y: mouseY,
-            selected
+            selected,
           }
         );
       }; // mouseMove()
@@ -2860,7 +2889,7 @@ class SvgCanvas {
        * @fires module:svgcanvas.SvgCanvas#event:ext_mouseUp
        * @returns {void}
        */
-      const mouseUp = function(evt) {
+      const mouseUp = function (evt) {
         if (evt.button === 2) {
           return;
         }
@@ -2977,7 +3006,7 @@ class SvgCanvas {
                 const elem = selectedElements[0];
                 if (elem) {
                   elem.removeAttribute("style");
-                  walkTree(elem, function(el) {
+                  walkTree(elem, function (el) {
                     el.removeAttribute("style");
                   });
                 }
@@ -2994,7 +3023,7 @@ class SvgCanvas {
               y: Math.min(rStartY, realY),
               width: Math.abs(realX - rStartX),
               height: Math.abs(realY - rStartY),
-              factor
+              factor,
             });
             return;
           }
@@ -3052,8 +3081,8 @@ class SvgCanvas {
                   cy: (freehand.miny + freehand.maxy) / 2,
                   rx: (freehand.maxx - freehand.minx) / 2,
                   ry: (freehand.maxy - freehand.miny) / 2,
-                  id: getId()
-                }
+                  id: getId(),
+                },
               });
               call("changed", [element]);
               keep = true;
@@ -3072,8 +3101,8 @@ class SvgCanvas {
                   y: freehand.miny,
                   width: freehand.maxx - freehand.minx,
                   height: freehand.maxy - freehand.miny,
-                  id: getId()
-                }
+                  id: getId(),
+                },
               });
               call("changed", [element]);
               keep = true;
@@ -3136,12 +3165,12 @@ class SvgCanvas {
           /** @type {module:svgcanvas.SvgCanvas#event:ext_mouseUp} */ {
             event: evt,
             mouse_x: mouseX,
-            mouse_y: mouseY
+            mouse_y: mouseY,
           },
           true
         );
 
-        $.each(extResult, function(i, r) {
+        $.each(extResult, function (i, r) {
           if (r) {
             keep = r.keep || keep;
             ({ element } = r);
@@ -3203,7 +3232,7 @@ class SvgCanvas {
               .clone()
               .attr({
                 to: curShape.opacity,
-                dur: aniDur
+                dur: aniDur,
               })
               .appendTo(element);
             try {
@@ -3216,7 +3245,7 @@ class SvgCanvas {
 
           // Ideally this would be done on the endEvent of the animation,
           // but that doesn't seem to be supported in Webkit
-          setTimeout(function() {
+          setTimeout(function () {
             if (cAni) {
               cAni.remove();
             }
@@ -3239,7 +3268,7 @@ class SvgCanvas {
         startTransform = null;
       };
 
-      const dblClick = function(evt) {
+      const dblClick = function (evt) {
         const evtTarget = evt.target;
         const parent = evtTarget.parentNode;
 
@@ -3285,7 +3314,7 @@ class SvgCanvas {
       };
 
       // prevent links from being followed in the canvas
-      const handleLinkInCanvas = function(e) {
+      const handleLinkInCanvas = function (e) {
         e.preventDefault();
         return false;
       };
@@ -3309,7 +3338,7 @@ class SvgCanvas {
          * @fires module:svgcanvas.SvgCanvas#event:zoomDone
          * @returns {void}
          */
-        function(e) {
+        function (e) {
           if (!e.shiftKey) {
             return;
           }
@@ -3317,9 +3346,7 @@ class SvgCanvas {
           e.preventDefault();
           const evt = e.originalEvent;
 
-          rootSctm = $("#svgcontent g")[0]
-            .getScreenCTM()
-            .inverse();
+          rootSctm = $("#svgcontent g")[0].getScreenCTM().inverse();
 
           const workarea = $("#workarea");
           const scrbar = 15;
@@ -3377,19 +3404,19 @@ class SvgCanvas {
           // top left of workarea in content pixels after zoom
           const topLeftNew = {
             x: pt.x - (pt.x - topLeftOld.x) / factor,
-            y: pt.y - (pt.y - topLeftOld.y) / factor
+            y: pt.y - (pt.y - topLeftOld.y) / factor,
           };
 
           // top left of workarea in canvas pixels relative to content after zoom
           const topLeftNewCanvas = {
             x: topLeftNew.x * zoomlevel,
-            y: topLeftNew.y * zoomlevel
+            y: topLeftNew.y * zoomlevel,
           };
 
           // new center in canvas pixels
           const newCtr = {
             x: topLeftNewCanvas.x - rulerwidth + editorFullW / 2,
-            y: topLeftNewCanvas.y - rulerwidth + editorFullH / 2
+            y: topLeftNewCanvas.y - rulerwidth + editorFullH / 2,
           };
 
           canvas.setZoom(zoomlevel);
@@ -3408,7 +3435,7 @@ class SvgCanvas {
      * @namespace {PlainObject} textActions
      * @memberof module:svgcanvas.SvgCanvas#
      */
-    const textActions = (canvas.textActions = (function() {
+    const textActions = (canvas.textActions = (function () {
       /* eslint-enable jsdoc/require-property */
       let curtext;
       let textinput;
@@ -3451,13 +3478,13 @@ class SvgCanvas {
           assignAttributes(cursor, {
             id: "text_cursor",
             stroke: "#333",
-            "stroke-width": 1
+            "stroke-width": 1,
           });
           cursor = getElem("selectorParentGroup").appendChild(cursor);
         }
 
         if (!blinker) {
-          blinker = setInterval(function() {
+          blinker = setInterval(function () {
             const show = cursor.getAttribute("display") === "none";
             cursor.setAttribute("display", show ? "inline" : "none");
           }, 600);
@@ -3472,7 +3499,7 @@ class SvgCanvas {
           x2: endPt.x,
           y2: endPt.y,
           visibility: "visible",
-          display: "inline"
+          display: "inline",
         });
 
         if (selblock) {
@@ -3504,7 +3531,7 @@ class SvgCanvas {
             id: "text_selectblock",
             fill: "green",
             opacity: 0.5,
-            style: "pointer-events:none"
+            style: "pointer-events:none",
           });
           getElem("selectorParentGroup").append(selblock);
         }
@@ -3543,7 +3570,7 @@ class SvgCanvas {
 
         assignAttributes(selblock, {
           d: dstr,
-          display: "inline"
+          display: "inline",
         });
       }
 
@@ -3617,7 +3644,7 @@ class SvgCanvas {
       function screenToPt(xIn, yIn) {
         const out = {
           x: xIn,
-          y: yIn
+          y: yIn,
         };
 
         out.x /= currentZoom;
@@ -3641,7 +3668,7 @@ class SvgCanvas {
       function ptToScreen(xIn, yIn) {
         const out = {
           x: xIn,
-          y: yIn
+          y: yIn,
         };
 
         if (matrix) {
@@ -3699,7 +3726,7 @@ function hideCursor () {
 
         // Set tripleclick
         $(evt.target).click(selectAll);
-        setTimeout(function() {
+        setTimeout(function () {
           $(evt.target).unbind("click", selectAll);
         }, 300);
       }
@@ -3811,7 +3838,7 @@ function hideCursor () {
             setCursorFromPoint(pt.x, pt.y);
           }
 
-          setTimeout(function() {
+          setTimeout(function () {
             allowDbl = true;
           }, 300);
         },
@@ -3901,9 +3928,7 @@ function hideCursor () {
           chardata.length = len;
           textinput.focus();
 
-          $(curtext)
-            .unbind("dblclick", selectWord)
-            .dblclick(selectWord);
+          $(curtext).unbind("dblclick", selectWord).dblclick(selectWord);
 
           if (!len) {
             end = { x: textbb.x + textbb.width / 2, width: 0 };
@@ -3930,17 +3955,17 @@ function hideCursor () {
               x: start.x,
               y: textbb.y, // start.y?
               width: end.x - start.x,
-              height: textbb.height
+              height: textbb.height,
             };
           }
 
           // Add a last bbox for cursor at end of text
           chardata.push({
             x: end.x,
-            width: 0
+            width: 0,
           });
           setSelection(textinput.selectionStart, textinput.selectionEnd, true);
-        }
+        },
       };
     })());
 
@@ -3954,7 +3979,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#removeUnusedDefElems
      * @returns {Integer} The number of elements that were removed
      */
-    const removeUnusedDefElems = (this.removeUnusedDefElems = function() {
+    const removeUnusedDefElems = (this.removeUnusedDefElems = function () {
       const defs = svgcontent.getElementsByTagNameNS(NS.SVG, "defs");
       if (!defs || !defs.length) {
         return 0;
@@ -3970,7 +3995,7 @@ function hideCursor () {
         "filter",
         "marker-start",
         "marker-mid",
-        "marker-end"
+        "marker-end",
       ];
       const alen = attrs.length;
 
@@ -4017,14 +4042,14 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#svgCanvasToString
      * @returns {string} The SVG image for output
      */
-    this.svgCanvasToString = function() {
+    this.svgCanvasToString = function () {
       // keep calling it until there are none to remove
       while (removeUnusedDefElems() > 0) {} // eslint-disable-line no-empty
 
       pathActions.clear(true);
 
       // Keep SVG-Edit comment on top
-      $.each(svgcontent.childNodes, function(i, node) {
+      $.each(svgcontent.childNodes, function (i, node) {
         if (i && node.nodeType === 8 && node.data.includes("Created with")) {
           svgcontent.firstChild.before(node);
         }
@@ -4041,7 +4066,7 @@ function hideCursor () {
       // Unwrap gsvg if it has no special attributes (only id and style)
       $(svgcontent)
         .find("g:data(gsvg)")
-        .each(function() {
+        .each(function () {
           const attrs = this.attributes;
           let len = attrs.length;
           for (let i = 0; i < len; i++) {
@@ -4060,7 +4085,7 @@ function hideCursor () {
 
       // Rewrap gsvg
       if (nakedSvgs.length) {
-        $(nakedSvgs).each(function() {
+        $(nakedSvgs).each(function () {
           groupSvgElem(this);
         });
       }
@@ -4075,7 +4100,7 @@ function hideCursor () {
      * @param {Integer} indent - Number of spaces to indent this tag
      * @returns {string} The given element as an SVG tag
      */
-    this.svgToString = function(elem, indent) {
+    this.svgToString = function (elem, indent) {
       const out = [];
       const unit = curConfig.baseUnit;
       const unitRe = new RegExp("^-?[\\d\\.]+" + unit + "$");
@@ -4133,7 +4158,7 @@ function hideCursor () {
           $(elem)
             .find("*")
             .andSelf()
-            .each(function() {
+            .each(function () {
               // const el = this;
               // for some elements have no attribute
               const uri = this.namespaceURI;
@@ -4148,7 +4173,7 @@ function hideCursor () {
                 out.push(" xmlns:" + nsMap[uri] + '="' + uri + '"');
               }
 
-              $.each(this.attributes, function(i, attr) {
+              $.each(this.attributes, function (i, attr) {
                 const u = attr.namespaceURI;
                 if (
                   u &&
@@ -4171,7 +4196,7 @@ function hideCursor () {
             "y",
             "viewBox",
             "id",
-            "overflow"
+            "overflow",
           ];
           while (i--) {
             const attr = attrs[i];
@@ -4208,7 +4233,7 @@ function hideCursor () {
               continue;
             }
             if (attrVal === "null") {
-              const styleName = attr.localName.replace(/-[a-z]/g, s =>
+              const styleName = attr.localName.replace(/-[a-z]/g, (s) =>
                 s[1].toUpperCase()
               );
               if (Object.prototype.hasOwnProperty.call(elem.style, styleName)) {
@@ -4328,13 +4353,13 @@ function hideCursor () {
      * @param {string} src - The path/URL of the image
      * @returns {Promise<string|false>} Resolves to a Data URL (string|false)
      */
-    this.embedImage = function(src) {
+    this.embedImage = function (src) {
       // Todo: Remove this Promise in favor of making an async/await `Image.load` utility
-      return new Promise(function(resolve, reject) {
+      return new Promise(function (resolve, reject) {
         // eslint-disable-line promise/avoid-new
         // load in the image and once it's loaded, get the dimensions
         $(new Image())
-          .load(function(response, status, xhr) {
+          .load(function (response, status, xhr) {
             if (status === "error") {
               reject(
                 new Error(
@@ -4370,7 +4395,7 @@ function hideCursor () {
      * @param {string} val
      * @returns {void}
      */
-    this.setGoodImage = function(val) {
+    this.setGoodImage = function (val) {
       lastGoodImgUrl = val;
     };
 
@@ -4379,7 +4404,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#open
      * @returns {void}
      */
-    this.open = function() {
+    this.open = function () {
       /* */
     };
 
@@ -4392,7 +4417,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:saved
      * @returns {void}
      */
-    this.save = function(opts) {
+    this.save = function (opts) {
       // remove the selected outline before serializing
       clearSelection();
       // Update save options if provided
@@ -4428,7 +4453,7 @@ function hideCursor () {
       const issueList = {
         feGaussianBlur: uiStrings.exportNoBlur,
         foreignObject: uiStrings.exportNoforeignObject,
-        "[stroke-dasharray]": uiStrings.exportNoDashArray
+        "[stroke-dasharray]": uiStrings.exportNoDashArray,
       };
       const content = $(svgcontent);
 
@@ -4437,7 +4462,7 @@ function hideCursor () {
         issueList.text = uiStrings.exportNoText;
       }
 
-      $.each(issueList, function(sel, descr) {
+      $.each(issueList, function (sel, descr) {
         if (content.find(sel).length) {
           issueCodes.push(sel);
           issues.push(descr);
@@ -4477,7 +4502,7 @@ function hideCursor () {
      * @todo Confirm/fix ICO type
      * @returns {Promise<module:svgcanvas.ImageExportedResults>} Resolves to {@link module:svgcanvas.ImageExportedResults}
      */
-    this.rasterExport = async function(
+    this.rasterExport = async function (
       imgType,
       quality,
       exportWindowName,
@@ -4490,13 +4515,11 @@ function hideCursor () {
 
       if (!canvg) {
         ({ canvg } = await importSetGlobal(curConfig.canvgPath + "canvg.js", {
-          global: "canvg"
+          global: "canvg",
         }));
       }
       if (!$("#export_canvas").length) {
-        $("<canvas>", { id: "export_canvas" })
-          .hide()
-          .appendTo("body");
+        $("<canvas>", { id: "export_canvas" }).hide().appendTo("body");
       }
       const c = $("#export_canvas")[0];
       c.width = canvas.contentW;
@@ -4525,7 +4548,7 @@ function hideCursor () {
             type: imgType,
             mimeType,
             quality,
-            exportWindowName
+            exportWindowName,
           };
           if (!opts.avoidEvent) {
             call("exported", obj);
@@ -4534,7 +4557,7 @@ function hideCursor () {
         }
         if (c.toBlob) {
           c.toBlob(
-            blob => {
+            (blob) => {
               bloburl = createObjectURL(blob);
               done();
             },
@@ -4582,7 +4605,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:exportedPDF
      * @returns {Promise<module:svgcanvas.PDFExportedResults>} Resolves to {@link module:svgcanvas.PDFExportedResults}
      */
-    this.exportPDF = async function(
+    this.exportPDF = async function (
       exportWindowName,
       outputType = isChrome() ? "save" : undefined
     ) {
@@ -4593,7 +4616,7 @@ function hideCursor () {
           //   currently global-only, so not Rolled-up
           "jspdf/underscore-min.js",
           // 'jspdf/jspdf.min.js',
-          "../../svgedit-myfix/editor/jspdf/jspdf-1.0.150.debug.js"
+          "../../svgedit-myfix/editor/jspdf/jspdf-1.0.150.debug.js",
         ]);
 
         const modularVersion =
@@ -4602,7 +4625,7 @@ function hideCursor () {
           window.svgEditor.modules !== false;
         // Todo: Switch to `import()` when widely supported and available (also allow customization of path)
         await importScript(curConfig.jspdfPath + "jspdf.plugin.svgToPdf.js", {
-          type: modularVersion ? "module" : "text/javascript"
+          type: modularVersion ? "module" : "text/javascript",
         });
         // await importModule('jspdf/jspdf.plugin.svgToPdf.js');
       }
@@ -4615,7 +4638,7 @@ function hideCursor () {
       const doc = jsPDF({
         orientation,
         unit,
-        format: [res.w, res.h]
+        format: [res.w, res.h],
         // , compressPdf: true
       });
       const docTitle = getDocumentTitle();
@@ -4624,7 +4647,7 @@ function hideCursor () {
     subject: '',
     author: '',
     keywords: '',
-    creator: '' */
+    creator: '' */,
       });
       const { issues, issueCodes } = getIssues();
       const svg = this.svgCanvasToString();
@@ -4649,7 +4672,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getSvgString
      * @returns {string} The current drawing as raw SVG XML text.
      */
-    this.getSvgString = function() {
+    this.getSvgString = function () {
       saveOptions.apply = false;
       return this.svgCanvasToString();
     };
@@ -4664,7 +4687,7 @@ function hideCursor () {
      * `svgCanvas.randomizeIds() <==> svgCanvas.randomizeIds(true)`
      * @returns {void}
      */
-    this.randomizeIds = function(enableRandomization) {
+    this.randomizeIds = function (enableRandomization) {
       if (arguments.length > 0 && enableRandomization === false) {
         draw.randomizeIds(false, getCurrentDrawing());
       } else {
@@ -4678,7 +4701,7 @@ function hideCursor () {
      * @param {Element} g - The parent element of the tree to give unique IDs
      * @returns {void}
      */
-    const uniquifyElems = (this.uniquifyElems = function(g) {
+    const uniquifyElems = (this.uniquifyElems = function (g) {
       const ids = {};
       // TODO: Handle markers and connectors. These are not yet re-identified properly
       // as their referring elements do not get remapped.
@@ -4695,10 +4718,10 @@ function hideCursor () {
         "radialGradient",
         "symbol",
         "textPath",
-        "use"
+        "use",
       ];
 
-      walkTree(g, function(n) {
+      walkTree(g, function (n) {
         // if it's an element node
         if (n.nodeType === 1) {
           // and the element has an ID
@@ -4713,7 +4736,7 @@ function hideCursor () {
 
           // now search for all attributes on this element that might refer
           // to other elements
-          $.each(refAttrs, function(i, attr) {
+          $.each(refAttrs, function (i, attr) {
             const attrnode = n.getAttributeNode(attr);
             if (attrnode) {
               // the incoming file has been sanitized, so we should be able to safely just strip off the leading #
@@ -4782,14 +4805,14 @@ function hideCursor () {
      * @param {Element} parent
      * @returns {void}
      */
-    const setUseData = (this.setUseData = function(parent) {
+    const setUseData = (this.setUseData = function (parent) {
       let elems = $(parent);
 
       if (parent.tagName !== "use") {
         elems = elems.find("use");
       }
 
-      elems.each(function() {
+      elems.each(function () {
         const id = getHref(this).substr(1);
         const refElem = getElem(id);
         if (!refElem) {
@@ -4797,9 +4820,7 @@ function hideCursor () {
         }
         $(this).data("ref", refElem);
         if (refElem.tagName === "symbol" || refElem.tagName === "svg") {
-          $(this)
-            .data("symbol", refElem)
-            .data("ref", refElem);
+          $(this).data("symbol", refElem).data("ref", refElem);
         }
       });
     });
@@ -4810,18 +4831,18 @@ function hideCursor () {
      * @param {Element} elem
      * @returns {void}
      */
-    const convertGradients = (this.convertGradients = function(elem) {
+    const convertGradients = (this.convertGradients = function (elem) {
       let elems = $(elem).find("linearGradient, radialGradient");
       if (!elems.length && isWebkit()) {
         // Bug in webkit prevents regular *Gradient selector search
         elems = $(elem)
           .find("*")
-          .filter(function() {
+          .filter(function () {
             return this.tagName.includes("Gradient");
           });
       }
 
-      elems.each(function() {
+      elems.each(function () {
         const grad = this; // eslint-disable-line consistent-this
         if ($(grad).attr("gradientUnits") === "userSpaceOnUse") {
           // TODO: Support more than one element with this ref by duplicating parent grad
@@ -4862,7 +4883,7 @@ function hideCursor () {
               x1: (gCoords.x1 - bb.x) / bb.width,
               y1: (gCoords.y1 - bb.y) / bb.height,
               x2: (gCoords.x2 - bb.x) / bb.width,
-              y2: (gCoords.y2 - bb.y) / bb.height
+              y2: (gCoords.y2 - bb.y) / bb.height,
             });
             grad.removeAttribute("gradientUnits");
           }
@@ -4897,7 +4918,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:selected
      * @returns {void}
      */
-    const convertToGroup = (this.convertToGroup = function(elem) {
+    const convertToGroup = (this.convertToGroup = function (elem) {
       if (!elem) {
         elem = selectedElements[0];
       }
@@ -5009,7 +5030,7 @@ function hideCursor () {
 
         // recalculate dimensions on the top-level children so that unnecessary transforms
         // are removed
-        walkTreePost(g, function(n) {
+        walkTreePost(g, function (n) {
           try {
             recalculateDimensions(n);
           } catch (e) {
@@ -5020,7 +5041,7 @@ function hideCursor () {
         // Give ID for any visible element missing one
         $(g)
           .find(visElems)
-          .each(function() {
+          .each(function () {
             if (!this.id) {
               this.id = getNextId();
             }
@@ -5052,7 +5073,7 @@ function hideCursor () {
      * @returns {boolean} This function returns `false` if the set was
      *     unsuccessful, `true` otherwise.
      */
-    this.setSvgString = function(xmlString, preventUndo) {
+    this.setSvgString = function (xmlString, preventUndo) {
       try {
         // convert string into XML document
         const newDoc = text2xml(xmlString);
@@ -5098,7 +5119,7 @@ function hideCursor () {
         }
 
         // change image href vals if possible
-        content.find("image").each(function() {
+        content.find("image").each(function () {
           const image = this; // eslint-disable-line consistent-this
           preventClickDefault(image);
           const val = getHref(this);
@@ -5111,7 +5132,7 @@ function hideCursor () {
                 const url = decodeURIComponent(m[1]);
                 // const url = decodeURIComponent(m.groups.url);
                 $(new Image())
-                  .load(function() {
+                  .load(function () {
                     image.setAttributeNS(NS.XLINK, "xlink:href", url);
                   })
                   .attr("src", url);
@@ -5123,7 +5144,7 @@ function hideCursor () {
         });
 
         // Wrap child SVGs in group elements
-        content.find("svg").each(function() {
+        content.find("svg").each(function () {
           // Skip if it's in a <defs>
           if ($(this).closest("defs").length) {
             return;
@@ -5157,7 +5178,7 @@ function hideCursor () {
 
         const attrs = {
           id: "svgcontent",
-          overflow: curConfig.show_outside_canvas ? "visible" : "hidden"
+          overflow: curConfig.show_outside_canvas ? "visible" : "hidden",
         };
 
         let percs = false;
@@ -5169,7 +5190,7 @@ function hideCursor () {
           attrs.height = vb[3];
           // handle content that doesn't have a viewBox
         } else {
-          $.each(["width", "height"], function(i, dim) {
+          $.each(["width", "height"], function (i, dim) {
             // Set to 100 if not given
             const val = content.attr(dim) || "100%";
 
@@ -5189,7 +5210,7 @@ function hideCursor () {
         content
           .children()
           .find(visElems)
-          .each(function() {
+          .each(function () {
             if (!this.id) {
               this.id = getNextId();
             }
@@ -5253,7 +5274,7 @@ function hideCursor () {
      * arbitrary transform lists, but makes some assumptions about how the transform list
      * was obtained
      */
-    this.importSvgString = function(xmlString) {
+    this.importSvgString = function (xmlString) {
       let j, ts, useEl;
       try {
         // Get unique ID
@@ -5338,7 +5359,7 @@ function hideCursor () {
           // Store data
           importIds[uid] = {
             symbol,
-            xform: ts
+            xform: ts,
           };
 
           findDefs().append(symbol);
@@ -5355,9 +5376,7 @@ function hideCursor () {
 
         useEl.setAttribute("transform", ts);
         recalculateDimensions(useEl);
-        $(useEl)
-          .data("symbol", symbol)
-          .data("ref", symbol);
+        $(useEl).data("symbol", symbol).data("ref", symbol);
         addToSelection([useEl]);
 
         // TODO: Find way to add this in a recalculateDimensions-parsable way
@@ -5390,7 +5409,7 @@ function hideCursor () {
       mergeLayer,
       mergeAllLayers,
       leaveContext,
-      setContext
+      setContext,
     };
     Object.entries(dr).forEach(([prop, propVal]) => {
       canvas[prop] = propVal;
@@ -5421,7 +5440,7 @@ function hideCursor () {
          */
         changeSVGContent() {
           call("changed", [svgcontent]);
-        }
+        },
       }
     );
 
@@ -5435,7 +5454,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:cleared
      * @returns {void}
      */
-    this.clear = function() {
+    this.clear = function () {
       pathActions.clear();
 
       clearSelection();
@@ -5468,7 +5487,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getContentElem
      * @returns {Element} The content DOM element
      */
-    this.getContentElem = function() {
+    this.getContentElem = function () {
       return svgcontent;
     };
 
@@ -5476,7 +5495,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getRootElem
      * @returns {SVGSVGElement} The root DOM element
      */
-    this.getRootElem = function() {
+    this.getRootElem = function () {
       return svgroot;
     };
 
@@ -5491,7 +5510,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getResolution
      * @returns {DimensionsAndZoom} The current dimensions and zoom level in an object
      */
-    const getResolution = (this.getResolution = function() {
+    const getResolution = (this.getResolution = function () {
       //    const vb = svgcontent.getAttribute('viewBox').split(' ');
       //    return {w:vb[2], h:vb[3], zoom: currentZoom};
 
@@ -5501,7 +5520,7 @@ function hideCursor () {
       return {
         w,
         h,
-        zoom: currentZoom
+        zoom: currentZoom,
       };
     });
 
@@ -5509,7 +5528,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getSnapToGrid
      * @returns {boolean} The current snap to grid setting
      */
-    this.getSnapToGrid = function() {
+    this.getSnapToGrid = function () {
       return curConfig.gridSnapping;
     };
 
@@ -5517,7 +5536,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getVersion
      * @returns {string} A string which describes the revision number of SvgCanvas.
      */
-    this.getVersion = function() {
+    this.getVersion = function () {
       return "svgcanvas.js ($Rev$)";
     };
 
@@ -5527,7 +5546,7 @@ function hideCursor () {
      * @param {module:path.uiStrings} strs - Object with strings (see the [locales API]{@link module:locale.LocaleStrings} and the [tutorial]{@tutorial LocaleDocs})
      * @returns {void}
      */
-    this.setUiStrings = function(strs) {
+    this.setUiStrings = function (strs) {
       Object.assign(uiStrings, strs.notification);
       $ = jQueryPluginDBox($, strs.common);
       pathModule.setUiStrings(strs);
@@ -5539,7 +5558,7 @@ function hideCursor () {
      * @param {module:SVGEditor.Config} opts - Object with options
      * @returns {void}
      */
-    this.setConfig = function(opts) {
+    this.setConfig = function (opts) {
       Object.assign(curConfig, opts);
     };
 
@@ -5549,7 +5568,7 @@ function hideCursor () {
      * @returns {string|void} the current group/SVG's title contents or
      * `undefined` if no element is passed nd there are no selected elements.
      */
-    this.getTitle = function(elem) {
+    this.getTitle = function (elem) {
       elem = elem || selectedElements[0];
       if (!elem) {
         return undefined;
@@ -5571,7 +5590,7 @@ function hideCursor () {
      * @todo Combine this with `setDocumentTitle`
      * @returns {void}
      */
-    this.setGroupTitle = function(val) {
+    this.setGroupTitle = function (val) {
       let elem = selectedElements[0];
       elem = $(elem).data("gsvg") || elem;
 
@@ -5609,7 +5628,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getDocumentTitle
      * @returns {string|void} The current document title or an empty string if not found
      */
-    const getDocumentTitle = (this.getDocumentTitle = function() {
+    const getDocumentTitle = (this.getDocumentTitle = function () {
       return canvas.getTitle(svgcontent);
     });
 
@@ -5620,7 +5639,7 @@ function hideCursor () {
      * @param {string} newTitle - String with the new title
      * @returns {void}
      */
-    this.setDocumentTitle = function(newTitle) {
+    this.setDocumentTitle = function (newTitle) {
       const childs = svgcontent.childNodes;
       let docTitle = false,
         oldTitle = "";
@@ -5658,7 +5677,7 @@ function hideCursor () {
      * @param {boolean} [add] - Indicates whether or not to add the namespace value
      * @returns {string} The editor's namespace URL
      */
-    this.getEditorNS = function(add) {
+    this.getEditorNS = function (add) {
       if (add) {
         svgcontent.setAttribute("xmlns:se", NS.SE);
       }
@@ -5675,7 +5694,7 @@ function hideCursor () {
      * @returns {boolean} Indicates if resolution change was successful.
      * It will fail on "fit to content" option with no content to fit to.
      */
-    this.setResolution = function(x, y) {
+    this.setResolution = function (x, y) {
       const res = getResolution();
       const { w, h } = res;
       let batchCmd;
@@ -5690,7 +5709,7 @@ function hideCursor () {
           addToSelection(visEls);
           const dx = [],
             dy = [];
-          $.each(visEls, function(i, item) {
+          $.each(visEls, function (i, item) {
             dx.push(bbox.x * -1);
             dy.push(bbox.y * -1);
           });
@@ -5728,7 +5747,7 @@ function hideCursor () {
         );
         batchCmd.addSubCommand(
           new ChangeElementCommand(svgcontent, {
-            viewBox: ["0 0", w, h].join(" ")
+            viewBox: ["0 0", w, h].join(" "),
           })
         );
 
@@ -5749,7 +5768,7 @@ function hideCursor () {
      * @returns {module:svgcanvas.ElementPositionInCanvas} An object with `x`, `y` values indicating the svgcontent element's
      * position in the editor's canvas.
      */
-    this.getOffset = function() {
+    this.getOffset = function () {
       return $(svgcontent).attr(["x", "y"]);
     };
 
@@ -5766,10 +5785,10 @@ function hideCursor () {
      * @param {Integer} editorH - The editor's workarea box's height
      * @returns {module:svgcanvas.ZoomAndBBox|void}
      */
-    this.setBBoxZoom = function(val, editorW, editorH) {
+    this.setBBoxZoom = function (val, editorW, editorH) {
       let spacer = 0.85;
       let bb;
-      const calcZoom = function(bb) {
+      const calcZoom = function (bb) {
         // eslint-disable-line no-shadow
         if (!bb) {
           return false;
@@ -5796,7 +5815,7 @@ function hideCursor () {
           if (!selectedElements[0]) {
             return undefined;
           }
-          const selectedElems = $.map(selectedElements, function(n) {
+          const selectedElems = $.map(selectedElements, function (n) {
             if (n) {
               return n;
             }
@@ -5902,14 +5921,14 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:ext_zoomChanged
      * @returns {void}
      */
-    this.setZoom = function(zoomLevel) {
+    this.setZoom = function (zoomLevel) {
       const res = getResolution();
       svgcontent.setAttribute(
         "viewBox",
         "0 0 " + res.w / zoomLevel + " " + res.h / zoomLevel
       );
       currentZoom = zoomLevel;
-      $.each(selectedElements, function(i, elem) {
+      $.each(selectedElements, function (i, elem) {
         if (!elem) {
           return;
         }
@@ -5923,11 +5942,9 @@ function hideCursor () {
         /** @type {module:svgcanvas.SvgCanvas#event:ext_zoomChanged} */ zoomLevel
       );
 
-      setTimeout(function() {
+      setTimeout(function () {
         console.log("Sctm updated");
-        rootSctm = $("#svgcontent g")[0]
-          .getScreenCTM()
-          .inverse();
+        rootSctm = $("#svgcontent g")[0].getScreenCTM().inverse();
       }, 300);
     };
 
@@ -5935,7 +5952,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getMode
      * @returns {string} The current editor mode string
      */
-    this.getMode = function() {
+    this.getMode = function () {
       return currentMode;
     };
 
@@ -5945,7 +5962,7 @@ function hideCursor () {
      * @param {string} name - String with the new mode to change to
      * @returns {void}
      */
-    this.setMode = function(name) {
+    this.setMode = function (name) {
       pathActions.clear(true);
       textActions.clear();
       curProperties =
@@ -5969,7 +5986,7 @@ function hideCursor () {
      * @param {string} type
      * @returns {string|module:svgcanvas.PaintOptions|Float|module:jGraduate~Paint} The current fill/stroke option
      */
-    this.getColor = function(type) {
+    this.getColor = function (type) {
       return curProperties[type];
     };
 
@@ -5982,7 +5999,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.setColor = function(type, val, preventUndo) {
+    this.setColor = function (type, val, preventUndo) {
       curShape[type] = val;
       curProperties[type + "_paint"] = { type: "solidColor" };
       const elems = [];
@@ -6027,7 +6044,7 @@ function hideCursor () {
      * @param {"fill"|"stroke"} type - String indicating "fill" or "stroke" to apply to an element
      * @returns {void}
      */
-    const setGradient = (this.setGradient = function(type) {
+    const setGradient = (this.setGradient = function (type) {
       if (
         !curProperties[type + "_paint"] ||
         curProperties[type + "_paint"].type === "solidColor"
@@ -6057,7 +6074,7 @@ function hideCursor () {
      * @param {SVGGradientElement} grad - The gradient DOM element to compare to others
      * @returns {SVGGradientElement} The existing gradient if found, `null` if not
      */
-    const findDuplicateGradient = function(grad) {
+    const findDuplicateGradient = function (grad) {
       const defs = findDefs();
       const existingGrads = $(defs).find("linearGradient, radialGradient");
       let i = existingGrads.length;
@@ -6078,7 +6095,7 @@ function hideCursor () {
           const ogAttrs = $(og).attr(radAttrs);
 
           let diff = false;
-          $.each(radAttrs, function(j, attr) {
+          $.each(radAttrs, function (j, attr) {
             if (gradAttrs[attr] !== ogAttrs[attr]) {
               diff = true;
             }
@@ -6127,7 +6144,7 @@ function hideCursor () {
      * @param {module:jGraduate.jGraduatePaintOptions} paint - The jGraduate paint object to apply
      * @returns {void}
      */
-    this.setPaint = function(type, paint) {
+    this.setPaint = function (type, paint) {
       // make a copy
       const p = new $.jGraduate.Paint(paint);
       this.setPaintOpacity(type, p.alpha / 100, true);
@@ -6154,7 +6171,7 @@ function hideCursor () {
      * @param {module:jGraduate~Paint} paint
      * @returns {void}
      */
-    this.setStrokePaint = function(paint) {
+    this.setStrokePaint = function (paint) {
       this.setPaint("stroke", paint);
     };
 
@@ -6163,7 +6180,7 @@ function hideCursor () {
      * @param {module:jGraduate~Paint} paint
      * @returns {void}
      */
-    this.setFillPaint = function(paint) {
+    this.setFillPaint = function (paint) {
       this.setPaint("fill", paint);
     };
 
@@ -6171,7 +6188,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getStrokeWidth
      * @returns {Float|string} The current stroke-width value
      */
-    this.getStrokeWidth = function() {
+    this.getStrokeWidth = function () {
       return curProperties.stroke_width;
     };
 
@@ -6183,7 +6200,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.setStrokeWidth = function(val) {
+    this.setStrokeWidth = function (val) {
       if (val === 0 && ["line", "path"].includes(currentMode)) {
         canvas.setStrokeWidth(1);
         return;
@@ -6226,7 +6243,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.setStrokeAttr = function(attr, val) {
+    this.setStrokeAttr = function (attr, val) {
       curShape[attr.replace("-", "_")] = val;
       const elems = [];
 
@@ -6235,7 +6252,7 @@ function hideCursor () {
         const elem = selectedElements[i];
         if (elem) {
           if (elem.tagName === "g") {
-            walkTree(elem, function(e) {
+            walkTree(elem, function (e) {
               if (e.nodeName !== "g") {
                 elems.push(e);
               }
@@ -6268,7 +6285,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getStyle
      * @returns {module:svgcanvas.StyleOptions} current style options
      */
-    this.getStyle = function() {
+    this.getStyle = function () {
       return curShape;
     };
 
@@ -6284,7 +6301,7 @@ function hideCursor () {
      * @param {string} val
      * @returns {void}
      */
-    this.setOpacity = function(val) {
+    this.setOpacity = function (val) {
       curShape.opacity = val;
       changeSelectedAttribute("opacity", val);
     };
@@ -6293,7 +6310,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getFillOpacity
      * @returns {Float} the current fill opacity
      */
-    this.getFillOpacity = function() {
+    this.getFillOpacity = function () {
       return curShape.fill_opacity;
     };
 
@@ -6301,7 +6318,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getStrokeOpacity
      * @returns {string} the current stroke opacity
      */
-    this.getStrokeOpacity = function() {
+    this.getStrokeOpacity = function () {
       return curShape.stroke_opacity;
     };
 
@@ -6313,7 +6330,7 @@ function hideCursor () {
      * @param {boolean} preventUndo - Indicates whether or not this should be an undoable action
      * @returns {void}
      */
-    this.setPaintOpacity = function(type, val, preventUndo) {
+    this.setPaintOpacity = function (type, val, preventUndo) {
       curShape[type + "_opacity"] = val;
       if (!preventUndo) {
         changeSelectedAttribute(type + "-opacity", val);
@@ -6328,7 +6345,7 @@ function hideCursor () {
      * @param {"fill"|"stroke"} type - String with "fill" or "stroke"
      * @returns {Float} Fill/stroke opacity
      */
-    this.getPaintOpacity = function(type) {
+    this.getPaintOpacity = function (type) {
       return type === "fill" ? this.getFillOpacity() : this.getStrokeOpacity();
     };
 
@@ -6338,7 +6355,7 @@ function hideCursor () {
      * @param {Element} elem - The element to check the blur value for
      * @returns {string} stdDeviation blur attribute value
      */
-    this.getBlur = function(elem) {
+    this.getBlur = function (elem) {
       let val = 0;
       // const elem = selectedElements[0];
 
@@ -6354,7 +6371,7 @@ function hideCursor () {
       return val;
     };
 
-    (function() {
+    (function () {
       let curCommand = null;
       let filter = null;
       let filterHidden = false;
@@ -6365,7 +6382,7 @@ function hideCursor () {
        * @param {Float} val - The new `stdDeviation` value
        * @returns {void}
        */
-      canvas.setBlurNoUndo = function(val) {
+      canvas.setBlurNoUndo = function (val) {
         if (!filter) {
           canvas.setBlur(val);
           return;
@@ -6389,7 +6406,7 @@ function hideCursor () {
             elem.setAttribute("filter", "url(#" + elem.id + "_blur)");
           }
           changeSelectedAttributeNoUndo("stdDeviation", val, [
-            filter.firstChild
+            filter.firstChild,
           ]);
           canvas.setBlurOffsets(filter, val);
         }
@@ -6415,7 +6432,7 @@ function hideCursor () {
        * @param {Float} stdDev - The standard deviation value on which to base the offset size
        * @returns {void}
        */
-      canvas.setBlurOffsets = function(filterElem, stdDev) {
+      canvas.setBlurOffsets = function (filterElem, stdDev) {
         if (stdDev > 3) {
           // TODO: Create algorithm here where size is based on expected blur
           assignAttributes(
@@ -6424,7 +6441,7 @@ function hideCursor () {
               x: "-50%",
               y: "-50%",
               width: "200%",
-              height: "200%"
+              height: "200%",
             },
             100
           );
@@ -6444,7 +6461,7 @@ function hideCursor () {
        * @param {boolean} complete - Whether or not the action should be completed (to add to the undo manager)
        * @returns {void}
        */
-      canvas.setBlur = function(val, complete) {
+      canvas.setBlur = function (val, complete) {
         if (curCommand) {
           finishChange();
           return;
@@ -6470,15 +6487,15 @@ function hideCursor () {
             element: "feGaussianBlur",
             attr: {
               in: "SourceGraphic",
-              stdDeviation: val
-            }
+              stdDeviation: val,
+            },
           });
 
           filter = addSVGElementFromJson({
             element: "filter",
             attr: {
-              id: elemId + "_blur"
-            }
+              id: elemId + "_blur",
+            },
           });
 
           filter.append(newblur);
@@ -6501,7 +6518,7 @@ function hideCursor () {
 
         curCommand = batchCmd;
         canvas.undoMgr.beginUndoableChange("stdDeviation", [
-          filter ? filter.firstChild : null
+          filter ? filter.firstChild : null,
         ]);
         if (complete) {
           canvas.setBlurNoUndo(val);
@@ -6515,7 +6532,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getBold
      * @returns {boolean} Indicates whether or not element is bold
      */
-    this.getBold = function() {
+    this.getBold = function () {
       // should only have one element selected
       const selected = selectedElements[0];
       if (
@@ -6534,7 +6551,7 @@ function hideCursor () {
      * @param {boolean} b - Indicates bold (`true`) or normal (`false`)
      * @returns {void}
      */
-    this.setBold = function(b) {
+    this.setBold = function (b) {
       const selected = selectedElements[0];
       if (
         !isNullish(selected) &&
@@ -6553,7 +6570,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getItalic
      * @returns {boolean} Indicates whether or not element is italic
      */
-    this.getItalic = function() {
+    this.getItalic = function () {
       const selected = selectedElements[0];
       if (
         !isNullish(selected) &&
@@ -6571,7 +6588,7 @@ function hideCursor () {
      * @param {boolean} i - Indicates italic (`true`) or normal (`false`)
      * @returns {void}
      */
-    this.setItalic = function(i) {
+    this.setItalic = function (i) {
       const selected = selectedElements[0];
       if (
         !isNullish(selected) &&
@@ -6589,7 +6606,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getFontFamily
      * @returns {string} The current font family
      */
-    this.getFontFamily = function() {
+    this.getFontFamily = function () {
       return curText.font_family;
     };
 
@@ -6599,7 +6616,7 @@ function hideCursor () {
      * @param {string} val - String with the new font family
      * @returns {void}
      */
-    this.setFontFamily = function(val) {
+    this.setFontFamily = function (val) {
       curText.font_family = val;
       changeSelectedAttribute("font-family", val);
       if (selectedElements[0] && !selectedElements[0].textContent) {
@@ -6613,7 +6630,7 @@ function hideCursor () {
      * @param {string} val - String with the new font color
      * @returns {void}
      */
-    this.setFontColor = function(val) {
+    this.setFontColor = function (val) {
       curText.fill = val;
       changeSelectedAttribute("fill", val);
     };
@@ -6622,7 +6639,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getFontColor
      * @returns {string} The current font color
      */
-    this.getFontColor = function() {
+    this.getFontColor = function () {
       return curText.fill;
     };
 
@@ -6630,7 +6647,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getFontSize
      * @returns {Float} The current font size
      */
-    this.getFontSize = function() {
+    this.getFontSize = function () {
       return curText.font_size;
     };
 
@@ -6640,7 +6657,7 @@ function hideCursor () {
      * @param {Float} val - Float with the new font size
      * @returns {void}
      */
-    this.setFontSize = function(val) {
+    this.setFontSize = function (val) {
       curText.font_size = val;
       changeSelectedAttribute("font-size", val);
       if (!selectedElements[0].textContent) {
@@ -6652,7 +6669,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getText
      * @returns {string} The current text (`textContent`) of the selected element
      */
-    this.getText = function() {
+    this.getText = function () {
       const selected = selectedElements[0];
       if (isNullish(selected)) {
         return "";
@@ -6666,7 +6683,7 @@ function hideCursor () {
      * @param {string} val - String with the new text
      * @returns {void}
      */
-    this.setTextContent = function(val) {
+    this.setTextContent = function (val) {
       changeSelectedAttribute("#text", val);
       textActions.init(val);
       textActions.setCursor();
@@ -6680,7 +6697,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.setImageURL = function(val) {
+    this.setImageURL = function (val) {
       const elem = selectedElements[0];
       if (!elem) {
         return;
@@ -6701,17 +6718,17 @@ function hideCursor () {
       setHref(elem, val);
       batchCmd.addSubCommand(
         new ChangeElementCommand(elem, {
-          "#href": curHref
+          "#href": curHref,
         })
       );
 
       $(new Image())
-        .load(function() {
+        .load(function () {
           const changes = $(elem).attr(["width", "height"]);
 
           $(elem).attr({
             width: this.width,
-            height: this.height
+            height: this.height,
           });
 
           selectorManager.requestSelector(elem).resize();
@@ -6729,7 +6746,7 @@ function hideCursor () {
      * @param {string} val - String with the link URL/path
      * @returns {void}
      */
-    this.setLinkURL = function(val) {
+    this.setLinkURL = function (val) {
       let elem = selectedElements[0];
       if (!elem) {
         return;
@@ -6755,7 +6772,7 @@ function hideCursor () {
       setHref(elem, val);
       batchCmd.addSubCommand(
         new ChangeElementCommand(elem, {
-          "#href": curHref
+          "#href": curHref,
         })
       );
 
@@ -6770,7 +6787,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.setRectRadius = function(val) {
+    this.setRectRadius = function (val) {
       const selected = selectedElements[0];
       if (!isNullish(selected) && selected.tagName === "rect") {
         const r = selected.getAttribute("rx");
@@ -6791,7 +6808,7 @@ function hideCursor () {
      * @param {string} url
      * @returns {void}
      */
-    this.makeHyperlink = function(url) {
+    this.makeHyperlink = function (url) {
       canvas.groupSelectedElements("a", url);
 
       // TODO: If element is a single "g", convert to "a"
@@ -6802,7 +6819,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#removeHyperlink
      * @returns {void}
      */
-    this.removeHyperlink = function() {
+    this.removeHyperlink = function () {
       canvas.ungroupSelectedElement();
     };
 
@@ -6816,7 +6833,7 @@ function hideCursor () {
      * @param {Integer} newType - New segment type. See {@link https://www.w3.org/TR/SVG/paths.html#InterfaceSVGPathSeg} for list
      * @returns {void}
      */
-    this.setSegType = function(newType) {
+    this.setSegType = function (newType) {
       pathActions.setSegType(newType);
     };
 
@@ -6829,10 +6846,10 @@ function hideCursor () {
      * @returns {void|DOMRect|false|SVGPathElement|null} If the getBBox flag is true, the resulting path's bounding box object.
      * Otherwise the resulting path element is returned.
      */
-    this.convertToPath = function(elem, getBBox) {
+    this.convertToPath = function (elem, getBBox) {
       if (isNullish(elem)) {
         const elems = selectedElements;
-        $.each(elems, function(i, el) {
+        $.each(elems, function (i, el) {
           if (el) {
             canvas.convertToPath(el);
           }
@@ -6854,7 +6871,7 @@ function hideCursor () {
         "stroke-linecap": curShape.stroke_linecap,
         "stroke-opacity": curShape.stroke_opacity,
         opacity: curShape.opacity,
-        visibility: "hidden"
+        visibility: "hidden",
       };
       return convertToPath(
         elem,
@@ -6876,7 +6893,7 @@ function hideCursor () {
      * @param {Element[]} elems - The DOM elements to apply the change to
      * @returns {void}
      */
-    const changeSelectedAttributeNoUndo = function(attr, newValue, elems) {
+    const changeSelectedAttributeNoUndo = function (attr, newValue, elems) {
       if (currentMode === "pathedit") {
         // Editing node
         pathActions.moveNode(attr, newValue);
@@ -6981,7 +6998,7 @@ function hideCursor () {
           // that are not in the selectedElements array, we need to only request a
           // selector if the element is in that array
           if (selectedElements.includes(elem)) {
-            setTimeout(function() {
+            setTimeout(function () {
               // Due to element replacement, this element may no longer
               // be part of the DOM
               if (!elem.parentNode) {
@@ -7032,7 +7049,7 @@ function hideCursor () {
      * @param {Element[]} elems - The DOM elements to apply the change to
      * @returns {void}
      */
-    const changeSelectedAttribute = (this.changeSelectedAttribute = function(
+    const changeSelectedAttribute = (this.changeSelectedAttribute = function (
       attr,
       val,
       elems
@@ -7056,7 +7073,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.deleteSelectedElements = function() {
+    this.deleteSelectedElements = function () {
       const batchCmd = new BatchCommand("Delete Elements");
       const len = selectedElements.length;
       const selectedCopy = []; // selectedElements is being deleted
@@ -7105,7 +7122,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#cutSelectedElements
      * @returns {void}
      */
-    this.cutSelectedElements = function() {
+    this.cutSelectedElements = function () {
       canvas.copySelectedElements();
       canvas.deleteSelectedElements();
     };
@@ -7119,7 +7136,7 @@ function hideCursor () {
     function flashStorage() {
       const data = sessionStorage.getItem(CLIPBOARD_ID);
       localStorage.setItem(CLIPBOARD_ID, data);
-      setTimeout(function() {
+      setTimeout(function () {
         localStorage.removeItem(CLIPBOARD_ID);
       }, 1);
     }
@@ -7151,9 +7168,9 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#copySelectedElements
      * @returns {void}
      */
-    this.copySelectedElements = function() {
+    this.copySelectedElements = function () {
       const data = JSON.stringify(
-        selectedElements.map(x => getJsonFromSvgElement(x))
+        selectedElements.map((x) => getJsonFromSvgElement(x))
       );
       // Use sessionStorage for the clipboard data.
       sessionStorage.setItem(CLIPBOARD_ID, data);
@@ -7175,7 +7192,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:ext_IDsUpdated
      * @returns {void}
      */
-    this.pasteElements = function(type, x, y) {
+    this.pasteElements = function (type, x, y) {
       let clipb = JSON.parse(sessionStorage.getItem(CLIPBOARD_ID));
       if (!clipb) return;
       let len = clipb.length;
@@ -7220,11 +7237,11 @@ function hideCursor () {
         /** @type {module:svgcanvas.SvgCanvas#event:ext_IDsUpdated} */
         { elems: clipb, changes: changedIDs },
         true
-      ).forEach(function(extChanges) {
+      ).forEach(function (extChanges) {
         if (!extChanges || !("remove" in extChanges)) return;
 
-        extChanges.remove.forEach(function(removeID) {
-          clipb = clipb.filter(function(clipBoardItem) {
+        extChanges.remove.forEach(function (removeID) {
+          clipb = clipb.filter(function (clipBoardItem) {
             return clipBoardItem.attr.id !== removeID;
           });
         });
@@ -7263,7 +7280,7 @@ function hideCursor () {
           dx = [],
           dy = [];
 
-        $.each(pasted, function(i, item) {
+        $.each(pasted, function (i, item) {
           dx.push(cx);
           dy.push(cy);
         });
@@ -7283,7 +7300,7 @@ function hideCursor () {
      * @param {string} [urlArg]
      * @returns {void}
      */
-    this.groupSelectedElements = function(type, urlArg) {
+    this.groupSelectedElements = function (type, urlArg) {
       if (!type) {
         type = "g";
       }
@@ -7309,8 +7326,8 @@ function hideCursor () {
       const g = addSVGElementFromJson({
         element: type,
         attr: {
-          id: getNextId()
-        }
+          id: getNextId(),
+        },
       });
       if (type === "a") {
         setHref(g, url);
@@ -7355,7 +7372,7 @@ function hideCursor () {
      * @param {boolean} undoable
      * @returns {BatchCommand|void}
      */
-    const pushGroupProperties = (this.pushGroupProperties = function(
+    const pushGroupProperties = (this.pushGroupProperties = function (
       g,
       undoable
     ) {
@@ -7433,7 +7450,7 @@ function hideCursor () {
           // Update blur value
           if (cblur) {
             changeSelectedAttribute("stdDeviation", cblur, [
-              gfilter.firstChild
+              gfilter.firstChild,
             ]);
             canvas.setBlurOffsets(gfilter, cblur);
           }
@@ -7567,7 +7584,7 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#ungroupSelectedElement
      * @returns {void}
      */
-    this.ungroupSelectedElement = function() {
+    this.ungroupSelectedElement = function () {
       let g = selectedElements[0];
       if (!g) {
         return;
@@ -7580,9 +7597,7 @@ function hideCursor () {
       if (g.tagName === "use") {
         // Somehow doesn't have data set, so retrieve
         const symbol = getElem(getHref(g).substr(1));
-        $(g)
-          .data("symbol", symbol)
-          .data("ref", symbol);
+        $(g).data("symbol", symbol).data("ref", symbol);
         convertToGroup(g);
         return;
       }
@@ -7656,7 +7671,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.moveToTopSelectedElement = function() {
+    this.moveToTopSelectedElement = function () {
       const [selected] = selectedElements;
       if (!isNullish(selected)) {
         let t = selected;
@@ -7681,7 +7696,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.moveToBottomSelectedElement = function() {
+    this.moveToBottomSelectedElement = function () {
       const [selected] = selectedElements;
       if (!isNullish(selected)) {
         let t = selected;
@@ -7716,7 +7731,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.moveUpDownSelected = function(dir) {
+    this.moveUpDownSelected = function (dir) {
       const selected = selectedElements[0];
       if (!selected) {
         return;
@@ -7732,7 +7747,7 @@ function hideCursor () {
         list.reverse();
       }
 
-      $.each(list, function() {
+      $.each(list, function () {
         if (!foundCur) {
           if (this === selected) {
             foundCur = true;
@@ -7769,7 +7784,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {BatchCommand|void} Batch command for the move
      */
-    this.moveSelectedElements = function(dx, dy, undoable) {
+    this.moveSelectedElements = function (dx, dy, undoable) {
       // if undoable is not sent, default to true
       // if single values, scale them to the zoom
       if (dx.constructor !== Array) {
@@ -7839,7 +7854,7 @@ function hideCursor () {
      * @param {Float} y Float with the distance to move on the y-axis
      * @returns {void}
      */
-    this.cloneSelectedElements = function(x, y) {
+    this.cloneSelectedElements = function (x, y) {
       let i, elem;
       const batchCmd = new BatchCommand("Clone Elements");
       // find all the elements selected (stop at first null)
@@ -7888,7 +7903,7 @@ function hideCursor () {
      * @param {"selected"|"largest"|"smallest"|"page"} relativeTo
      * @returns {void}
      */
-    this.alignSelectedElements = function(type, relativeTo) {
+    this.alignSelectedElements = function (type, relativeTo) {
       const bboxes = []; // angles = [];
       const len = selectedElements.length;
       if (!len) {
@@ -8035,7 +8050,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:ext_canvasUpdated
      * @returns {module:svgcanvas.CanvasInfo}
      */
-    this.updateCanvas = function(w, h) {
+    this.updateCanvas = function (w, h) {
       svgroot.setAttribute("width", w);
       svgroot.setAttribute("height", h);
       const bg = $("#canvasBackground")[0];
@@ -8049,21 +8064,21 @@ function hideCursor () {
         height: this.contentH * currentZoom,
         x,
         y,
-        viewBox: "0 0 " + this.contentW + " " + this.contentH
+        viewBox: "0 0 " + this.contentW + " " + this.contentH,
       });
 
       assignAttributes(bg, {
         width: svgcontent.getAttribute("width"),
         height: svgcontent.getAttribute("height"),
         x,
-        y
+        y,
       });
 
       const bgImg = getElem("background_image");
       if (bgImg) {
         assignAttributes(bgImg, {
           width: "100%",
-          height: "100%"
+          height: "100%",
         });
       }
 
@@ -8094,7 +8109,7 @@ function hideCursor () {
           old_x: oldX,
           old_y: oldY,
           d_x: x - oldX,
-          d_y: y - oldY
+          d_y: y - oldY,
         }
       );
       return { x, y, old_x: oldX, old_y: oldY, d_x: x - oldX, d_y: y - oldY };
@@ -8107,7 +8122,7 @@ function hideCursor () {
      * @param {string} url - URL or path to image to use
      * @returns {void}
      */
-    this.setBackground = function(color, url) {
+    this.setBackground = function (color, url) {
       const bg = getElem("canvasBackground");
       const border = $(bg).find("rect")[0];
       let bgImg = getElem("background_image");
@@ -8121,12 +8136,12 @@ function hideCursor () {
             width: "100%",
             height: "100%",
             preserveAspectRatio: "xMinYMin",
-            style: "pointer-events:none"
+            style: "pointer-events:none",
           });
           const div = document.createElement("div");
           assignAttributes(div, {
             style:
-              "pointer-events:none;width:100%;height:100%;background-image:url(data:image/gif;base64,R0lGODlhEAAQAIAAAP///9bW1iH5BAAAAAAALAAAAAAQABAAAAIfjG+gq4jM3IFLJgpswNly/XkcBpIiVaInlLJr9FZWAQA7);"
+              "pointer-events:none;width:100%;height:100%;background-image:url(data:image/gif;base64,R0lGODlhEAAQAIAAAP///9bW1iH5BAAAAAAALAAAAAAQABAAAAIfjG+gq4jM3IFLJgpswNly/XkcBpIiVaInlLJr9FZWAQA7);",
           });
           bgPattern.appendChild(div);
           bg.append(bgPattern);
@@ -8142,7 +8157,7 @@ function hideCursor () {
             width: "100%",
             height: "100%",
             preserveAspectRatio: "xMinYMin",
-            style: "pointer-events:none"
+            style: "pointer-events:none",
           });
         }
         setHref(bgImg, url);
@@ -8159,7 +8174,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:selected
      * @returns {void}
      */
-    this.cycleElement = function(next) {
+    this.cycleElement = function (next) {
       let num;
       const curElem = selectedElements[0];
       let elem = false;
@@ -8234,7 +8249,7 @@ function hideCursor () {
 * @function module:svgcanvas.SvgCanvas#getPrivateMethods
 * @returns {module:svgcanvas.PrivateMethods}
 */
-    this.getPrivateMethods = function() {
+    this.getPrivateMethods = function () {
       const obj = {
         addCommandToHistory,
         BatchCommand,
@@ -8263,7 +8278,7 @@ function hideCursor () {
         text2xml,
         transformBox,
         transformPoint,
-        walkTree
+        walkTree,
       };
       return obj;
     };
