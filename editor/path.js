@@ -362,7 +362,6 @@ export const getPointFromGrip = function (pt, pth) {
   const currentZoom = editorContext_.getCurrentZoom();
   out.x /= currentZoom;
   out.y /= currentZoom;
-
   return out;
 };
 
@@ -1058,7 +1057,6 @@ export class Path {
     this.segs = [];
     this.selected_pts = [];
     this.first_seg = null;
-    this.ppath = new paper.Path().importSVG(this.elem.outerHTML);
 
     // Set up segs array
     for (let i = 0; i < len; i++) {
@@ -1135,10 +1133,11 @@ export class Path {
 
   divideAt(x, y, currentZoom) {
     const zoom = currentZoom || 1;
-    const segment = this.findSeg({ x, y });
+    const seg = this.findSeg({ x, y });
 
-    if (segment) {
-      this.addSeg(segment.index, { x: x / zoom, y: y / zoom });
+    if (seg) {
+      const pathPt = transformPoint(x / zoom, y / zoom, this.imatrix);
+      this.addSeg(seg.index, pathPt);
     }
   }
 
@@ -1443,7 +1442,11 @@ export class Path {
       this.update();
     });
 
-    this.ppath = new paper.Path().importSVG(this.elem.outerHTML);
+    this.ppath = new paper.Path(elem.getAttribute("d"));
+    if (this.matrix) {
+      const { a, b, c, d, e: tx, f: ty } = this.matrix;
+      this.ppath.matrix.set(a, b, c, d, tx, ty);
+    }
     return this;
   }
 
