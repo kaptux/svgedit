@@ -7,29 +7,36 @@
  * @copyright 2010 Alexis Deveria, 2010 Jeff Schiller
  */
 
-import './svgpathseg.js';
-import jQueryPluginSVG from './jQuery.attr.js'; // Needed for SVG attribute setting and array form with `attr`
-import {NS} from './namespaces.js';
-import {getTransformList} from './svgtransformlist.js';
-import {setUnitAttr, getTypeMap} from './units.js';
-import {convertPath} from './path.js';
+import "./svgpathseg.js";
+import jQueryPluginSVG from "./jQuery.attr.js"; // Needed for SVG attribute setting and array form with `attr`
+import { NS } from "./namespaces.js";
+import { getTransformList } from "./svgtransformlist.js";
+import { setUnitAttr, getTypeMap } from "./units.js";
+import { convertPath } from "./path.js";
 import {
-  hasMatrixTransform, transformListToTransform, transformBox
-} from './math.js';
+  hasMatrixTransform,
+  transformListToTransform,
+  transformBox,
+} from "./math.js";
 import {
-  isWebkit, supportsHVLineContainerBBox, supportsPathBBox, supportsXpath,
-  supportsSelectors
-} from './browser.js';
+  isWebkit,
+  supportsHVLineContainerBBox,
+  supportsPathBBox,
+  supportsXpath,
+  supportsSelectors,
+} from "./browser.js";
 
 // Constants
 const $ = jQueryPluginSVG(jQuery);
 
 // String used to encode base64.
-const KEYSTR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+const KEYSTR =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 // Much faster than running getBBox() every time
-const visElems = 'a,circle,ellipse,foreignObject,g,image,line,path,polygon,polyline,rect,svg,text,tspan,use';
-const visElemsArr = visElems.split(',');
+const visElems =
+  "a,circle,ellipse,foreignObject,g,image,line,path,polygon,polyline,rect,svg,text,tspan,use";
+const visElemsArr = visElems.split(",");
 // const hidElems = 'clipPath,defs,desc,feGaussianBlur,filter,linearGradient,marker,mask,metadata,pattern,radialGradient,stop,switch,symbol,title,textPath';
 
 let editorContext_ = null;
@@ -38,14 +45,14 @@ let domcontainer_ = null;
 let svgroot_ = null;
 
 /**
-* Object with the following keys/values.
-* @typedef {PlainObject} module:utilities.SVGElementJSON
-* @property {string} element - Tag name of the SVG element to create
-* @property {PlainObject<string, string>} attr - Has key-value attributes to assign to the new element. An `id` should be set so that {@link module:utilities.EditorContext#addSVGElementFromJson} can later re-identify the element for modification or replacement.
-* @property {boolean} [curStyles=false] - Indicates whether current style attributes should be applied first
-* @property {module:utilities.SVGElementJSON[]} [children] - Data objects to be added recursively as children
-* @property {string} [namespace="http://www.w3.org/2000/svg"] - Indicate a (non-SVG) namespace
-*/
+ * Object with the following keys/values.
+ * @typedef {PlainObject} module:utilities.SVGElementJSON
+ * @property {string} element - Tag name of the SVG element to create
+ * @property {PlainObject<string, string>} attr - Has key-value attributes to assign to the new element. An `id` should be set so that {@link module:utilities.EditorContext#addSVGElementFromJson} can later re-identify the element for modification or replacement.
+ * @property {boolean} [curStyles=false] - Indicates whether current style attributes should be applied first
+ * @property {module:utilities.SVGElementJSON[]} [children] - Data objects to be added recursively as children
+ * @property {string} [namespace="http://www.w3.org/2000/svg"] - Indicate a (non-SVG) namespace
+ */
 
 /**
  * An object that creates SVG elements for the canvas.
@@ -64,37 +71,37 @@ let svgroot_ = null;
  * @function module:utilities.EditorContext#addSVGElementFromJson
  * @param {module:utilities.SVGElementJSON} data
  * @returns {Element} The new element
-*/
+ */
 /**
  * @function module:utilities.EditorContext#getSelectedElements
  * @returns {Element[]} the array with selected DOM elements
-*/
+ */
 /**
  * @function module:utilities.EditorContext#getDOMDocument
  * @returns {HTMLDocument}
-*/
+ */
 /**
  * @function module:utilities.EditorContext#getDOMContainer
  * @returns {HTMLElement}
-*/
+ */
 /**
  * @function module:utilities.EditorContext#getSVGRoot
  * @returns {SVGSVGElement}
-*/
+ */
 /**
  * @function module:utilities.EditorContext#getBaseUnit
  * @returns {string}
-*/
+ */
 /**
  * @function module:utilities.EditorContext#getSnappingStep
  * @returns {Float|string}
-*/
+ */
 
 /**
-* @function module:utilities.init
-* @param {module:utilities.EditorContext} editorContext
-* @returns {void}
-*/
+ * @function module:utilities.init
+ * @param {module:utilities.EditorContext} editorContext
+ * @returns {void}
+ */
 export const init = function (editorContext) {
   editorContext_ = editorContext;
   domdoc_ = editorContext.getDOMDocument();
@@ -110,37 +117,37 @@ export const init = function (editorContext) {
  * @todo This might be needed in other places `parseFromString` is used even without LGTM flagging
  */
 export const dropXMLInternalSubset = (str) => {
-  return str.replace(/(<!DOCTYPE\s+\w*\s*\[).*(\?]>)/, '$1$2');
+  return str.replace(/(<!DOCTYPE\s+\w*\s*\[).*(\?]>)/, "$1$2");
   // return str.replace(/(?<doctypeOpen><!DOCTYPE\s+\w*\s*\[).*(?<doctypeClose>\?\]>)/, '$<doctypeOpen>$<doctypeClose>');
 };
 
 /**
-* Converts characters in a string to XML-friendly entities.
-* @function module:utilities.toXml
-* @example `&` becomes `&amp;`
-* @param {string} str - The string to be converted
-* @returns {string} The converted string
-*/
+ * Converts characters in a string to XML-friendly entities.
+ * @function module:utilities.toXml
+ * @example `&` becomes `&amp;`
+ * @param {string} str - The string to be converted
+ * @returns {string} The converted string
+ */
 export const toXml = function (str) {
   // &apos; is ok in XML, but not HTML
   // &gt; does not normally need escaping, though it can if within a CDATA expression (and preceded by "]]")
   return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;'); // Note: `&apos;` is XML only
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#x27;"); // Note: `&apos;` is XML only
 };
 
 /**
-* Converts XML entities in a string to single characters.
-* @function module:utilities.fromXml
-* @example `&amp;` becomes `&`
-* @param {string} str - The string to be converted
-* @returns {string} The converted string
-*/
-export function fromXml (str) {
-  return $('<p/>').html(str).text();
+ * Converts XML entities in a string to single characters.
+ * @function module:utilities.fromXml
+ * @example `&amp;` becomes `&`
+ * @param {string} str - The string to be converted
+ * @returns {string} The converted string
+ */
+export function fromXml(str) {
+  return $("<p/>").html(str).text();
 }
 
 // This code was written by Tyler Akins and has been placed in the
@@ -151,12 +158,12 @@ export function fromXml (str) {
 //        also precalculate the size of the array needed.
 
 /**
-* Converts a string to base64.
-* @function module:utilities.encode64
-* @param {string} input
-* @returns {string} Base64 output
-*/
-export function encode64 (input) {
+ * Converts a string to base64.
+ * @function module:utilities.encode64
+ * @param {string} input
+ * @returns {string} Base64 output
+ */
+export function encode64(input) {
   // base64 strings are 4/3 larger than the original string
   input = encodeUTF8(input); // convert non-ASCII characters
   // input = convertToXMLReferences(input);
@@ -193,24 +200,24 @@ export function encode64 (input) {
     output[p++] = KEYSTR.charAt(enc4);
   } while (i < input.length);
 
-  return output.join('');
+  return output.join("");
 }
 
 /**
-* Converts a string from base64.
-* @function module:utilities.decode64
-* @param {string} input Base64-encoded input
-* @returns {string} Decoded output
-*/
-export function decode64 (input) {
+ * Converts a string from base64.
+ * @function module:utilities.decode64
+ * @param {string} input Base64-encoded input
+ * @returns {string} Decoded output
+ */
+export function decode64(input) {
   if (window.atob) {
     return decodeUTF8(window.atob(input));
   }
 
   // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
-  input = input.replace(/[^A-Za-z\d+/=]/g, '');
+  input = input.replace(/[^A-Za-z\d+/=]/g, "");
 
-  let output = '';
+  let output = "";
   let i = 0;
 
   do {
@@ -238,20 +245,20 @@ export function decode64 (input) {
 }
 
 /**
-* @function module:utilities.decodeUTF8
-* @param {string} argString
-* @returns {string}
-*/
-export function decodeUTF8 (argString) {
+ * @function module:utilities.decodeUTF8
+ * @param {string} argString
+ * @returns {string}
+ */
+export function decodeUTF8(argString) {
   return decodeURIComponent(escape(argString));
 }
 
 // codedread:does not seem to work with webkit-based browsers on OSX // Brettz9: please test again as function upgraded
 /**
-* @function module:utilities.encodeUTF8
-* @param {string} argString
-* @returns {string}
-*/
+ * @function module:utilities.encodeUTF8
+ * @param {string} argString
+ * @returns {string}
+ */
 export const encodeUTF8 = function (argString) {
   return unescape(encodeURIComponent(argString));
 };
@@ -263,10 +270,15 @@ export const encodeUTF8 = function (argString) {
  * @returns {string} object URL or empty string
  */
 export const dataURLToObjectURL = function (dataurl) {
-  if (typeof Uint8Array === 'undefined' || typeof Blob === 'undefined' || typeof URL === 'undefined' || !URL.createObjectURL) {
-    return '';
+  if (
+    typeof Uint8Array === "undefined" ||
+    typeof Blob === "undefined" ||
+    typeof URL === "undefined" ||
+    !URL.createObjectURL
+  ) {
+    return "";
   }
-  const arr = dataurl.split(','),
+  const arr = dataurl.split(","),
     mime = arr[0].match(/:(.*?);/)[1],
     bstr = atob(arr[1]);
   /*
@@ -279,7 +291,7 @@ export const dataURLToObjectURL = function (dataurl) {
   while (n--) {
     u8arr[n] = bstr.charCodeAt(n);
   }
-  const blob = new Blob([u8arr], {type: mime});
+  const blob = new Blob([u8arr], { type: mime });
   return URL.createObjectURL(blob);
 };
 
@@ -290,8 +302,8 @@ export const dataURLToObjectURL = function (dataurl) {
  * @returns {string} object URL or empty string
  */
 export const createObjectURL = function (blob) {
-  if (!blob || typeof URL === 'undefined' || !URL.createObjectURL) {
-    return '';
+  if (!blob || typeof URL === "undefined" || !URL.createObjectURL) {
+    return "";
   }
   return URL.createObjectURL(blob);
 };
@@ -300,21 +312,24 @@ export const createObjectURL = function (blob) {
  * @property {string} blankPageObjectURL
  */
 export const blankPageObjectURL = (function () {
-  if (typeof Blob === 'undefined') {
-    return '';
+  if (typeof Blob === "undefined") {
+    return "";
   }
-  const blob = new Blob(['<html><head><title>SVG-edit</title></head><body>&nbsp;</body></html>'], {type: 'text/html'});
+  const blob = new Blob(
+    ["<html><head><title>SVG-edit</title></head><body>&nbsp;</body></html>"],
+    { type: "text/html" }
+  );
   return createObjectURL(blob);
 })();
 
 /**
-* Converts a string to use XML references (for non-ASCII).
-* @function module:utilities.convertToXMLReferences
-* @param {string} input
-* @returns {string} Decimal numeric character references
-*/
+ * Converts a string to use XML references (for non-ASCII).
+ * @function module:utilities.convertToXMLReferences
+ * @param {string} input
+ * @returns {string} Decimal numeric character references
+ */
 export const convertToXMLReferences = function (input) {
-  let output = '';
+  let output = "";
   [...input].forEach((ch) => {
     const c = ch.charCodeAt();
     if (c <= 127) {
@@ -327,66 +342,70 @@ export const convertToXMLReferences = function (input) {
 };
 
 /**
-* Cross-browser compatible method of converting a string to an XML tree.
-* Found this function [here]{@link http://groups.google.com/group/jquery-dev/browse_thread/thread/c6d11387c580a77f}.
-* @function module:utilities.text2xml
-* @param {string} sXML
-* @throws {Error}
-* @returns {XMLDocument}
-*/
+ * Cross-browser compatible method of converting a string to an XML tree.
+ * Found this function [here]{@link http://groups.google.com/group/jquery-dev/browse_thread/thread/c6d11387c580a77f}.
+ * @function module:utilities.text2xml
+ * @param {string} sXML
+ * @throws {Error}
+ * @returns {XMLDocument}
+ */
 export const text2xml = function (sXML) {
-  if (sXML.includes('<svg:svg')) {
-    sXML = sXML.replace(/<(\/?)svg:/g, '<$1').replace('xmlns:svg', 'xmlns');
+  if (sXML.includes("<svg:svg")) {
+    sXML = sXML.replace(/<(\/?)svg:/g, "<$1").replace("xmlns:svg", "xmlns");
   }
 
   let out, dXML;
   try {
-    dXML = (window.DOMParser) ? new DOMParser() : new window.ActiveXObject('Microsoft.XMLDOM');
+    dXML = window.DOMParser
+      ? new DOMParser()
+      : new window.ActiveXObject("Microsoft.XMLDOM");
     dXML.async = false;
   } catch (e) {
-    throw new Error('XML Parser could not be instantiated');
+    throw new Error("XML Parser could not be instantiated");
   }
   try {
     if (dXML.loadXML) {
-      out = (dXML.loadXML(sXML)) ? dXML : false;
+      out = dXML.loadXML(sXML) ? dXML : false;
     } else {
-      out = dXML.parseFromString(sXML, 'text/xml');
+      out = dXML.parseFromString(sXML, "text/xml");
     }
-  } catch (e2) { throw new Error('Error parsing XML string'); }
+  } catch (e2) {
+    throw new Error("Error parsing XML string");
+  }
   return out;
 };
 
 /**
-* @typedef {PlainObject} module:utilities.BBoxObject (like `DOMRect`)
-* @property {Float} x
-* @property {Float} y
-* @property {Float} width
-* @property {Float} height
-*/
+ * @typedef {PlainObject} module:utilities.BBoxObject (like `DOMRect`)
+ * @property {Float} x
+ * @property {Float} y
+ * @property {Float} width
+ * @property {Float} height
+ */
 
 /**
-* Converts a `SVGRect` into an object.
-* @function module:utilities.bboxToObj
-* @param {SVGRect} bbox - a SVGRect
-* @returns {module:utilities.BBoxObject} An object with properties names x, y, width, height.
-*/
-export const bboxToObj = function ({x, y, width, height}) {
-  return {x, y, width, height};
+ * Converts a `SVGRect` into an object.
+ * @function module:utilities.bboxToObj
+ * @param {SVGRect} bbox - a SVGRect
+ * @returns {module:utilities.BBoxObject} An object with properties names x, y, width, height.
+ */
+export const bboxToObj = function ({ x, y, width, height }) {
+  return { x, y, width, height };
 };
 
 /**
-* @callback module:utilities.TreeWalker
-* @param {Element} elem - DOM element being traversed
-* @returns {void}
-*/
+ * @callback module:utilities.TreeWalker
+ * @param {Element} elem - DOM element being traversed
+ * @returns {void}
+ */
 
 /**
-* Walks the tree and executes the callback on each element in a top-down fashion.
-* @function module:utilities.walkTree
-* @param {Element} elem - DOM element to traverse
-* @param {module:utilities.TreeWalker} cbFn - Callback function to run on each element
-* @returns {void}
-*/
+ * Walks the tree and executes the callback on each element in a top-down fashion.
+ * @function module:utilities.walkTree
+ * @param {Element} elem - DOM element to traverse
+ * @param {module:utilities.TreeWalker} cbFn - Callback function to run on each element
+ * @returns {void}
+ */
 export const walkTree = function (elem, cbFn) {
   if (elem && elem.nodeType === 1) {
     cbFn(elem);
@@ -398,13 +417,13 @@ export const walkTree = function (elem, cbFn) {
 };
 
 /**
-* Walks the tree and executes the callback on each element in a depth-first fashion.
-* @function module:utilities.walkTreePost
-* @todo Shouldn't this be calling walkTreePost?
-* @param {Element} elem - DOM element to traverse
-* @param {module:utilities.TreeWalker} cbFn - Callback function to run on each element
-* @returns {void}
-*/
+ * Walks the tree and executes the callback on each element in a depth-first fashion.
+ * @function module:utilities.walkTreePost
+ * @todo Shouldn't this be calling walkTreePost?
+ * @param {Element} elem - DOM element to traverse
+ * @param {module:utilities.TreeWalker} cbFn - Callback function to run on each element
+ * @returns {void}
+ */
 export const walkTreePost = function (elem, cbFn) {
   if (elem && elem.nodeType === 1) {
     let i = elem.childNodes.length;
@@ -416,15 +435,15 @@ export const walkTreePost = function (elem, cbFn) {
 };
 
 /**
-* Extracts the URL from the `url(...)` syntax of some attributes.
-* Three variants:
-*  - `<circle fill="url(someFile.svg#foo)" />`
-*  - `<circle fill="url('someFile.svg#foo')" />`
-*  - `<circle fill='url("someFile.svg#foo")' />`
-* @function module:utilities.getUrlFromAttr
-* @param {string} attrVal The attribute value as a string
-* @returns {string} String with just the URL, like "someFile.svg#foo"
-*/
+ * Extracts the URL from the `url(...)` syntax of some attributes.
+ * Three variants:
+ *  - `<circle fill="url(someFile.svg#foo)" />`
+ *  - `<circle fill="url('someFile.svg#foo')" />`
+ *  - `<circle fill='url("someFile.svg#foo")' />`
+ * @function module:utilities.getUrlFromAttr
+ * @param {string} attrVal The attribute value as a string
+ * @returns {string} String with just the URL, like "someFile.svg#foo"
+ */
 export const getUrlFromAttr = function (attrVal) {
   if (attrVal) {
     // url('#somegrad')
@@ -435,44 +454,46 @@ export const getUrlFromAttr = function (attrVal) {
     if (attrVal.startsWith("url('")) {
       return attrVal.substring(5, attrVal.indexOf("'", 6));
     }
-    if (attrVal.startsWith('url(')) {
-      return attrVal.substring(4, attrVal.indexOf(')'));
+    if (attrVal.startsWith("url(")) {
+      return attrVal.substring(4, attrVal.indexOf(")"));
     }
   }
   return null;
 };
 
 /**
-* @function module:utilities.getHref
-* @param {Element} elem
-* @returns {string} The given element's `xlink:href` value
-*/
-export let getHref = function (elem) { // eslint-disable-line import/no-mutable-exports
-  return elem.getAttributeNS(NS.XLINK, 'href');
+ * @function module:utilities.getHref
+ * @param {Element} elem
+ * @returns {string} The given element's `xlink:href` value
+ */
+export let getHref = function (elem) {
+  // eslint-disable-line import/no-mutable-exports
+  return elem.getAttributeNS(NS.XLINK, "href");
 };
 
 /**
-* Sets the given element's `xlink:href` value.
-* @function module:utilities.setHref
-* @param {Element} elem
-* @param {string} val
-* @returns {void}
-*/
-export let setHref = function (elem, val) { // eslint-disable-line import/no-mutable-exports
-  elem.setAttributeNS(NS.XLINK, 'xlink:href', val);
+ * Sets the given element's `xlink:href` value.
+ * @function module:utilities.setHref
+ * @param {Element} elem
+ * @param {string} val
+ * @returns {void}
+ */
+export let setHref = function (elem, val) {
+  // eslint-disable-line import/no-mutable-exports
+  elem.setAttributeNS(NS.XLINK, "xlink:href", val);
 };
 
 /**
-* @function module:utilities.findDefs
-* @returns {SVGDefsElement} The document's `<defs>` element, creating it first if necessary
-*/
+ * @function module:utilities.findDefs
+ * @returns {SVGDefsElement} The document's `<defs>` element, creating it first if necessary
+ */
 export const findDefs = function () {
   const svgElement = editorContext_.getSVGContent();
-  let defs = svgElement.getElementsByTagNameNS(NS.SVG, 'defs');
+  let defs = svgElement.getElementsByTagNameNS(NS.SVG, "defs");
   if (defs.length > 0) {
     defs = defs[0];
   } else {
-    defs = svgElement.ownerDocument.createElementNS(NS.SVG, 'defs');
+    defs = svgElement.ownerDocument.createElementNS(NS.SVG, "defs");
     if (svgElement.firstChild) {
       // first child is a comment, so call nextSibling
       svgElement.insertBefore(defs, svgElement.firstChild.nextSibling);
@@ -487,12 +508,12 @@ export const findDefs = function () {
 // TODO(codedread): Consider moving the next to functions to bbox.js
 
 /**
-* Get correct BBox for a path in Webkit.
-* Converted from code found [here]{@link http://blog.hackers-cafe.net/2009/06/how-to-calculate-bezier-curves-bounding.html}.
-* @function module:utilities.getPathBBox
-* @param {SVGPathElement} path - The path DOM element to get the BBox for
-* @returns {module:utilities.BBoxObject} A BBox-like object
-*/
+ * Get correct BBox for a path in Webkit.
+ * Converted from code found [here]{@link http://blog.hackers-cafe.net/2009/06/how-to-calculate-bezier-curves-bounding.html}.
+ * @function module:utilities.getPathBBox
+ * @param {SVGPathElement} path - The path DOM element to get the BBox for
+ * @returns {module:utilities.BBoxObject} A BBox-like object
+ */
 export const getPathBBox = function (path) {
   const seglist = path.pathSegList;
   const tot = seglist.numberOfItems;
@@ -503,17 +524,23 @@ export const getPathBBox = function (path) {
 
   const getCalc = function (j, P1, P2, P3) {
     return function (t) {
-      return 1 - (t ** 3) * P0[j] +
-        3 * 1 - (t ** 2) * t * P1[j] +
-        3 * (1 - t) * (t ** 2) * P2[j] +
-        (t ** 3) * P3[j];
+      return (
+        1 -
+        t ** 3 * P0[j] +
+        3 * 1 -
+        t ** 2 * t * P1[j] +
+        3 * (1 - t) * t ** 2 * P2[j] +
+        t ** 3 * P3[j]
+      );
     };
   };
 
   for (let i = 0; i < tot; i++) {
     const seg = seglist.getItem(i);
 
-    if (seg.x === undefined) { continue; }
+    if (seg.x === undefined) {
+      continue;
+    }
 
     // Add actual points to limits
     bounds[0].push(P0[0]);
@@ -532,19 +559,27 @@ export const getPathBBox = function (path) {
         const c = 3 * P1[j] - 3 * P0[j];
 
         if (a === 0) {
-          if (b === 0) { continue; }
+          if (b === 0) {
+            continue;
+          }
           const t = -c / b;
           if (t > 0 && t < 1) {
             bounds[j].push(calc(t));
           }
           continue;
         }
-        const b2ac = (b ** 2) - 4 * c * a;
-        if (b2ac < 0) { continue; }
+        const b2ac = b ** 2 - 4 * c * a;
+        if (b2ac < 0) {
+          continue;
+        }
         const t1 = (-b + Math.sqrt(b2ac)) / (2 * a);
-        if (t1 > 0 && t1 < 1) { bounds[j].push(calc(t1)); }
+        if (t1 > 0 && t1 < 1) {
+          bounds[j].push(calc(t1));
+        }
         const t2 = (-b - Math.sqrt(b2ac)) / (2 * a);
-        if (t2 > 0 && t2 < 1) { bounds[j].push(calc(t2)); }
+        if (t2 > 0 && t2 < 1) {
+          bounds[j].push(calc(t2));
+        }
       }
       P0 = P3;
     } else {
@@ -561,32 +596,34 @@ export const getPathBBox = function (path) {
     x,
     y,
     width: w,
-    height: h
+    height: h,
   };
 };
 
 /**
-* Get the given/selected element's bounding box object, checking for
-* horizontal/vertical lines (see issue 717)
-* Note that performance is currently terrible, so some way to improve would
-* be great.
-* @param {Element} selected - Container or `<use>` DOM element
-* @returns {DOMRect} Bounding box object
-*/
-function groupBBFix (selected) {
+ * Get the given/selected element's bounding box object, checking for
+ * horizontal/vertical lines (see issue 717)
+ * Note that performance is currently terrible, so some way to improve would
+ * be great.
+ * @param {Element} selected - Container or `<use>` DOM element
+ * @returns {DOMRect} Bounding box object
+ */
+function groupBBFix(selected) {
   if (supportsHVLineContainerBBox()) {
-    try { return selected.getBBox(); } catch (e) {}
+    try {
+      return selected.getBBox();
+    } catch (e) {}
   }
-  const ref = $.data(selected, 'ref');
+  const ref = $.data(selected, "ref");
   let matched = null;
   let ret, copy;
 
   if (ref) {
-    copy = $(ref).children().clone().attr('visibility', 'hidden');
+    copy = $(ref).children().clone().attr("visibility", "hidden");
     $(svgroot_).append(copy);
-    matched = copy.filter('line, path');
+    matched = copy.filter("line, path");
   } else {
-    matched = $(selected).find('line, path');
+    matched = $(selected).find("line, path");
   }
 
   let issue = false;
@@ -613,85 +650,88 @@ function groupBBFix (selected) {
 }
 
 /**
-* Get the given/selected element's bounding box object, convert it to be more
-* usable when necessary.
-* @function module:utilities.getBBox
-* @param {Element} elem - Optional DOM element to get the BBox for
-* @returns {module:utilities.BBoxObject} Bounding box object
-*/
+ * Get the given/selected element's bounding box object, convert it to be more
+ * usable when necessary.
+ * @function module:utilities.getBBox
+ * @param {Element} elem - Optional DOM element to get the BBox for
+ * @returns {module:utilities.BBoxObject} Bounding box object
+ */
 export const getBBox = function (elem) {
   const selected = elem || editorContext_.geSelectedElements()[0];
-  if (elem.nodeType !== 1) { return null; }
+  if (elem.nodeType !== 1) {
+    return null;
+  }
   const elname = selected.nodeName;
 
   let ret = null;
   switch (elname) {
-  case 'text':
-    if (selected.textContent === '') {
-      selected.textContent = 'a'; // Some character needed for the selector to use.
-      ret = selected.getBBox();
-      selected.textContent = '';
-    } else if (selected.getBBox) {
-      ret = selected.getBBox();
-    }
-    break;
-  case 'path':
-    if (!supportsPathBBox()) {
-      ret = getPathBBox(selected);
-    } else if (selected.getBBox) {
-      ret = selected.getBBox();
-    }
-    break;
-  case 'g':
-  case 'a':
-    ret = groupBBFix(selected);
-    break;
-  default:
-
-    if (elname === 'use') {
-      ret = groupBBFix(selected); // , true);
-    }
-    if (elname === 'use' || (elname === 'foreignObject' && isWebkit())) {
-      if (!ret) { ret = selected.getBBox(); }
-      // This is resolved in later versions of webkit, perhaps we should
-      // have a featured detection for correct 'use' behavior?
-      // ——————————
-      if (!isWebkit()) {
-        const {x, y, width, height} = ret;
-        const bb = {
-          width,
-          height,
-          x: x + parseFloat(selected.getAttribute('x') || 0),
-          y: y + parseFloat(selected.getAttribute('y') || 0)
-        };
-        ret = bb;
+    case "text":
+      if (selected.textContent === "") {
+        selected.textContent = "a"; // Some character needed for the selector to use.
+        ret = selected.getBBox();
+        selected.textContent = "";
+      } else if (selected.getBBox) {
+        ret = selected.getBBox();
       }
-    } else if (visElemsArr.includes(elname)) {
-      if (selected) {
-        try {
+      break;
+    case "path":
+      if (!supportsPathBBox()) {
+        ret = getPathBBox(selected);
+      } else if (selected.getBBox) {
+        ret = selected.getBBox();
+      }
+      break;
+    case "g":
+    case "a":
+      ret = groupBBFix(selected);
+      break;
+    default:
+      if (elname === "use") {
+        ret = groupBBFix(selected); // , true);
+      }
+      if (elname === "use" || (elname === "foreignObject" && isWebkit())) {
+        if (!ret) {
           ret = selected.getBBox();
-        } catch (err) {
-          // tspan (and textPath apparently) have no `getBBox` in Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=937268
-          // Re: Chrome returning bbox for containing text element, see: https://bugs.chromium.org/p/chromium/issues/detail?id=349835
-          const extent = selected.getExtentOfChar(0); // pos+dimensions of the first glyph
-          const width = selected.getComputedTextLength(); // width of the tspan
-          ret = {
-            x: extent.x,
-            y: extent.y,
-            width,
-            height: extent.height
-          };
         }
-      } else {
-        // Check if element is child of a foreignObject
-        const fo = $(selected).closest('foreignObject');
-        if (fo.length) {
-          if (fo[0].getBBox) {
-            ret = fo[0].getBBox();
+        // This is resolved in later versions of webkit, perhaps we should
+        // have a featured detection for correct 'use' behavior?
+        // ——————————
+        if (!isWebkit()) {
+          const { x, y, width, height } = ret;
+          const bb = {
+            width,
+            height,
+            x: x + parseFloat(selected.getAttribute("x") || 0),
+            y: y + parseFloat(selected.getAttribute("y") || 0),
+          };
+          ret = bb;
+        }
+      } else if (visElemsArr.includes(elname)) {
+        if (selected) {
+          try {
+            ret = selected.getBBox();
+          } catch (err) {
+            // tspan (and textPath apparently) have no `getBBox` in Firefox: https://bugzilla.mozilla.org/show_bug.cgi?id=937268
+            // Re: Chrome returning bbox for containing text element, see: https://bugs.chromium.org/p/chromium/issues/detail?id=349835
+            const extent = selected.getExtentOfChar(0); // pos+dimensions of the first glyph
+            const width = selected.getComputedTextLength(); // width of the tspan
+            ret = {
+              x: extent.x,
+              y: extent.y,
+              width,
+              height: extent.height,
+            };
+          }
+        } else {
+          // Check if element is child of a foreignObject
+          const fo = $(selected).closest("foreignObject");
+          if (fo.length) {
+            if (fo[0].getBBox) {
+              ret = fo[0].getBBox();
+            }
           }
         }
       }
-    }
   }
   if (ret) {
     ret = bboxToObj(ret);
@@ -702,26 +742,26 @@ export const getBBox = function (elem) {
 };
 
 /**
-* @typedef {GenericArray} module:utilities.PathSegmentArray
-* @property {Integer} length 2
-* @property {"M"|"L"|"C"|"Z"} 0
-* @property {Float[]} 1
-*/
+ * @typedef {GenericArray} module:utilities.PathSegmentArray
+ * @property {Integer} length 2
+ * @property {"M"|"L"|"C"|"Z"} 0
+ * @property {Float[]} 1
+ */
 
 /**
-* Create a path 'd' attribute from path segments.
-* Each segment is an array of the form: `[singleChar, [x,y, x,y, ...]]`
-* @function module:utilities.getPathDFromSegments
-* @param {module:utilities.PathSegmentArray[]} pathSegments - An array of path segments to be converted
-* @returns {string} The converted path d attribute.
-*/
+ * Create a path 'd' attribute from path segments.
+ * Each segment is an array of the form: `[singleChar, [x,y, x,y, ...]]`
+ * @function module:utilities.getPathDFromSegments
+ * @param {module:utilities.PathSegmentArray[]} pathSegments - An array of path segments to be converted
+ * @returns {string} The converted path d attribute.
+ */
 export const getPathDFromSegments = function (pathSegments) {
-  let d = '';
+  let d = "";
 
   $.each(pathSegments, function (j, [singleChar, pts]) {
     d += singleChar;
     for (let i = 0; i < pts.length; i += 2) {
-      d += (pts[i] + ',' + pts[i + 1]) + ' ';
+      d += pts[i] + "," + pts[i + 1] + " ";
     }
   });
 
@@ -729,128 +769,147 @@ export const getPathDFromSegments = function (pathSegments) {
 };
 
 /**
-* Make a path 'd' attribute from a simple SVG element shape.
-* @function module:utilities.getPathDFromElement
-* @param {Element} elem - The element to be converted
-* @returns {string} The path d attribute or `undefined` if the element type is unknown.
-*/
+ * Make a path 'd' attribute from a simple SVG element shape.
+ * @function module:utilities.getPathDFromElement
+ * @param {Element} elem - The element to be converted
+ * @returns {string} The path d attribute or `undefined` if the element type is unknown.
+ */
 export const getPathDFromElement = function (elem) {
   // Possibly the cubed root of 6, but 1.81 works best
   let num = 1.81;
   let d, a, rx, ry;
   switch (elem.tagName) {
-  case 'ellipse':
-  case 'circle': {
-    a = $(elem).attr(['rx', 'ry', 'cx', 'cy']);
-    const {cx, cy} = a;
-    ({rx, ry} = a);
-    if (elem.tagName === 'circle') {
-      ry = $(elem).attr('r');
-      rx = ry;
-    }
+    case "ellipse":
+    case "circle": {
+      a = $(elem).attr(["rx", "ry", "cx", "cy"]);
+      const { cx, cy } = a;
+      ({ rx, ry } = a);
+      if (elem.tagName === "circle") {
+        ry = $(elem).attr("r");
+        rx = ry;
+      }
 
-    d = getPathDFromSegments([
-      ['M', [(cx - rx), (cy)]],
-      ['C', [(cx - rx), (cy - ry / num), (cx - rx / num), (cy - ry), (cx), (cy - ry)]],
-      ['C', [(cx + rx / num), (cy - ry), (cx + rx), (cy - ry / num), (cx + rx), (cy)]],
-      ['C', [(cx + rx), (cy + ry / num), (cx + rx / num), (cy + ry), (cx), (cy + ry)]],
-      ['C', [(cx - rx / num), (cy + ry), (cx - rx), (cy + ry / num), (cx - rx), (cy)]],
-      ['Z', []]
-    ]);
-    break;
-  } case 'path':
-    d = elem.getAttribute('d');
-    break;
-  case 'line':
-    a = $(elem).attr(['x1', 'y1', 'x2', 'y2']);
-    d = 'M' + a.x1 + ',' + a.y1 + 'L' + a.x2 + ',' + a.y2;
-    break;
-  case 'polyline':
-    d = 'M' + elem.getAttribute('points');
-    break;
-  case 'polygon':
-    d = 'M' + elem.getAttribute('points') + ' Z';
-    break;
-  case 'rect': {
-    const r = $(elem).attr(['rx', 'ry']);
-    ({rx, ry} = r);
-    const b = elem.getBBox();
-    const {x, y} = b,
-      w = b.width,
-      h = b.height;
-    num = 4 - num; // Why? Because!
-
-    if (!rx && !ry) {
-      // Regular rect
       d = getPathDFromSegments([
-        ['M', [x, y]],
-        ['L', [x + w, y]],
-        ['L', [x + w, y + h]],
-        ['L', [x, y + h]],
-        ['L', [x, y]],
-        ['Z', []]
+        ["M", [cx - rx, cy]],
+        ["C", [cx - rx, cy - ry / num, cx - rx / num, cy - ry, cx, cy - ry]],
+        ["C", [cx + rx / num, cy - ry, cx + rx, cy - ry / num, cx + rx, cy]],
+        ["C", [cx + rx, cy + ry / num, cx + rx / num, cy + ry, cx, cy + ry]],
+        ["C", [cx - rx / num, cy + ry, cx - rx, cy + ry / num, cx - rx, cy]],
+        ["Z", []],
       ]);
-    } else {
-      d = getPathDFromSegments([
-        ['M', [x, y + ry]],
-        ['C', [x, y + ry / num, x + rx / num, y, x + rx, y]],
-        ['L', [x + w - rx, y]],
-        ['C', [x + w - rx / num, y, x + w, y + ry / num, x + w, y + ry]],
-        ['L', [x + w, y + h - ry]],
-        ['C', [x + w, y + h - ry / num, x + w - rx / num, y + h, x + w - rx, y + h]],
-        ['L', [x + rx, y + h]],
-        ['C', [x + rx / num, y + h, x, y + h - ry / num, x, y + h - ry]],
-        ['L', [x, y + ry]],
-        ['Z', []]
-      ]);
+      break;
     }
-    break;
-  } default:
-    break;
+    case "path":
+      d = elem.getAttribute("d");
+      break;
+    case "line":
+      a = $(elem).attr(["x1", "y1", "x2", "y2"]);
+      d = "M" + a.x1 + "," + a.y1 + "L" + a.x2 + "," + a.y2;
+      break;
+    case "polyline":
+      d = "M" + elem.getAttribute("points");
+      break;
+    case "polygon":
+      d = "M" + elem.getAttribute("points") + " Z";
+      break;
+    case "rect": {
+      const r = $(elem).attr(["rx", "ry"]);
+      ({ rx, ry } = r);
+      const b = elem.getBBox();
+      const { x, y } = b,
+        w = b.width,
+        h = b.height;
+      num = 4 - num; // Why? Because!
+
+      if (!rx && !ry) {
+        // Regular rect
+        d = getPathDFromSegments([
+          ["M", [x, y]],
+          ["L", [x + w, y]],
+          ["L", [x + w, y + h]],
+          ["L", [x, y + h]],
+          ["L", [x, y]],
+          ["Z", []],
+        ]);
+      } else {
+        d = getPathDFromSegments([
+          ["M", [x, y + ry]],
+          ["C", [x, y + ry / num, x + rx / num, y, x + rx, y]],
+          ["L", [x + w - rx, y]],
+          ["C", [x + w - rx / num, y, x + w, y + ry / num, x + w, y + ry]],
+          ["L", [x + w, y + h - ry]],
+          [
+            "C",
+            [
+              x + w,
+              y + h - ry / num,
+              x + w - rx / num,
+              y + h,
+              x + w - rx,
+              y + h,
+            ],
+          ],
+          ["L", [x + rx, y + h]],
+          ["C", [x + rx / num, y + h, x, y + h - ry / num, x, y + h - ry]],
+          ["L", [x, y + ry]],
+          ["Z", []],
+        ]);
+      }
+      break;
+    }
+    default:
+      break;
   }
 
   return d;
 };
 
 /**
-* Get a set of attributes from an element that is useful for convertToPath.
-* @function module:utilities.getExtraAttributesForConvertToPath
-* @param {Element} elem - The element to be probed
-* @returns {PlainObject<"marker-start"|"marker-end"|"marker-mid"|"filter"|"clip-path", string>} An object with attributes.
-*/
+ * Get a set of attributes from an element that is useful for convertToPath.
+ * @function module:utilities.getExtraAttributesForConvertToPath
+ * @param {Element} elem - The element to be probed
+ * @returns {PlainObject<"marker-start"|"marker-end"|"marker-mid"|"filter"|"clip-path", string>} An object with attributes.
+ */
 export const getExtraAttributesForConvertToPath = function (elem) {
   const attrs = {};
   // TODO: make this list global so that we can properly maintain it
   // TODO: what about @transform, @clip-rule, @fill-rule, etc?
-  $.each(['marker-start', 'marker-end', 'marker-mid', 'filter', 'clip-path'], function () {
-    const a = elem.getAttribute(this);
-    if (a) {
-      attrs[this] = a;
+  $.each(
+    ["marker-start", "marker-end", "marker-mid", "filter", "clip-path"],
+    function () {
+      const a = elem.getAttribute(this);
+      if (a) {
+        attrs[this] = a;
+      }
     }
-  });
+  );
   return attrs;
 };
 
 /**
-* Get the BBox of an element-as-path.
-* @function module:utilities.getBBoxOfElementAsPath
-* @param {Element} elem - The DOM element to be probed
-* @param {module:utilities.EditorContext#addSVGElementFromJson} addSVGElementFromJson - Function to add the path element to the current layer. See canvas.addSVGElementFromJson
-* @param {module:path.pathActions} pathActions - If a transform exists, `pathActions.resetOrientation()` is used. See: canvas.pathActions.
-* @returns {DOMRect|false} The resulting path's bounding box object.
-*/
-export const getBBoxOfElementAsPath = function (elem, addSVGElementFromJson, pathActions) {
+ * Get the BBox of an element-as-path.
+ * @function module:utilities.getBBoxOfElementAsPath
+ * @param {Element} elem - The DOM element to be probed
+ * @param {module:utilities.EditorContext#addSVGElementFromJson} addSVGElementFromJson - Function to add the path element to the current layer. See canvas.addSVGElementFromJson
+ * @param {module:path.pathActions} pathActions - If a transform exists, `pathActions.resetOrientation()` is used. See: canvas.pathActions.
+ * @returns {DOMRect|false} The resulting path's bounding box object.
+ */
+export const getBBoxOfElementAsPath = function (
+  elem,
+  addSVGElementFromJson,
+  pathActions
+) {
   const path = addSVGElementFromJson({
-    element: 'path',
-    attr: getExtraAttributesForConvertToPath(elem)
+    element: "path",
+    attr: getExtraAttributesForConvertToPath(elem),
   });
 
-  const eltrans = elem.getAttribute('transform');
+  const eltrans = elem.getAttribute("transform");
   if (eltrans) {
-    path.setAttribute('transform', eltrans);
+    path.setAttribute("transform", eltrans);
   }
 
-  const {parentNode} = elem;
+  const { parentNode } = elem;
   if (elem.nextSibling) {
     elem.before(path);
   } else {
@@ -859,7 +918,7 @@ export const getBBoxOfElementAsPath = function (elem, addSVGElementFromJson, pat
 
   const d = getPathDFromElement(elem);
   if (d) {
-    path.setAttribute('d', d);
+    path.setAttribute("d", d);
   } else {
     path.remove();
   }
@@ -877,36 +936,45 @@ export const getBBoxOfElementAsPath = function (elem, addSVGElementFromJson, pat
 };
 
 /**
-* Convert selected element to a path.
-* @function module:utilities.convertToPath
-* @param {Element} elem - The DOM element to be converted
-* @param {module:utilities.SVGElementJSON} attrs - Apply attributes to new path. see canvas.convertToPath
-* @param {module:utilities.EditorContext#addSVGElementFromJson} addSVGElementFromJson - Function to add the path element to the current layer. See canvas.addSVGElementFromJson
-* @param {module:path.pathActions} pathActions - If a transform exists, pathActions.resetOrientation() is used. See: canvas.pathActions.
-* @param {module:draw.DrawCanvasInit#clearSelection|module:path.EditorContext#clearSelection} clearSelection - see [canvas.clearSelection]{@link module:svgcanvas.SvgCanvas#clearSelection}
-* @param {module:path.EditorContext#addToSelection} addToSelection - see [canvas.addToSelection]{@link module:svgcanvas.SvgCanvas#addToSelection}
-* @param {module:history} hstry - see history module
-* @param {module:path.EditorContext#addCommandToHistory|module:draw.DrawCanvasInit#addCommandToHistory} addCommandToHistory - see [canvas.addCommandToHistory]{@link module:svgcanvas~addCommandToHistory}
-* @returns {SVGPathElement|null} The converted path element or null if the DOM element was not recognized.
-*/
-export const convertToPath = function (elem, attrs, addSVGElementFromJson, pathActions, clearSelection, addToSelection, hstry, addCommandToHistory) {
-  const batchCmd = new hstry.BatchCommand('Convert element to Path');
+ * Convert selected element to a path.
+ * @function module:utilities.convertToPath
+ * @param {Element} elem - The DOM element to be converted
+ * @param {module:utilities.SVGElementJSON} attrs - Apply attributes to new path. see canvas.convertToPath
+ * @param {module:utilities.EditorContext#addSVGElementFromJson} addSVGElementFromJson - Function to add the path element to the current layer. See canvas.addSVGElementFromJson
+ * @param {module:path.pathActions} pathActions - If a transform exists, pathActions.resetOrientation() is used. See: canvas.pathActions.
+ * @param {module:draw.DrawCanvasInit#clearSelection|module:path.EditorContext#clearSelection} clearSelection - see [canvas.clearSelection]{@link module:svgcanvas.SvgCanvas#clearSelection}
+ * @param {module:path.EditorContext#addToSelection} addToSelection - see [canvas.addToSelection]{@link module:svgcanvas.SvgCanvas#addToSelection}
+ * @param {module:history} hstry - see history module
+ * @param {module:path.EditorContext#addCommandToHistory|module:draw.DrawCanvasInit#addCommandToHistory} addCommandToHistory - see [canvas.addCommandToHistory]{@link module:svgcanvas~addCommandToHistory}
+ * @returns {SVGPathElement|null} The converted path element or null if the DOM element was not recognized.
+ */
+export const convertToPath = function (
+  elem,
+  attrs,
+  addSVGElementFromJson,
+  pathActions,
+  clearSelection,
+  addToSelection,
+  hstry,
+  addCommandToHistory
+) {
+  const batchCmd = new hstry.BatchCommand("Convert element to Path");
 
   // Any attribute on the element not covered by the passed-in attributes
   attrs = $.extend({}, attrs, getExtraAttributesForConvertToPath(elem));
 
   const path = addSVGElementFromJson({
-    element: 'path',
-    attr: attrs
+    element: "path",
+    attr: attrs,
   });
 
-  const eltrans = elem.getAttribute('transform');
+  const eltrans = elem.getAttribute("transform");
   if (eltrans) {
-    path.setAttribute('transform', eltrans);
+    path.setAttribute("transform", eltrans);
   }
 
-  const {id} = elem;
-  const {parentNode} = elem;
+  const { id } = elem;
+  const { parentNode } = elem;
   if (elem.nextSibling) {
     elem.before(path);
   } else {
@@ -915,7 +983,7 @@ export const convertToPath = function (elem, attrs, addSVGElementFromJson, pathA
 
   const d = getPathDFromElement(elem);
   if (d) {
-    path.setAttribute('d', d);
+    path.setAttribute("d", d);
 
     // Replace the current element with the converted one
 
@@ -927,14 +995,16 @@ export const convertToPath = function (elem, attrs, addSVGElementFromJson, pathA
       }
     }
 
-    const {nextSibling} = elem;
-    batchCmd.addSubCommand(new hstry.RemoveElementCommand(elem, nextSibling, parent));
+    const { nextSibling } = elem;
+    batchCmd.addSubCommand(
+      new hstry.RemoveElementCommand(elem, nextSibling, parent)
+    );
     batchCmd.addSubCommand(new hstry.InsertElementCommand(path));
 
     clearSelection();
     elem.remove();
-    path.setAttribute('id', id);
-    path.removeAttribute('visibility');
+    path.setAttribute("id", id);
+    path.removeAttribute("visibility");
     addToSelection([path], true);
 
     addCommandToHistory(batchCmd);
@@ -947,26 +1017,26 @@ export const convertToPath = function (elem, attrs, addSVGElementFromJson, pathA
 };
 
 /**
-* Can the bbox be optimized over the native getBBox? The optimized bbox is the same as the native getBBox when
-* the rotation angle is a multiple of 90 degrees and there are no complex transforms.
-* Getting an optimized bbox can be dramatically slower, so we want to make sure it's worth it.
-*
-* The best example for this is a circle rotate 45 degrees. The circle doesn't get wider or taller when rotated
-* about it's center.
-*
-* The standard, unoptimized technique gets the native bbox of the circle, rotates the box 45 degrees, uses
-* that width and height, and applies any transforms to get the final bbox. This means the calculated bbox
-* is much wider than the original circle. If the angle had been 0, 90, 180, etc. both techniques render the
-* same bbox.
-*
-* The optimization is not needed if the rotation is a multiple 90 degrees. The default technique is to call
-* getBBox then apply the angle and any transforms.
-*
-* @param {Float} angle - The rotation angle in degrees
-* @param {boolean} hasAMatrixTransform - True if there is a matrix transform
-* @returns {boolean} True if the bbox can be optimized.
-*/
-function bBoxCanBeOptimizedOverNativeGetBBox (angle, hasAMatrixTransform) {
+ * Can the bbox be optimized over the native getBBox? The optimized bbox is the same as the native getBBox when
+ * the rotation angle is a multiple of 90 degrees and there are no complex transforms.
+ * Getting an optimized bbox can be dramatically slower, so we want to make sure it's worth it.
+ *
+ * The best example for this is a circle rotate 45 degrees. The circle doesn't get wider or taller when rotated
+ * about it's center.
+ *
+ * The standard, unoptimized technique gets the native bbox of the circle, rotates the box 45 degrees, uses
+ * that width and height, and applies any transforms to get the final bbox. This means the calculated bbox
+ * is much wider than the original circle. If the angle had been 0, 90, 180, etc. both techniques render the
+ * same bbox.
+ *
+ * The optimization is not needed if the rotation is a multiple 90 degrees. The default technique is to call
+ * getBBox then apply the angle and any transforms.
+ *
+ * @param {Float} angle - The rotation angle in degrees
+ * @param {boolean} hasAMatrixTransform - True if there is a matrix transform
+ * @returns {boolean} True if the bbox can be optimized.
+ */
+function bBoxCanBeOptimizedOverNativeGetBBox(angle, hasAMatrixTransform) {
   const angleModulo90 = angle % 90;
   const closeTo90 = angleModulo90 < -89.99 || angleModulo90 > 89.99;
   const closeTo0 = angleModulo90 > -0.001 && angleModulo90 < 0.001;
@@ -974,14 +1044,18 @@ function bBoxCanBeOptimizedOverNativeGetBBox (angle, hasAMatrixTransform) {
 }
 
 /**
-* Get bounding box that includes any transforms.
-* @function module:utilities.getBBoxWithTransform
-* @param {Element} elem - The DOM element to be converted
-* @param {module:utilities.EditorContext#addSVGElementFromJson} addSVGElementFromJson - Function to add the path element to the current layer. See canvas.addSVGElementFromJson
-* @param {module:path.pathActions} pathActions - If a transform exists, pathActions.resetOrientation() is used. See: canvas.pathActions.
-* @returns {module:utilities.BBoxObject|module:math.TransformedBox|DOMRect} A single bounding box object
-*/
-export const getBBoxWithTransform = function (elem, addSVGElementFromJson, pathActions) {
+ * Get bounding box that includes any transforms.
+ * @function module:utilities.getBBoxWithTransform
+ * @param {Element} elem - The DOM element to be converted
+ * @param {module:utilities.EditorContext#addSVGElementFromJson} addSVGElementFromJson - Function to add the path element to the current layer. See canvas.addSVGElementFromJson
+ * @param {module:path.pathActions} pathActions - If a transform exists, pathActions.resetOrientation() is used. See: canvas.pathActions.
+ * @returns {module:utilities.BBoxObject|module:math.TransformedBox|DOMRect} A single bounding box object
+ */
+export const getBBoxWithTransform = function (
+  elem,
+  addSVGElementFromJson,
+  pathActions
+) {
   // TODO: Fix issue with rotated groups. Currently they work
   // fine in FF, but not in other browsers (same problem mentioned
   // in Issue 339 comment #2).
@@ -1001,23 +1075,31 @@ export const getBBoxWithTransform = function (elem, addSVGElementFromJson, pathA
     if (bBoxCanBeOptimizedOverNativeGetBBox(angle, hasMatrixXForm)) {
       // Get the BBox from the raw path for these elements
       // TODO: why ellipse and not circle
-      const elemNames = ['ellipse', 'path', 'line', 'polyline', 'polygon'];
+      const elemNames = ["ellipse", "path", "line", "polyline", "polygon"];
       if (elemNames.includes(elem.tagName)) {
-        goodBb = getBBoxOfElementAsPath(elem, addSVGElementFromJson, pathActions);
+        goodBb = getBBoxOfElementAsPath(
+          elem,
+          addSVGElementFromJson,
+          pathActions
+        );
         bb = goodBb;
-      } else if (elem.tagName === 'rect') {
+      } else if (elem.tagName === "rect") {
         // Look for radius
-        const rx = elem.getAttribute('rx');
-        const ry = elem.getAttribute('ry');
+        const rx = elem.getAttribute("rx");
+        const ry = elem.getAttribute("ry");
         if (rx || ry) {
-          goodBb = getBBoxOfElementAsPath(elem, addSVGElementFromJson, pathActions);
+          goodBb = getBBoxOfElementAsPath(
+            elem,
+            addSVGElementFromJson,
+            pathActions
+          );
           bb = goodBb;
         }
       }
     }
 
     if (!goodBb) {
-      const {matrix} = transformListToTransform(tlist);
+      const { matrix } = transformListToTransform(tlist);
       bb = transformBox(bb.x, bb.y, bb.width, bb.height, matrix).aabox;
 
       // Old technique that was exceedingly slow with large documents.
@@ -1044,9 +1126,9 @@ export const getBBoxWithTransform = function (elem, addSVGElementFromJson, pathA
  * @todo This is problematic with large stroke-width and, for example, a single
  * horizontal line. The calculated BBox extends way beyond left and right sides.
  */
-function getStrokeOffsetForBBox (elem) {
-  const sw = elem.getAttribute('stroke-width');
-  return (!isNaN(sw) && elem.getAttribute('stroke') !== 'none') ? sw / 2 : 0;
+function getStrokeOffsetForBBox(elem) {
+  const sw = elem.getAttribute("stroke-width");
+  return !isNaN(sw) && elem.getAttribute("stroke") !== "none" ? sw / 2 : 0;
 }
 
 /**
@@ -1058,25 +1140,37 @@ function getStrokeOffsetForBBox (elem) {
  */
 
 /**
-* Get the bounding box for one or more stroked and/or transformed elements.
-* @function module:utilities.getStrokedBBox
-* @param {Element[]} elems - Array with DOM elements to check
-* @param {module:utilities.EditorContext#addSVGElementFromJson} addSVGElementFromJson - Function to add the path element to the current layer. See canvas.addSVGElementFromJson
-* @param {module:path.pathActions} pathActions - If a transform exists, pathActions.resetOrientation() is used. See: canvas.pathActions.
-* @returns {module:utilities.BBoxObject|module:math.TransformedBox|DOMRect} A single bounding box object
-*/
-export const getStrokedBBox = function (elems, addSVGElementFromJson, pathActions) {
-  if (!elems || !elems.length) { return false; }
+ * Get the bounding box for one or more stroked and/or transformed elements.
+ * @function module:utilities.getStrokedBBox
+ * @param {Element[]} elems - Array with DOM elements to check
+ * @param {module:utilities.EditorContext#addSVGElementFromJson} addSVGElementFromJson - Function to add the path element to the current layer. See canvas.addSVGElementFromJson
+ * @param {module:path.pathActions} pathActions - If a transform exists, pathActions.resetOrientation() is used. See: canvas.pathActions.
+ * @returns {module:utilities.BBoxObject|module:math.TransformedBox|DOMRect} A single bounding box object
+ */
+export const getStrokedBBox = function (
+  elems,
+  addSVGElementFromJson,
+  pathActions
+) {
+  if (!elems || !elems.length) {
+    return false;
+  }
 
   let fullBb;
   $.each(elems, function () {
-    if (fullBb) { return; }
-    if (!this.parentNode) { return; }
+    if (fullBb) {
+      return;
+    }
+    if (!this.parentNode) {
+      return;
+    }
     fullBb = getBBoxWithTransform(this, addSVGElementFromJson, pathActions);
   });
 
   // This shouldn't ever happen...
-  if (fullBb === undefined) { return null; }
+  if (fullBb === undefined) {
+    return null;
+  }
 
   // fullBb doesn't include the stoke, so this does no good!
   // if (elems.length == 1) return fullBb;
@@ -1095,7 +1189,11 @@ export const getStrokedBBox = function (elems, addSVGElementFromJson, pathAction
     maxY += offset;
   } else {
     $.each(elems, function (i, elem) {
-      const curBb = getBBoxWithTransform(elem, addSVGElementFromJson, pathActions);
+      const curBb = getBBoxWithTransform(
+        elem,
+        addSVGElementFromJson,
+        pathActions
+      );
       if (curBb) {
         const offset = getStrokeOffsetForBBox(elem);
         minX = Math.min(minX, curBb.x - offset);
@@ -1117,35 +1215,39 @@ export const getStrokedBBox = function (elems, addSVGElementFromJson, pathAction
 };
 
 /**
-* Get all elements that have a BBox (excludes `<defs>`, `<title>`, etc).
-* Note that 0-opacity, off-screen etc elements are still considered "visible"
-* for this function.
-* @function module:utilities.getVisibleElements
-* @param {Element} parentElement - The parent DOM element to search within
-* @returns {Element[]} All "visible" elements.
-*/
+ * Get all elements that have a BBox (excludes `<defs>`, `<title>`, etc).
+ * Note that 0-opacity, off-screen etc elements are still considered "visible"
+ * for this function.
+ * @function module:utilities.getVisibleElements
+ * @param {Element} parentElement - The parent DOM element to search within
+ * @returns {Element[]} All "visible" elements.
+ */
 export const getVisibleElements = function (parentElement) {
   if (!parentElement) {
     parentElement = $(editorContext_.getSVGContent()).children(); // Prevent layers from being included
   }
 
   const contentElems = [];
-  $(parentElement).children().each(function (i, elem) {
-    if (elem.getBBox) {
-      contentElems.push(elem);
-    }
-  });
+  $(parentElement)
+    .children()
+    .each(function (i, elem) {
+      if (elem.getBBox) {
+        contentElems.push(elem);
+      }
+    });
   return contentElems.reverse();
 };
 
 /**
-* Get the bounding box for one or more stroked and/or transformed elements.
-* @function module:utilities.getStrokedBBoxDefaultVisible
-* @param {Element[]} elems - Array with DOM elements to check
-* @returns {module:utilities.BBoxObject} A single bounding box object
-*/
+ * Get the bounding box for one or more stroked and/or transformed elements.
+ * @function module:utilities.getStrokedBBoxDefaultVisible
+ * @param {Element[]} elems - Array with DOM elements to check
+ * @returns {module:utilities.BBoxObject} A single bounding box object
+ */
 export const getStrokedBBoxDefaultVisible = function (elems) {
-  if (!elems) { elems = getVisibleElements(); }
+  if (!elems) {
+    elems = getVisibleElements();
+  }
   return getStrokedBBox(
     elems,
     editorContext_.addSVGElementFromJson,
@@ -1154,32 +1256,35 @@ export const getStrokedBBoxDefaultVisible = function (elems) {
 };
 
 /**
-* Get the rotation angle of the given transform list.
-* @function module:utilities.getRotationAngleFromTransformList
-* @param {SVGTransformList} tlist - List of transforms
-* @param {boolean} toRad - When true returns the value in radians rather than degrees
-* @returns {Float} The angle in degrees or radians
-*/
+ * Get the rotation angle of the given transform list.
+ * @function module:utilities.getRotationAngleFromTransformList
+ * @param {SVGTransformList} tlist - List of transforms
+ * @param {boolean} toRad - When true returns the value in radians rather than degrees
+ * @returns {Float} The angle in degrees or radians
+ */
 export const getRotationAngleFromTransformList = function (tlist, toRad) {
-  if (!tlist) { return 0; } // <svg> elements have no tlist
+  if (!tlist) {
+    return 0;
+  } // <svg> elements have no tlist
   const N = tlist.numberOfItems;
   for (let i = 0; i < N; ++i) {
     const xform = tlist.getItem(i);
     if (xform.type === 4) {
-      return toRad ? xform.angle * Math.PI / 180.0 : xform.angle;
+      return toRad ? (xform.angle * Math.PI) / 180.0 : xform.angle;
     }
   }
   return 0.0;
 };
 
 /**
-* Get the rotation angle of the given/selected DOM element.
-* @function module:utilities.getRotationAngle
-* @param {Element} [elem] - DOM element to get the angle for. Default to first of selected elements.
-* @param {boolean} [toRad=false] - When true returns the value in radians rather than degrees
-* @returns {Float} The angle in degrees or radians
-*/
-export let getRotationAngle = function (elem, toRad) { // eslint-disable-line import/no-mutable-exports
+ * Get the rotation angle of the given/selected DOM element.
+ * @function module:utilities.getRotationAngle
+ * @param {Element} [elem] - DOM element to get the angle for. Default to first of selected elements.
+ * @param {boolean} [toRad=false] - When true returns the value in radians rather than degrees
+ * @returns {Float} The angle in degrees or radians
+ */
+export let getRotationAngle = function (elem, toRad) {
+  // eslint-disable-line import/no-mutable-exports
   const selected = elem || editorContext_.getSelectedElements()[0];
   // find the rotation transform (if any) and set it
   const tlist = getTransformList(selected);
@@ -1187,56 +1292,66 @@ export let getRotationAngle = function (elem, toRad) { // eslint-disable-line im
 };
 
 /**
-* Get the reference element associated with the given attribute value.
-* @function module:utilities.getRefElem
-* @param {string} attrVal - The attribute value as a string
-* @returns {Element} Reference element
-*/
+ * Get the reference element associated with the given attribute value.
+ * @function module:utilities.getRefElem
+ * @param {string} attrVal - The attribute value as a string
+ * @returns {Element} Reference element
+ */
 export const getRefElem = function (attrVal) {
   return getElem(getUrlFromAttr(attrVal).substr(1));
 };
 
 /**
-* Get a DOM element by ID within the SVG root element.
-* @function module:utilities.getElem
-* @param {string} id - String with the element's new ID
-* @returns {?Element}
-*/
-export const getElem = (supportsSelectors())
+ * Get a DOM element by ID within the SVG root element.
+ * @function module:utilities.getElem
+ * @param {string} id - String with the element's new ID
+ * @returns {?Element}
+ */
+export const getElem = supportsSelectors()
   ? function (id) {
-    // querySelector lookup
-    return svgroot_.querySelector('#' + id);
-  }
+      // querySelector lookup
+      return svgroot_.querySelector("#" + id);
+    }
   : supportsXpath()
-    ? function (id) {
+  ? function (id) {
       // xpath lookup
       return domdoc_.evaluate(
         'svg:svg[@id="svgroot"]//svg:*[@id="' + id + '"]',
         domcontainer_,
-        function () { return NS.SVG; },
+        function () {
+          return NS.SVG;
+        },
         9,
         null
       ).singleNodeValue;
     }
-    : function (id) {
+  : function (id) {
       // jQuery lookup: twice as slow as xpath in FF
-      return $(svgroot_).find('[id=' + id + ']')[0];
+      return $(svgroot_).find("[id=" + id + "]")[0];
     };
 
 /**
-* Assigns multiple attributes to an element.
-* @function module:utilities.assignAttributes
-* @param {Element} elem - DOM element to apply new attribute values to
-* @param {PlainObject<string, string>} attrs - Object with attribute keys/values
-* @param {Integer} [suspendLength] - Milliseconds to suspend redraw
-* @param {boolean} [unitCheck=false] - Boolean to indicate the need to use units.setUnitAttr
-* @returns {void}
-*/
-export const assignAttributes = function (elem, attrs, suspendLength, unitCheck) {
+ * Assigns multiple attributes to an element.
+ * @function module:utilities.assignAttributes
+ * @param {Element} elem - DOM element to apply new attribute values to
+ * @param {PlainObject<string, string>} attrs - Object with attribute keys/values
+ * @param {Integer} [suspendLength] - Milliseconds to suspend redraw
+ * @param {boolean} [unitCheck=false] - Boolean to indicate the need to use units.setUnitAttr
+ * @returns {void}
+ */
+export const assignAttributes = function (
+  elem,
+  attrs,
+  suspendLength,
+  unitCheck
+) {
   for (const [key, value] of Object.entries(attrs)) {
-    const ns = (key.substr(0, 4) === 'xml:'
-      ? NS.XML
-      : key.substr(0, 6) === 'xlink:' ? NS.XLINK : null);
+    const ns =
+      key.substr(0, 4) === "xml:"
+        ? NS.XML
+        : key.substr(0, 6) === "xlink:"
+        ? NS.XLINK
+        : null;
     if (isNullish(value)) {
       if (ns) {
         elem.removeAttributeNS(ns, key);
@@ -1256,27 +1371,27 @@ export const assignAttributes = function (elem, attrs, suspendLength, unitCheck)
 };
 
 /**
-* Remove unneeded (default) attributes, making resulting SVG smaller.
-* @function module:utilities.cleanupElement
-* @param {Element} element - DOM element to clean up
-* @returns {void}
-*/
+ * Remove unneeded (default) attributes, making resulting SVG smaller.
+ * @function module:utilities.cleanupElement
+ * @param {Element} element - DOM element to clean up
+ * @returns {void}
+ */
 export const cleanupElement = function (element) {
   const defaults = {
-    'fill-opacity': 1,
-    'stop-opacity': 1,
+    "fill-opacity": 1,
+    "stop-opacity": 1,
     opacity: 1,
-    stroke: 'none',
-    'stroke-dasharray': 'none',
-    'stroke-linejoin': 'miter',
-    'stroke-linecap': 'butt',
-    'stroke-opacity': 1,
-    'stroke-width': 1,
+    stroke: "none",
+    "stroke-dasharray": "none",
+    "stroke-linejoin": "miter",
+    "stroke-linecap": "butt",
+    "stroke-opacity": 1,
+    "stroke-width": 1,
     rx: 0,
-    ry: 0
+    ry: 0,
   };
 
-  if (element.nodeName === 'ellipse') {
+  if (element.nodeName === "ellipse") {
     // Ellipse elements require rx and ry attributes
     delete defaults.rx;
     delete defaults.ry;
@@ -1290,15 +1405,15 @@ export const cleanupElement = function (element) {
 };
 
 /**
-* Round value to for snapping.
-* @function module:utilities.snapToGrid
-* @param {Float} value
-* @returns {Integer}
-*/
+ * Round value to for snapping.
+ * @function module:utilities.snapToGrid
+ * @param {Float} value
+ * @returns {Integer}
+ */
 export const snapToGrid = function (value) {
   const unit = editorContext_.getBaseUnit();
   let stepSize = editorContext_.getSnappingStep();
-  if (unit !== 'px') {
+  if (unit !== "px") {
     stepSize *= getTypeMap()[unit];
   }
   value = Math.round(value / stepSize) * stepSize;
@@ -1306,14 +1421,14 @@ export const snapToGrid = function (value) {
 };
 
 /**
-* Escapes special characters in a regular expression.
-* @function module:utilities.regexEscape
-* @param {string} str
-* @returns {string}
-*/
+ * Escapes special characters in a regular expression.
+ * @function module:utilities.regexEscape
+ * @param {string} str
+ * @returns {string}
+ */
 export const regexEscape = function (str) {
   // Originally from: http://phpjs.org/functions
-  return String(str).replace(/[.\\+*?[^\]$(){}=!<>|:-]/g, '\\$&');
+  return String(str).replace(/[.\\+*?[^\]$(){}=!<>|:-]/g, "\\$&");
 };
 
 /**
@@ -1323,7 +1438,9 @@ export const regexEscape = function (str) {
  * @returns {void}
  */
 export const preventClickDefault = function (img) {
-  $(img).click(function (e) { e.preventDefault(); });
+  $(img).click(function (e) {
+    e.preventDefault();
+  });
 };
 
 /**
@@ -1341,41 +1458,41 @@ export const copyElem = function (el, getNextId) {
   // manually create a copy of the element
   const newEl = document.createElementNS(el.namespaceURI, el.nodeName);
   $.each(el.attributes, function (i, attr) {
-    if (attr.localName !== '-moz-math-font-style') {
+    if (attr.localName !== "-moz-math-font-style") {
       newEl.setAttributeNS(attr.namespaceURI, attr.nodeName, attr.value);
     }
   });
   // set the copied element's new id
-  newEl.removeAttribute('id');
+  newEl.removeAttribute("id");
   newEl.id = getNextId();
 
   // Opera's "d" value needs to be reset for Opera/Win/non-EN
   // Also needed for webkit (else does not keep curved segments on clone)
-  if (isWebkit() && el.nodeName === 'path') {
+  if (isWebkit() && el.nodeName === "path") {
     const fixedD = convertPath(el);
-    newEl.setAttribute('d', fixedD);
+    newEl.setAttribute("d", fixedD);
   }
 
   // now create copies of all children
   $.each(el.childNodes, function (i, child) {
     switch (child.nodeType) {
-    case 1: // element node
-      newEl.append(copyElem(child, getNextId));
-      break;
-    case 3: // text node
-      newEl.textContent = child.nodeValue;
-      break;
-    default:
-      break;
+      case 1: // element node
+        newEl.append(copyElem(child, getNextId));
+        break;
+      case 3: // text node
+        newEl.textContent = child.nodeValue;
+        break;
+      default:
+        break;
     }
   });
 
-  if ($(el).data('gsvg')) {
-    $(newEl).data('gsvg', newEl.firstChild);
-  } else if ($(el).data('symbol')) {
-    const ref = $(el).data('symbol');
-    $(newEl).data('ref', ref).data('symbol', ref);
-  } else if (newEl.tagName === 'image') {
+  if ($(el).data("gsvg")) {
+    $(newEl).data("gsvg", newEl.firstChild);
+  } else if ($(el).data("symbol")) {
+    const ref = $(el).data("symbol");
+    $(newEl).data("ref", ref).data("symbol", ref);
+  } else if (newEl.tagName === "image") {
     preventClickDefault(newEl);
   }
 
@@ -1391,14 +1508,64 @@ export const isNullish = (val) => {
   return val === null || val === undefined;
 };
 
+export const updateCursor = (mode, submode) => {
+  let cursors = [null, null];
+  switch (mode) {
+    case "select":
+      cursors = ["move", null];
+      break;
+    case "path":
+      cursors = ["pen", "pen"];
+  }
+
+  if (submode) {
+    switch (submode) {
+      case "add-point":
+        cursors = ["pen-plus", "pen-plus"];
+        break;
+      case "remove-point":
+        cursors = ["pen-minus", null];
+        break;
+      case "blend-curve":
+        cursors = ["select-curve", null];
+        break;
+    }
+  }
+
+  setCursor(...cursors);
+};
+
+export const setCursor = (elemsCursor, canvasCursor) => {
+  const elemsCursorStr = elemsCursor
+    ? elemsCursor === "move"
+      ? "move"
+      : `url("assets/cursor/${elemsCursor}.cur"), auto !important`
+    : "default";
+  const canvasCursorStr = canvasCursor
+    ? `url("assets/cursor/${canvasCursor}.cur"), auto !important`
+    : "default";
+
+  $("#styleoverrides").text(`
+      #svgcanvas svg * {
+        cursor: ${elemsCursorStr};
+        pointer-events: all;
+      }
+      #svgcanvas svg {
+        cursor: ${canvasCursorStr};
+      }
+    `);
+};
+
 /**
-* Overwrite methods for unit testing.
-* @function module:utilities.mock
-* @param {PlainObject} mockMethods
-* @returns {void}
-*/
+ * Overwrite methods for unit testing.
+ * @function module:utilities.mock
+ * @param {PlainObject} mockMethods
+ * @returns {void}
+ */
 export const mock = ({
-  getHref: getHrefUser, setHref: setHrefUser, getRotationAngle: getRotationAngleUser
+  getHref: getHrefUser,
+  setHref: setHrefUser,
+  getRotationAngle: getRotationAngleUser,
 }) => {
   getHref = getHrefUser;
   setHref = setHrefUser;

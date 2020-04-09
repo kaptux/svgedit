@@ -153,7 +153,7 @@ video {
 }
 
 #ruler_corner {
-  top: 38px;
+  top: 37px;
   left: 251px;
   width: 15px;
   height: 15px;
@@ -161,7 +161,7 @@ video {
 
 #ruler_x {
   height: 15px;
-  top: 38px;
+  top: 37px;
   left: 266px;
   right: 358px;
   border-bottom: 1px solid;
@@ -170,7 +170,7 @@ video {
 
 #ruler_y {
   width: 15px;
-  top: 53px;
+  top: 52px;
   left: 251px;
   bottom: 0px;
   border-right: 1px solid;

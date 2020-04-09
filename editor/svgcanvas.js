@@ -73,6 +73,7 @@ import {
   getBBox as utilsGetBBox,
   getStrokedBBoxDefaultVisible,
   isNullish,
+  updateCursor,
 } from "./utilities.js";
 import * as hstry from "./history.js";
 import {
@@ -128,6 +129,7 @@ const {
 let nearestPoint = null;
 let isOverPathPointGrip = false;
 let isOverCtrlPointGrip = false;
+let isShiftKey = false;
 
 if (!window.console) {
   window.console = {};
@@ -875,6 +877,18 @@ class SvgCanvas {
       }
     };
 
+    const updateCanvasCursor = function () {
+      let submode = null;
+      if (isShiftKey) {
+        if (nearestPoint) {
+          submode = "add-point";
+        } else if (isOverPathPointGrip) {
+          submode = "remove-point";
+        }
+      }
+      updateCursor(currentMode, submode);
+    };
+
     /**
      * @name module:svgcanvas.SvgCanvas#getMouseTarget
      * @type {module:path.EditorContext#getMouseTarget}
@@ -1125,6 +1139,7 @@ class SvgCanvas {
       startTransform = null,
       // String indicating the current editor mode
       currentMode = "select",
+      subMode = "",
       // String with the current direction in which an element is being resized
       currentResizeMode = "none",
       // Current general properties
@@ -1954,6 +1969,7 @@ class SvgCanvas {
         }
 
         rootSctm = $("#svgcontent g")[0].getScreenCTM().inverse();
+        isShiftKey = evt.shiftKey;
 
         const pt = transformPoint(evt.pageX, evt.pageY, rootSctm),
           mouseX = pt.x * currentZoom,
@@ -2314,10 +2330,10 @@ class SvgCanvas {
             if (nearestPoint && evt.shiftKey) {
               pathActions.addSegment(nearestPoint.x, nearestPoint.y);
               nearestPoint = pathActions.drawNearestPoint();
+              updateCanvasCursor();
             } else {
               startX *= currentZoom;
               startY *= currentZoom;
-              const isShiftKey = evt.shiftKey;
               evt.shiftKey = isShiftKey && !isOverPathPointGrip; //avoid multiple selection
               pathActions.mouseDown(evt, mouseTarget, startX, startY);
               started = true;
@@ -2326,7 +2342,7 @@ class SvgCanvas {
                 pathActions.deletePathNode();
                 started = false;
               }
-              isOverPathPointGrip = false;
+              setIsOverPathPointGrip(false);
             }
             break;
           case "textedit":
@@ -2382,15 +2398,19 @@ class SvgCanvas {
        * @returns {void}
        */
       const mouseMove = function (evt) {
-        if (!started && !evt.shiftKey) {
+        isShiftKey = evt.shiftKey;
+
+        if (!started && !isShiftKey) {
           if (nearestPoint) {
             nearestPoint = pathActions.drawNearestPoint(); //reset
+            updateCanvasCursor();
           }
           return;
         }
 
         if ((isOverCtrlPointGrip || isOverPathPointGrip) && nearestPoint) {
           nearestPoint = pathActions.drawNearestPoint(); //reset
+          updateCanvasCursor();
         }
 
         if (evt.button === 1 || canvas.spaceKey) {
@@ -2810,6 +2830,7 @@ class SvgCanvas {
                 realX * currentZoom,
                 realY * currentZoom
               );
+              updateCanvasCursor();
             }
 
             break;
@@ -2890,6 +2911,8 @@ class SvgCanvas {
        * @returns {void}
        */
       const mouseUp = function (evt) {
+        isShiftKey = evt.shiftKey;
+
         if (evt.button === 2) {
           return;
         }
@@ -5970,6 +5993,14 @@ function hideCursor () {
           ? curText
           : curShape;
       currentMode = name;
+    };
+
+    this.getSubMode = function () {
+      return subMode;
+    };
+
+    this.setSubMode = function (mode) {
+      subMode = mode;
     };
 
     /**

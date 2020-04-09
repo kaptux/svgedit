@@ -365,6 +365,17 @@ export const getPointFromGrip = function (pt, pth) {
   return out;
 };
 
+export const fromCanvasPoint = function ({ x, y }, path) {
+  const zoom = editorContext_.getCurrentZoom();
+  return transformPoint(x / zoom, y / zoom, path.imatrix);
+};
+
+export const toCanvasPoint = function ({ x, y }, path) {
+  const zoom = editorContext_.getCurrentZoom();
+  const out = transformPoint(x, y, path.matrix);
+  return { x: out.x * zoom, y: out.y * zoom };
+};
+
 /**
  * Requires prior call to `setUiStrings` if `xlink:title`
  *    to be set on the grip.
@@ -1057,6 +1068,7 @@ export class Path {
     this.segs = [];
     this.selected_pts = [];
     this.first_seg = null;
+    this.ppath = new paper.Path(this.elem.getAttribute("d"));
 
     // Set up segs array
     for (let i = 0; i < len; i++) {
@@ -1125,19 +1137,17 @@ export class Path {
     return this;
   }
 
-  getNearestPoint(pt, currentZoom) {
-    const zoom = currentZoom || 1;
-    const out = this.ppath.getNearestPoint(pt);
-    return new paper.Point(out.x * zoom, out.y * zoom);
+  getNearestPoint(pt) {
+    const pathPt = fromCanvasPoint(pt, this);
+    const out = this.ppath.getNearestPoint(pathPt);
+    return toCanvasPoint(out, this);
   }
 
-  divideAt(x, y, currentZoom) {
-    const zoom = currentZoom || 1;
-    const seg = this.findSeg({ x, y });
-
-    if (seg) {
-      const pathPt = transformPoint(x / zoom, y / zoom, this.imatrix);
-      this.addSeg(seg.index, pathPt);
+  divideAt(pt) {
+    const pathPt = fromCanvasPoint(pt, this);
+    const index = this.findSegIndex(pathPt);
+    if (index != null) {
+      this.addSeg(index, pathPt);
     }
   }
 
@@ -1151,15 +1161,13 @@ export class Path {
     }
   }
 
-  findSeg(pt) {
-    for (let i = 0; i < this.segs.length; i++) {
-      const current = this.segs[i];
-      const outerHtml = current.segsel.outerHTML;
-      const ppath = new paper.Path().importSVG(outerHtml);
-      const loc = ppath.getLocationOf(pt);
-      if (loc) {
-        return current;
-      }
+  findSegIndex(pt) {
+    const location = this.ppath.getLocationOf(pt);
+    if (location) {
+      return Math.max(
+        location.curve.segment1.index + 1,
+        location.curve.segment2.index
+      );
     }
     return null;
   }
@@ -1443,10 +1451,6 @@ export class Path {
     });
 
     this.ppath = new paper.Path(elem.getAttribute("d"));
-    if (this.matrix) {
-      const { a, b, c, d, e: tx, f: ty } = this.matrix;
-      this.ppath.matrix.set(a, b, c, d, tx, ty);
-    }
     return this;
   }
 
@@ -2040,8 +2044,7 @@ export const pathActions = (function () {
 
   return /** @lends module:path.pathActions */ {
     addSegment(x, y) {
-      const currentZoom = editorContext_.getCurrentZoom();
-      path.divideAt(x, y, currentZoom);
+      path.divideAt({ x, y });
       path.init();
       path.endChanges("Add path node(s)");
     },
@@ -2324,14 +2327,10 @@ export const pathActions = (function () {
         addNearestPointGrip();
         return null;
       }
-      const [mouseX, mouseY] = arguments;
-      const currentZoom = editorContext_.getCurrentZoom();
-      const cursor = new paper.Point(
-        mouseX / currentZoom,
-        mouseY / currentZoom
-      );
-      const point = path.getNearestPoint(cursor, currentZoom);
-      const distance = point.getDistance({ x: mouseX, y: mouseY });
+      const [x, y] = arguments;
+      const cursor = { x, y };
+      const point = path.getNearestPoint(cursor);
+      const distance = new paper.Point(point).getDistance(cursor);
       if (distance <= 8) {
         addNearestPointGrip(point.x, point.y);
         return { x: point.x, y: point.y };

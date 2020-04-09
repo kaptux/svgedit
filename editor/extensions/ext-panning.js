@@ -10,44 +10,49 @@
   This is a very basic SVG-Edit extension to let tablet/mobile devices pan without problem
 */
 export default {
-  name: 'panning',
-  async init ({importLocale}) {
+  name: "panning",
+  async init({ importLocale }) {
     const strings = await importLocale();
     const svgEditor = this;
     const svgCanvas = svgEditor.canvas;
-    const buttons = [{
-      id: 'ext-panning',
-      icon: svgEditor.curConfig.extIconsPath + 'panning.png',
-      type: 'mode',
-      events: {
-        click () {
-          svgCanvas.setMode('ext-panning');
-        }
-      }
-    }];
+    const buttons = [
+      {
+        id: "ext-panning",
+        icon: svgEditor.curConfig.extIconsPath + "panning.png",
+        type: "mode",
+        events: {
+          click() {
+            svgEditor.setCursor(null, "hand-open");
+            svgCanvas.setMode("ext-panning");
+          },
+        },
+      },
+    ];
     return {
       name: strings.name,
-      svgicons: svgEditor.curConfig.extIconsPath + 'ext-panning.xml',
+      svgicons: svgEditor.curConfig.extIconsPath + "ext-panning.xml",
       buttons: strings.buttons.map((button, i) => {
         return Object.assign(buttons[i], button);
       }),
-      mouseDown () {
-        if (svgCanvas.getMode() === 'ext-panning') {
+      mouseDown() {
+        if (svgCanvas.getMode() === "ext-panning") {
+          svgEditor.setCursor(null, "hand-closed");
           svgEditor.setPanning(true);
-          return {started: true};
+          return { started: true };
         }
         return undefined;
       },
-      mouseUp () {
-        if (svgCanvas.getMode() === 'ext-panning') {
+      mouseUp() {
+        if (svgCanvas.getMode() === "ext-panning") {
+          svgEditor.setCursor(null, "hand-open");
           svgEditor.setPanning(false);
           return {
             keep: false,
-            element: null
+            element: null,
           };
         }
         return undefined;
-      }
+      },
     };
-  }
+  },
 };
