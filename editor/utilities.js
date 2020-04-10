@@ -1527,7 +1527,7 @@ export const updateCursor = (mode, submode) => {
         cursors = ["pen-minus", null];
         break;
       case "blend-curve":
-        cursors = ["select-curve", null];
+        cursors = ["select-curve", "select-curve"];
         break;
     }
   }

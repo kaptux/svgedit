@@ -413,9 +413,7 @@ export const addPointGrip = function (index, x, y) {
     const grip = $("#pathpointgrip_" + index);
     grip.hover(
       function (evt) {
-        if (evt.shiftKey) {
-          editorContext_.setIsOverPathPointGrip(true);
-        }
+        editorContext_.setIsOverPathPointGrip(true);
       },
       function () {
         editorContext_.setIsOverPathPointGrip(false);
@@ -1004,8 +1002,12 @@ export class Segment {
    */
   moveCtrl(num, dx, dy) {
     const { item } = this;
-    item["x" + num] += dx;
-    item["y" + num] += dy;
+    const numArr = num.length ? num : [num];
+
+    for (const i of numArr) {
+      item["x" + i] += dx;
+      item["y" + i] += dy;
+    }
 
     const pts = [item.x, item.y, item.x1, item.y1, item.x2, item.y2];
 
@@ -1351,17 +1353,20 @@ export class Path {
         continue;
       }
 
+      const oldType = cur.type;
+
       if (!newType) {
         // double-click, so just toggle
         text = "Toggle Path Segment Type";
-
-        // Toggle segment to curve/straight line
-        const oldType = cur.type;
 
         newType = oldType === 6 ? 4 : 6;
       }
 
       newType = Number(newType);
+
+      if (newType === oldType) {
+        return;
+      }
 
       const curX = cur.item.x;
       const curY = cur.item.y;
@@ -2055,7 +2060,7 @@ export const pathActions = (function () {
      * @param {Float} startY
      * @returns {boolean|void}
      */
-    mouseDown(evt, mouseTarget, startX, startY) {
+    mouseDown(evt, mouseTarget, startX, startY, subMode, nearestPoint) {
       let id;
       if (editorContext_.getCurrentMode() === "path") {
         let mouseX = startX; // Was this meant to work with the other `mouseX`? (was defined globally so adding `let` to at least avoid a global)
@@ -2288,15 +2293,21 @@ export const pathActions = (function () {
         } else {
           path.addPtsToSelection(curPt);
         }
-      } else if (id.startsWith("ctrlpointgrip_")) {
+      } else if (id.startsWith("ctrlpointgrip_") || subMode === "blend-curve") {
         path.dragging = [startX, startY];
 
         setLinkControlPoints(evt.shiftKey);
 
-        const parts = id.split("_")[1].split("c");
-        curPt = Number(parts[0]);
-        const ctrlNum = Number(parts[1]);
-        path.selectPt(curPt, ctrlNum);
+        if (subMode === "blend-curve" && nearestPoint) {
+          curPt = path.findSegIndex(nearestPoint);
+          path.selectPt(curPt, [1, 2]);
+          path.setSegType(6);
+        } else {
+          const parts = id.split("_")[1].split("c");
+          curPt = Number(parts[0]);
+          const ctrlNum = Number(parts[1]);
+          path.selectPt(curPt, ctrlNum);
+        }
       }
 
       // Start selection box
@@ -2322,9 +2333,8 @@ export const pathActions = (function () {
       }
       return undefined;
     },
-    drawNearestPoint() {
-      if (arguments.length == 0) {
-        addNearestPointGrip();
+    getNearestPoint() {
+      if (arguments.length == 0 || path == null) {
         return null;
       }
       const [x, y] = arguments;
@@ -2332,8 +2342,16 @@ export const pathActions = (function () {
       const point = path.getNearestPoint(cursor);
       const distance = new paper.Point(point).getDistance(cursor);
       if (distance <= 8) {
-        addNearestPointGrip(point.x, point.y);
         return { x: point.x, y: point.y };
+      } else {
+        return null;
+      }
+    },
+    drawNearestPoint(x, y) {
+      const point = this.getNearestPoint(x, y);
+      if (point) {
+        addNearestPointGrip(point.x, point.y);
+        return point;
       } else {
         addNearestPointGrip();
         return null;

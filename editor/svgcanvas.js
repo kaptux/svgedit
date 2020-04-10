@@ -878,15 +878,18 @@ class SvgCanvas {
     };
 
     const updateCanvasCursor = function () {
-      let submode = null;
+      subMode = null;
       if (isShiftKey) {
         if (nearestPoint) {
-          submode = "add-point";
+          subMode = "add-point";
         } else if (isOverPathPointGrip) {
-          submode = "remove-point";
+          subMode = "remove-point";
         }
+      } else if (nearestPoint && !isOverPathPointGrip && !isOverCtrlPointGrip) {
+        subMode = "blend-curve";
       }
-      updateCursor(currentMode, submode);
+
+      updateCursor(currentMode, subMode);
     };
 
     /**
@@ -2335,7 +2338,14 @@ class SvgCanvas {
               startX *= currentZoom;
               startY *= currentZoom;
               evt.shiftKey = isShiftKey && !isOverPathPointGrip; //avoid multiple selection
-              pathActions.mouseDown(evt, mouseTarget, startX, startY);
+              pathActions.mouseDown(
+                evt,
+                mouseTarget,
+                startX,
+                startY,
+                subMode,
+                nearestPoint
+              );
               started = true;
 
               if (isShiftKey && isOverPathPointGrip) {
@@ -2399,10 +2409,12 @@ class SvgCanvas {
        */
       const mouseMove = function (evt) {
         isShiftKey = evt.shiftKey;
+        const pt = transformPoint(evt.pageX, evt.pageY, rootSctm);
 
         if (!started && !isShiftKey) {
-          if (nearestPoint) {
-            nearestPoint = pathActions.drawNearestPoint(); //reset
+          nearestPoint = pathActions.drawNearestPoint(); //reset
+          if (currentMode === "pathedit") {
+            nearestPoint = pathActions.getNearestPoint(pt.x, pt.y);
             updateCanvasCursor();
           }
           return;
@@ -2428,8 +2440,7 @@ class SvgCanvas {
           angle,
           box,
           selected = selectedElements[0];
-        const pt = transformPoint(evt.pageX, evt.pageY, rootSctm),
-          mouseX = pt.x * currentZoom,
+        const mouseX = pt.x * currentZoom,
           mouseY = pt.y * currentZoom,
           shape = getElem(getId());
 
