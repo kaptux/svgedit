@@ -2414,7 +2414,10 @@ class SvgCanvas {
         if (!started && !isShiftKey) {
           nearestPoint = pathActions.drawNearestPoint(); //reset
           if (currentMode === "pathedit") {
-            nearestPoint = pathActions.getNearestPoint(pt.x, pt.y);
+            nearestPoint = pathActions.getNearestPoint(
+              pt.x * currentZoom,
+              pt.y * currentZoom
+            );
             updateCanvasCursor();
           }
           return;

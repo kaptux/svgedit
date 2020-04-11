@@ -2299,7 +2299,9 @@ export const pathActions = (function () {
         setLinkControlPoints(evt.shiftKey);
 
         if (subMode === "blend-curve" && nearestPoint) {
-          curPt = path.findSegIndex(nearestPoint);
+          const pathPt = fromCanvasPoint(nearestPoint, path);
+          curPt = path.findSegIndex(pathPt);
+
           path.selectPt(curPt, [1, 2]);
           path.setSegType(6);
         } else {
