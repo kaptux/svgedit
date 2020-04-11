@@ -3568,6 +3568,7 @@ editor.init = function () {
     });
 
   $("#toolbarFigures").dropdown();
+  $("#toolbarMerges").dropdown();
   $("#slider-points").slider({
     min: 3,
     max: 25,
@@ -4143,6 +4144,10 @@ editor.init = function () {
     } else if (selectedElement) {
       svgCanvas.ungroupSelectedElement();
     }
+  };
+
+  const clickMergeUnion = function () {
+    svgCanvas.mergeUnion();
   };
 
   /**
@@ -5391,6 +5396,12 @@ editor.init = function () {
       {
         sel: "#tool_group_elements",
         fn: clickGroup,
+        evt: "click",
+        key: ["G", true],
+      },
+      {
+        sel: "#tool_merge_union",
+        fn: clickMergeUnion,
         evt: "click",
         key: ["G", true],
       },

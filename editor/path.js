@@ -2048,6 +2048,16 @@ export const pathActions = (function () {
   };
 
   return /** @lends module:path.pathActions */ {
+    mergeUnion(elems) {
+      if (elems.length > 1) {
+        let res = new paper.Path().importSVG(elems[0].outerHTML);
+        for (let i = 1; i < elems.length; i++) {
+          res = res.unite(new paper.Path().importSVG(elems[i].outerHTML));
+        }
+        return res.pathData;
+      }
+    },
+
     addSegment(x, y) {
       path.divideAt({ x, y });
       path.init();
