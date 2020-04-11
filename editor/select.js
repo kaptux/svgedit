@@ -485,7 +485,7 @@ export class SelectorManager {
    * @returns {void}
    */
   releaseSelector(elem) {
-    if (isNullish(elem)) {
+    if (isNullish(elem) || !this.selectorMap[elem.id]) {
       return;
     }
     const N = this.selectors.length,

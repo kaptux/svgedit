@@ -18,7 +18,7 @@ import {
   getMatrix,
   snapToAngle,
   rectsIntersect,
-  transformListToTransform,
+  transformListToTransform
 } from "./math.js";
 import {
   assignAttributes,
@@ -29,12 +29,12 @@ import {
   findDefs,
   snapToGrid,
   isNullish,
-  getBBox as utilsGetBBox,
+  getBBox as utilsGetBBox
 } from "./utilities.js";
 import {
   supportsPathInsertItemBefore,
   supportsPathReplaceItem,
-  isWebkit,
+  isWebkit
 } from "./browser.js";
 
 const $ = jQuery;
@@ -50,7 +50,7 @@ const segData = {
   12: ["x"], // PATHSEG_LINETO_HORIZONTAL_ABS
   14: ["y"], // PATHSEG_LINETO_VERTICAL_ABS
   16: ["x", "y", "x2", "y2"], // PATHSEG_CURVETO_CUBIC_SMOOTH_ABS
-  18: ["x", "y"], // PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS
+  18: ["x", "y"] // PATHSEG_CURVETO_QUADRATIC_SMOOTH_ABS
 };
 
 /**
@@ -65,7 +65,7 @@ const uiStrings = {};
  * @param {module:path.uiStrings} strs
  * @returns {void}
  */
-export const setUiStrings = function (strs) {
+export const setUiStrings = function(strs) {
   Object.assign(uiStrings, strs.ui);
 };
 
@@ -82,7 +82,7 @@ let pathData = {};
  * @param {boolean} lcp
  * @returns {void}
  */
-export const setLinkControlPoints = function (lcp) {
+export const setLinkControlPoints = function(lcp) {
   linkControlPts = lcp;
 };
 
@@ -250,7 +250,7 @@ let editorContext_ = null;
  * @param {module:path.EditorContext} editorContext
  * @returns {void}
  */
-export const init = function (editorContext) {
+export const init = function(editorContext) {
   editorContext_ = editorContext;
 
   pathFuncs = [0, "ClosePath"];
@@ -263,9 +263,9 @@ export const init = function (editorContext) {
     "LinetoHorizontal",
     "LinetoVertical",
     "CurvetoCubicSmooth",
-    "CurvetoQuadraticSmooth",
+    "CurvetoQuadraticSmooth"
   ];
-  $.each(pathFuncsStrs, function (i, s) {
+  $.each(pathFuncsStrs, function(i, s) {
     pathFuncs.push(s + "Abs");
     pathFuncs.push(s + "Rel");
   });
@@ -278,7 +278,7 @@ export const init = function (editorContext) {
  * @param {Integer} index
  * @returns {void}
  */
-export const insertItemBefore = function (elem, newseg, index) {
+export const insertItemBefore = function(elem, newseg, index) {
   // Support insertItemBefore on paths for FF2
   const list = elem.pathSegList;
 
@@ -309,9 +309,9 @@ export const insertItemBefore = function (elem, newseg, index) {
  * @param {SVGPathSegMovetoAbs|SVGPathSegLinetoAbs|SVGPathSegCurvetoCubicAbs|SVGPathSegCurvetoQuadraticAbs|SVGPathSegArcAbs|SVGPathSegLinetoHorizontalAbs|SVGPathSegLinetoVerticalAbs|SVGPathSegCurvetoCubicSmoothAbs|SVGPathSegCurvetoQuadraticSmoothAbs} segItem
  * @returns {ArgumentsArray}
  */
-export const ptObjToArr = function (type, segItem) {
+export const ptObjToArr = function(type, segItem) {
   const props = segData[type];
-  return props.map((prop) => {
+  return props.map(prop => {
     return segItem[prop];
   });
 };
@@ -322,11 +322,11 @@ export const ptObjToArr = function (type, segItem) {
  * @param {module:math.XYObject} altPt
  * @returns {module:math.XYObject}
  */
-export const getGripPt = function (seg, altPt) {
+export const getGripPt = function(seg, altPt) {
   const { path: pth } = seg;
   let out = {
     x: altPt ? altPt.x : seg.item.x,
-    y: altPt ? altPt.y : seg.item.y,
+    y: altPt ? altPt.y : seg.item.y
   };
 
   if (pth.matrix) {
@@ -347,10 +347,10 @@ export const getGripPt = function (seg, altPt) {
  * @param {module:path.Path} pth
  * @returns {module:math.XYObject}
  */
-export const getPointFromGrip = function (pt, pth) {
+export const getPointFromGrip = function(pt, pth) {
   const out = {
     x: pt.x,
-    y: pt.y,
+    y: pt.y
   };
 
   if (pth.matrix) {
@@ -365,12 +365,12 @@ export const getPointFromGrip = function (pt, pth) {
   return out;
 };
 
-export const fromCanvasPoint = function ({ x, y }, path) {
+export const fromCanvasPoint = function({ x, y }, path) {
   const zoom = editorContext_.getCurrentZoom();
   return transformPoint(x / zoom, y / zoom, path.imatrix);
 };
 
-export const toCanvasPoint = function ({ x, y }, path) {
+export const toCanvasPoint = function({ x, y }, path) {
   const zoom = editorContext_.getCurrentZoom();
   const out = transformPoint(x, y, path.matrix);
   return { x: out.x * zoom, y: out.y * zoom };
@@ -385,7 +385,7 @@ export const toCanvasPoint = function ({ x, y }, path) {
  * @param {Integer} y
  * @returns {SVGCircleElement}
  */
-export const addPointGrip = function (index, x, y) {
+export const addPointGrip = function(index, x, y) {
   // create the container of all the point grips
   const pointGripContainer = getGripContainer();
 
@@ -401,7 +401,7 @@ export const addPointGrip = function (index, x, y) {
       stroke: "#00F",
       "stroke-width": 2,
       cursor: "move",
-      style: "pointer-events:all",
+      style: "pointer-events:all"
     };
     if ("pathNodeTooltip" in uiStrings) {
       // May be empty if running path.js without svg-editor
@@ -412,14 +412,14 @@ export const addPointGrip = function (index, x, y) {
 
     const grip = $("#pathpointgrip_" + index);
     grip.hover(
-      function (evt) {
+      function(evt) {
         editorContext_.setIsOverPathPointGrip(true);
       },
-      function () {
+      function() {
         editorContext_.setIsOverPathPointGrip(false);
       }
     );
-    grip.dblclick(function (evt) {
+    grip.dblclick(function(evt) {
       if (path) {
         evt.stopPropagation();
         path.setSegType();
@@ -431,13 +431,13 @@ export const addPointGrip = function (index, x, y) {
     assignAttributes(pointGrip, {
       cx: x,
       cy: y,
-      display: "inline",
+      display: "inline"
     });
   }
   return pointGrip;
 };
 
-export const addNearestPointGrip = function (x, y) {
+export const addNearestPointGrip = function(x, y) {
   // create the container of all the point grips
   const pointGripContainer = getGripContainer();
   const id = "nearestpointgrip";
@@ -454,7 +454,7 @@ export const addNearestPointGrip = function (x, y) {
       stroke: "#00F",
       "stroke-width": 2,
       cursor: "none",
-      style: "pointer-events:none",
+      style: "pointer-events:none"
     };
     assignAttributes(pointGrip, atts);
     pointGripContainer.prepend(pointGrip);
@@ -464,7 +464,7 @@ export const addNearestPointGrip = function (x, y) {
     assignAttributes(pointGrip, {
       cx: x,
       cy: y,
-      display: "inline",
+      display: "inline"
     });
   } else {
     assignAttributes(pointGrip, { display: "none" });
@@ -473,7 +473,7 @@ export const addNearestPointGrip = function (x, y) {
   return pointGrip;
 };
 
-export const addCursorPointGrip = function (x, y) {
+export const addCursorPointGrip = function(x, y) {
   // create the container of all the point grips
   const pointGripContainer = getGripContainer();
   const id = "cursorpointgrip";
@@ -490,7 +490,7 @@ export const addCursorPointGrip = function (x, y) {
       stroke: "#00F",
       "stroke-width": 2,
       cursor: "none",
-      style: "pointer-events:none",
+      style: "pointer-events:none"
     };
     assignAttributes(pointGrip, atts);
     pointGripContainer.prepend(pointGrip);
@@ -500,7 +500,7 @@ export const addCursorPointGrip = function (x, y) {
     assignAttributes(pointGrip, {
       cx: x,
       cy: y,
-      display: "inline",
+      display: "inline"
     });
   } else {
     assignAttributes(pointGrip, { display: "none" });
@@ -513,7 +513,7 @@ export const addCursorPointGrip = function (x, y) {
  * @function module:path.getGripContainer
  * @returns {Element}
  */
-export const getGripContainer = function () {
+export const getGripContainer = function() {
   let c = getElem("pathpointgrip_container");
   if (!c) {
     const parentElement = getElem("selectorParentGroup");
@@ -530,7 +530,7 @@ export const getGripContainer = function () {
  * @param {string} id
  * @returns {SVGCircleElement}
  */
-export const addCtrlGrip = function (index) {
+export const addCtrlGrip = function(index) {
   const id = "ctrlpointgrip_" + index;
   let pointGrip = getElem(id);
   if (pointGrip) {
@@ -546,7 +546,7 @@ export const addCtrlGrip = function (index) {
     stroke: "#55F",
     "stroke-width": 1,
     cursor: "move",
-    style: "pointer-events:all",
+    style: "pointer-events:all"
   };
   if ("pathCtrlPtTooltip" in uiStrings) {
     // May be empty if running path.js without svg-editor
@@ -555,10 +555,10 @@ export const addCtrlGrip = function (index) {
   assignAttributes(pointGrip, atts);
   getGripContainer().append(pointGrip);
   $(`#${id}`).hover(
-    function () {
+    function() {
       editorContext_.setIsOverCtrlPointGrip(true);
     },
-    function () {
+    function() {
       editorContext_.setIsOverCtrlPointGrip(false);
     }
   );
@@ -570,7 +570,7 @@ export const addCtrlGrip = function (index) {
  * @param {string} id
  * @returns {SVGLineElement}
  */
-export const getCtrlLine = function (id) {
+export const getCtrlLine = function(id) {
   let ctrlLine = getElem("ctrlLine_" + id);
   if (ctrlLine) {
     return ctrlLine;
@@ -581,7 +581,7 @@ export const getCtrlLine = function (id) {
     id: "ctrlLine_" + id,
     stroke: "#555",
     "stroke-width": 1,
-    style: "pointer-events:none",
+    style: "pointer-events:none"
   });
   getGripContainer().append(ctrlLine);
   return ctrlLine;
@@ -593,7 +593,7 @@ export const getCtrlLine = function (id) {
  * @param {boolean} update
  * @returns {SVGCircleElement}
  */
-export const getPointGrip = function (seg, update) {
+export const getPointGrip = function(seg, update) {
   const { index } = seg;
   const pointGrip = addPointGrip(index);
 
@@ -602,7 +602,7 @@ export const getPointGrip = function (seg, update) {
     assignAttributes(pointGrip, {
       cx: pt.x,
       cy: pt.y,
-      display: "inline",
+      display: "inline"
     });
   }
 
@@ -614,7 +614,7 @@ export const getPointGrip = function (seg, update) {
  * @param {Segment} seg
  * @returns {PlainObject<string, SVGLineElement|SVGCircleElement>}
  */
-export const getControlPoints = function (seg) {
+export const getControlPoints = function(seg) {
   const { item, index } = seg;
   if (!("x1" in item) || !("x2" in item)) {
     return null;
@@ -640,7 +640,7 @@ export const getControlPoints = function (seg) {
       y1: pt.y,
       x2: gpt.x,
       y2: gpt.y,
-      display: "inline",
+      display: "inline"
     });
 
     cpt["c" + i + "_line"] = ctrlLine;
@@ -651,7 +651,7 @@ export const getControlPoints = function (seg) {
     assignAttributes(pointGrip, {
       cx: pt.x,
       cy: pt.y,
-      display: "inline",
+      display: "inline"
     });
     cpt["c" + i] = pointGrip;
   }
@@ -667,7 +667,7 @@ export const getControlPoints = function (seg) {
  * @param {SVGPathElement} elem
  * @returns {void}
  */
-export const replacePathSeg = function (type, index, pts, elem) {
+export const replacePathSeg = function(type, index, pts, elem) {
   const pth = elem || path.elem;
 
   const func = "createSVGPathSeg" + pathFuncs[type];
@@ -700,7 +700,7 @@ export const replacePathSeg = function (type, index, pts, elem) {
  * @param {boolean} update
  * @returns {SVGPathElement}
  */
-export const getSegSelector = function (seg, update) {
+export const getSegSelector = function(seg, update) {
   const { index } = seg;
   let segLine = getElem("segline_" + index);
   if (!segLine) {
@@ -714,7 +714,7 @@ export const getSegSelector = function (seg, update) {
       stroke: "#0FF",
       "stroke-width": 2,
       style: "pointer-events:none",
-      d: "M0,0 0,0",
+      d: "M0,0 0,0"
     });
     pointGripContainer.append(segLine);
   }
@@ -756,7 +756,7 @@ export const getSegSelector = function (seg, update) {
  * @param {Point} pt - Object with x and y values (third point)
  * @returns {Point[]} Array of two "smoothed" point objects
  */
-export const smoothControlPoints = function (ct1, ct2, pt) {
+export const smoothControlPoints = function(ct1, ct2, pt) {
   // each point must not be the origin
   const x1 = ct1.x - pt.x,
     y1 = ct1.y - pt.y,
@@ -892,7 +892,7 @@ export class Segment {
       const pt = getGripPt(this);
       assignAttributes(this.ptgrip, {
         cx: pt.x,
-        cy: pt.y,
+        cy: pt.y
       });
 
       getSegSelector(this, true);
@@ -923,7 +923,7 @@ export class Segment {
           item.x1,
           item.y1,
           (item.x2 += dx),
-          (item.y2 += dy),
+          (item.y2 += dy)
         ]
       : [(item.x += dx), (item.y += dy)];
 
@@ -942,7 +942,7 @@ export class Segment {
         (next.x1 += dx),
         (next.y1 += dy),
         next.x2,
-        next.y2,
+        next.y2
       ];
       replacePathSeg(this.next.type, this.next.index, nextPts);
     }
@@ -1061,7 +1061,7 @@ export class Path {
     // fixed, needed to work on all found elements, not just first
     $(getGripContainer())
       .find("*")
-      .each(function () {
+      .each(function() {
         $(this).attr("display", "none");
       });
 
@@ -1278,7 +1278,7 @@ export class Path {
    * @returns {void}
    */
   clearSelection() {
-    this.eachSeg(function () {
+    this.eachSeg(function() {
       // 'this' is the segment here
       this.select(false);
     });
@@ -1298,7 +1298,7 @@ export class Path {
    */
   show(y) {
     // Shows this path's segment grips
-    this.eachSeg(function () {
+    this.eachSeg(function() {
       // 'this' is the segment here
       this.show(y);
     });
@@ -1419,7 +1419,7 @@ export class Path {
   selectPt(pt, ctrlNum) {
     this.clearSelection();
     if (isNullish(pt)) {
-      this.eachSeg(function (i) {
+      this.eachSeg(function(i) {
         // 'this' is the segment here.
         if (this.prev) {
           pt = i;
@@ -1450,7 +1450,7 @@ export class Path {
       this.imatrix = null;
     }
 
-    this.eachSeg(function (i) {
+    this.eachSeg(function(i) {
       this.item = elem.pathSegList.getItem(i);
       this.update();
     });
@@ -1479,7 +1479,7 @@ export class Path {
     if (!Array.isArray(indexes)) {
       indexes = [indexes];
     }
-    indexes.forEach((index) => {
+    indexes.forEach(index => {
       const seg = this.segs[index];
       if (seg.ptgrip) {
         if (!this.selected_pts.includes(index) && index >= 0) {
@@ -1511,7 +1511,7 @@ export class Path {
   static subpathIsClosed(index) {
     let clsd = false;
     // Check if subpath is already open
-    path.eachSeg(function (i) {
+    path.eachSeg(function(i) {
       if (i <= index) {
         return true;
       }
@@ -1536,7 +1536,7 @@ export class Path {
  * @param {SVGPathElement} elem
  * @returns {module:path.Path}
  */
-export const getPath_ = function (elem) {
+export const getPath_ = function(elem) {
   let p = pathData[elem.id];
   if (!p) {
     p = pathData[elem.id] = new Path(elem);
@@ -1549,7 +1549,7 @@ export const getPath_ = function (elem) {
  * @param {string} id
  * @returns {void}
  */
-export const removePath_ = function (id) {
+export const removePath_ = function(id) {
   if (id in pathData) {
     delete pathData[id];
   }
@@ -1557,7 +1557,7 @@ export const removePath_ = function (id) {
 
 let newcx, newcy, oldcx, oldcy, angle;
 
-const getRotVals = function (x, y) {
+const getRotVals = function(x, y) {
   let dx = x - oldcx;
   let dy = y - oldcy;
 
@@ -1591,7 +1591,7 @@ const getRotVals = function (x, y) {
  * be optimized or even taken care of by `recalculateDimensions`
  * @returns {void}
  */
-export const recalcRotatedPath = function () {
+export const recalcRotatedPath = function() {
   const currentPath = path.elem;
   angle = getRotationAngle(currentPath, true);
   if (!angle) {
@@ -1653,7 +1653,7 @@ export const recalcRotatedPath = function () {
  * @function module:path.clearData
  * @returns {void}
  */
-export const clearData = function () {
+export const clearData = function() {
   pathData = {};
 };
 
@@ -1664,7 +1664,7 @@ export const clearData = function () {
  * @param {SVGMatrix} m
  * @returns {void}
  */
-export const reorientGrads = function (elem, m) {
+export const reorientGrads = function(elem, m) {
   const bb = utilsGetBBox(elem);
   for (let i = 0; i < 2; i++) {
     const type = i === 0 ? "fill" : "stroke";
@@ -1692,7 +1692,7 @@ export const reorientGrads = function (elem, m) {
           x1: (pt1.x - bb.x) / bb.width,
           y1: (pt1.y - bb.y) / bb.height,
           x2: (pt2.x - bb.x) / bb.width,
-          y2: (pt2.y - bb.y) / bb.height,
+          y2: (pt2.y - bb.y) / bb.height
         };
 
         const newgrad = grad.cloneNode(true);
@@ -1731,7 +1731,7 @@ const pathMap = [
   "S",
   "s",
   "T",
-  "t",
+  "t"
 ];
 
 /**
@@ -1742,7 +1742,7 @@ const pathMap = [
  * @param {boolean} toRel - true of convert to relative
  * @returns {string}
  */
-export const convertPath = function (pth, toRel) {
+export const convertPath = function(pth, toRel) {
   const { pathSegList } = pth;
   const len = pathSegList.numberOfItems;
   let curx = 0,
@@ -1765,7 +1765,7 @@ export const convertPath = function (pth, toRel) {
 
     switch (type) {
       case 1: // z,Z closepath (Z/z)
-        d += "z";
+        d += toRel ? "z" : "Z";
         if (lastM && !toRel) {
           curx = lastM[0];
           cury = lastM[1];
@@ -1854,7 +1854,7 @@ export const convertPath = function (pth, toRel) {
         d += pathDSegment(letter, [
           [x1, y1],
           [x2, y2],
-          [x, y],
+          [x, y]
         ]);
         break;
       case 8: // absolute quad (Q)
@@ -1877,7 +1877,7 @@ export const convertPath = function (pth, toRel) {
         }
         d += pathDSegment(letter, [
           [x1, y1],
-          [x, y],
+          [x, y]
         ]);
         break;
       // eslint-disable-next-line sonarjs/no-duplicated-branches
@@ -1922,7 +1922,7 @@ export const convertPath = function (pth, toRel) {
         }
         d += pathDSegment(letter, [
           [x2, y2],
-          [x, y],
+          [x, y]
         ]);
         break;
     } // switch on path segment type
@@ -1940,7 +1940,7 @@ export const convertPath = function (pth, toRel) {
  * @returns {string}
  */
 function pathDSegment(letter, points, morePoints, lastPoint) {
-  $.each(points, function (i, pnt) {
+  $.each(points, function(i, pnt) {
     points[i] = shortFloat(pnt);
   });
   let segment = letter + points.join(" ");
@@ -1960,7 +1960,7 @@ function pathDSegment(letter, points, morePoints, lastPoint) {
  * @namespace {PlainObject} pathActions
  * @memberof module:path
  */
-export const pathActions = (function () {
+export const pathActions = (function() {
   /* eslint-enable jsdoc/require-property */
   let subpath = false;
   let newPoint, firstCtrl;
@@ -1978,7 +1978,7 @@ export const pathActions = (function () {
    * @param {Element} element
    * @returns {Element}
    */
-  const smoothPolylineIntoPath = function (element) {
+  const smoothPolylineIntoPath = function(element) {
     let i;
     const { points } = element;
     const N = points.numberOfItems;
@@ -2039,8 +2039,8 @@ export const pathActions = (function () {
         attr: {
           id: editorContext_.getId(),
           d,
-          fill: "none",
-        },
+          fill: "none"
+        }
       });
       // No need to call "changed", as this is already done under mouseUp
     }
@@ -2048,11 +2048,11 @@ export const pathActions = (function () {
   };
 
   return /** @lends module:path.pathActions */ {
-    mergeUnion(elems) {
+    merge(elems, op) {
       if (elems.length > 1) {
         let res = new paper.Path().importSVG(elems[0].outerHTML);
         for (let i = 1; i < elems.length; i++) {
-          res = res.unite(new paper.Path().importSVG(elems[i].outerHTML));
+          res = res[op](new paper.Path().importSVG(elems[i].outerHTML));
         }
         return res.pathData;
       }
@@ -2095,7 +2095,7 @@ export const pathActions = (function () {
             id: "path_stretch_line",
             stroke: "#22C",
             "stroke-width": "0.5",
-            fill: "none",
+            fill: "none"
           });
           stretchy = getElem("selectorParentGroup").appendChild(stretchy);
         }
@@ -2114,8 +2114,8 @@ export const pathActions = (function () {
               attr: {
                 d: dAttr,
                 id: editorContext_.getNextId(),
-                opacity: editorContext_.getOpacity() / 2,
-              },
+                opacity: editorContext_.getOpacity() / 2
+              }
             })
           );
           // set stretchy line to first point
@@ -2338,7 +2338,7 @@ export const pathActions = (function () {
             y: startY * currentZoom,
             width: 0,
             height: 0,
-            display: "inline",
+            display: "inline"
           },
           100
         );
@@ -2418,7 +2418,7 @@ export const pathActions = (function () {
             y1: mouseY,
             x2: altX * currentZoom,
             y2: altY * currentZoom,
-            display: "inline",
+            display: "inline"
           });
 
           if (index === 0) {
@@ -2458,7 +2458,7 @@ export const pathActions = (function () {
                   prevX * currentZoom,
                   prevY * currentZoom,
                   mouseX,
-                  mouseY,
+                  mouseY
                 ],
                 stretchy
               );
@@ -2481,14 +2481,14 @@ export const pathActions = (function () {
         const pt = getPointFromGrip(
           {
             x: path.dragging[0],
-            y: path.dragging[1],
+            y: path.dragging[1]
           },
           path
         );
         const mpt = getPointFromGrip(
           {
             x: mouseX,
-            y: mouseY,
+            y: mouseY
           },
           path
         );
@@ -2503,7 +2503,7 @@ export const pathActions = (function () {
         }
       } else {
         path.selected_pts = [];
-        path.eachSeg(function (i) {
+        path.eachSeg(function(i) {
           const seg = this; // eslint-disable-line consistent-this
           if (!seg.next && !seg.prev) {
             return;
@@ -2518,7 +2518,7 @@ export const pathActions = (function () {
             x: pt.x,
             y: pt.y,
             width: 0,
-            height: 0,
+            height: 0
           };
 
           const sel = rectsIntersect(rbb, ptBb);
@@ -2557,7 +2557,7 @@ export const pathActions = (function () {
 
         return {
           keep: true,
-          element,
+          element
         };
       }
 
@@ -2674,7 +2674,7 @@ export const pathActions = (function () {
       const batchCmd = new BatchCommand("Reorient path");
       const changes = {
         d: elem.getAttribute("d"),
-        transform: elem.getAttribute("transform"),
+        transform: elem.getAttribute("transform")
       };
       batchCmd.addSubCommand(new ChangeElementCommand(elem, changes));
       editorContext_.clearSelection();
@@ -2702,7 +2702,9 @@ export const pathActions = (function () {
         const elem = getElem(editorContext_.getId());
         $(getElem("path_stretch_line")).remove();
         $(elem).remove();
-        $(getElem("pathpointgrip_container")).find("*").attr("display", "none");
+        $(getElem("pathpointgrip_container"))
+          .find("*")
+          .attr("display", "none");
         firstCtrl = null;
         editorContext_.setDrawnPath(null);
         editorContext_.setStarted(false);
@@ -2747,7 +2749,7 @@ export const pathActions = (function () {
           continue;
         }
         const pts = [];
-        $.each(["", 1, 2], function (j, n) {
+        $.each(["", 1, 2], function(j, n) {
           const x = seg["x" + n],
             y = seg["y" + n];
           if (x !== undefined && y !== undefined) {
@@ -2785,7 +2787,7 @@ export const pathActions = (function () {
       return {
         x: seg.item.x,
         y: seg.item.y,
-        type: seg.type,
+        type: seg.type
       };
     },
     /**
@@ -2839,7 +2841,7 @@ export const pathActions = (function () {
       let startItem = null;
 
       // Check if subpath is already open
-      path.eachSeg(function (i) {
+      path.eachSeg(function(i) {
         if (this.type === 2 && i <= index) {
           startItem = this.item;
         }
@@ -2952,11 +2954,11 @@ export const pathActions = (function () {
       }
 
       // Cleanup
-      const cleanup = function () {
+      const cleanup = function() {
         const segList = path.elem.pathSegList;
         let len = segList.numberOfItems;
 
-        const remItems = function (pos, count) {
+        const remItems = function(pos, count) {
           while (count--) {
             segList.removeItem(pos);
           }
@@ -3098,7 +3100,7 @@ export const pathActions = (function () {
      * @function module:path.pathActions.convertPath
      * @see module:path.convertPath
      */
-    convertPath,
+    convertPath
     /* eslint-enable jsdoc/require-returns */
   };
 })();
