@@ -1765,11 +1765,14 @@ export const convertPath = function(pth, toRel) {
 
     switch (type) {
       case 1: // z,Z closepath (Z/z)
-        d += toRel ? "z" : "Z";
         if (lastM && !toRel) {
-          curx = lastM[0];
-          cury = lastM[1];
+          const distance = new paper.Point([curx, cury]).getDistance(lastM);
+          if (distance > 0.0001) {
+            d += pathDSegment("L", [lastM]);
+          }
+          lastM = null;
         }
+        d += toRel ? "z" : "Z";
         break;
       case 12: // absolute horizontal line (H)
         x -= curx;
@@ -1823,7 +1826,7 @@ export const convertPath = function(pth, toRel) {
           curx = x;
           cury = y;
         }
-        if (type === 2 || type === 3) {
+        if (type === 2) {
           lastM = [curx, cury];
         }
 
@@ -2054,7 +2057,7 @@ export const pathActions = (function() {
         for (let i = 1; i < elems.length; i++) {
           res = res[op](new paper.Path().importSVG(elems[i].outerHTML));
         }
-        return res.pathData;
+        return res.reduce().pathData;
       }
     },
 

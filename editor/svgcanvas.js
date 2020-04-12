@@ -7347,6 +7347,9 @@ function hideCursor () {
       if (selectedElements.length > 1) {
         // 1. Transform shapes to Paths
         const elements = [...selectedElements];
+        if (op === "subtract") {
+          elements.reverse();
+        }
         for (let i = 0; i < elements.length; i++) {
           const elem = elements[i];
           if (elem.tagName !== "path") {
@@ -7360,6 +7363,7 @@ function hideCursor () {
         const json = getJsonFromSvgElement(elements[0]);
         json.attr.d = pathData;
         json.attr.id = getNextId();
+        delete json.attr.transform;
         const pathRes = addSVGElementFromJson(json);
 
         // 3. Paper works with relative paths. Need convert to Abs.
