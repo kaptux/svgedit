@@ -4175,6 +4175,9 @@ editor.init = function() {
   const clickMergeDifference = function() {
     svgCanvas.merge("exclude");
   };
+  const clickMergeDivide = function() {
+    svgCanvas.merge("divide");
+  };
 
   /**
    *
@@ -5449,6 +5452,11 @@ editor.init = function() {
       {
         sel: "#tool_merge_intersect",
         fn: clickMergeIntersect,
+        evt: "click"
+      },
+      {
+        sel: "#tool_merge_divide",
+        fn: clickMergeDivide,
         evt: "click"
       },
       { sel: "#tool_ungroup", fn: clickGroup, evt: "click" },

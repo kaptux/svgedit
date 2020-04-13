@@ -2057,7 +2057,9 @@ export const pathActions = (function() {
         for (let i = 1; i < elems.length; i++) {
           res = res[op](new paper.Path().importSVG(elems[i].outerHTML));
         }
-        return res.reduce().pathData;
+        return res.children
+          ? res.children.map(p => p.pathData)
+          : [res.pathData];
       }
     },
 

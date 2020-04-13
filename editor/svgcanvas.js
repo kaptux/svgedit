@@ -7347,7 +7347,7 @@ function hideCursor () {
       if (selectedElements.length > 1) {
         // 1. Transform shapes to Paths
         const elements = [...selectedElements];
-        if (op === "subtract") {
+        if (op === "subtract" || op === "divide") {
           elements.reverse();
         }
         for (let i = 0; i < elements.length; i++) {
@@ -7358,18 +7358,19 @@ function hideCursor () {
         }
 
         // 2. Exec merge op.
-        const pathData = pathActions.merge(elements, op);
+        const pathDatas = pathActions.merge(elements, op);
         const batchCmd = new BatchCommand("Merge - Union");
         const json = getJsonFromSvgElement(elements[0]);
-        json.attr.d = pathData;
-        json.attr.id = getNextId();
         delete json.attr.transform;
-        const pathRes = addSVGElementFromJson(json);
-
-        // 3. Paper works with relative paths. Need convert to Abs.
-        const newD = pathActions.convertPath(pathRes);
-        pathRes.setAttribute("d", newD);
-        batchCmd.addSubCommand(new InsertElementCommand(pathRes));
+        for (const pathData of pathDatas) {
+          json.attr.d = pathData;
+          json.attr.id = getNextId();
+          const pathRes = addSVGElementFromJson(json);
+          // 3. Paper works with relative paths. Need convert to Abs.
+          const newD = pathActions.convertPath(pathRes);
+          pathRes.setAttribute("d", newD);
+          batchCmd.addSubCommand(new InsertElementCommand(pathRes));
+        }
 
         // 4. Delete selected elements
         selectedElements = elements;
