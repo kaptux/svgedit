@@ -2051,6 +2051,15 @@ export const pathActions = (function() {
   };
 
   return /** @lends module:path.pathActions */ {
+    flip(elem, op) {
+      const ppath = new paper.Path().importSVG(elem.outerHTML);
+      if (op === "vertical") {
+        ppath.scale(1, -1);
+      } else {
+        ppath.scale(-1, 1);
+      }
+      return ppath.pathData;
+    },
     merge(elems, op) {
       if (elems.length > 1) {
         let res = new paper.Path().importSVG(elems[0].outerHTML);

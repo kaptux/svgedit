@@ -3609,6 +3609,16 @@ editor.init = function() {
 
   */
 
+  const clickRotate90Left = function() {
+    const current = parseFloat($("#angle").val() || 0);
+    svgCanvas.setRotationAngle(current - 90);
+  };
+
+  const clickRotate90Right = function() {
+    const current = parseFloat($("#angle").val() || 0);
+    svgCanvas.setRotationAngle(current + 90);
+  };
+
   /**
    *
    * @returns {void}
@@ -4153,6 +4163,14 @@ editor.init = function() {
    *
    * @returns {void}
    */
+  const clickFlipHorizonatal = function() {
+    svgCanvas.flip("horizontal");
+  };
+
+  const clickFlipVertical = function() {
+    svgCanvas.flip("vertical");
+  };
+
   const clickGroup = function() {
     // group
     if (multiselected) {
@@ -5433,6 +5451,26 @@ editor.init = function() {
         fn: clickGroup,
         evt: "click",
         key: ["G", true]
+      },
+      {
+        sel: "#tool_flip_horizontal",
+        fn: clickFlipHorizonatal,
+        evt: "click"
+      },
+      {
+        sel: "#tool_flip_vertical",
+        fn: clickFlipVertical,
+        evt: "click"
+      },
+      {
+        sel: "#tool_rotate_90_left",
+        fn: clickRotate90Left,
+        evt: "click"
+      },
+      {
+        sel: "#tool_rotate_90_right",
+        fn: clickRotate90Right,
+        evt: "click"
       },
       {
         sel: "#tool_merge_union",

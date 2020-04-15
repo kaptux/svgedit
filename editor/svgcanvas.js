@@ -1731,7 +1731,9 @@ class SvgCanvas {
         // we need to undo it, then redo it so it can be undo-able! :)
         // TODO: figure out how to make changes to transform list undo-able cross-browser?
         const newTransform = elem.getAttribute("transform");
-        elem.setAttribute("transform", oldTransform);
+        if (oldTransform) {
+          elem.setAttribute("transform", oldTransform);
+        }
         changeSelectedAttribute("transform", newTransform, selectedElements);
         call("changed", selectedElements);
       }
@@ -7341,6 +7343,33 @@ function hideCursor () {
 
       addCommandToHistory(batchCmd);
       call("changed", pasted);
+    };
+
+    this.flip = function(op) {
+      if (selectedElements.length != 1) {
+        return;
+      }
+
+      const batchCmd = new BatchCommand("Flip - " + op);
+      let elem = selectedElements[0];
+      if (elem.tagName !== "path") {
+        elem = this.convertToPath(elem);
+      }
+
+      const resPath = pathActions.flip(elem, op);
+      const json = getJsonFromSvgElement(elem);
+      delete json.attr.transform;
+      json.attr.d = resPath;
+      json.attr.id = getNextId();
+      const pathRes = addSVGElementFromJson(json);
+      const newD = pathActions.convertPath(pathRes);
+      pathRes.setAttribute("d", newD);
+      batchCmd.addSubCommand(new InsertElementCommand(pathRes));
+
+      selectedElements = [elem];
+      this.deleteSelectedElements(batchCmd);
+      this.clearSelection();
+      this.addToSelection([pathRes]);
     };
 
     this.merge = function(op) {
