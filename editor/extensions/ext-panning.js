@@ -22,11 +22,11 @@ export default {
         type: "mode",
         events: {
           click() {
-            svgEditor.setCursor(null, "hand-open");
+            svgEditor.setCursor("hand-open", "hand-open");
             svgCanvas.setMode("ext-panning");
-          },
-        },
-      },
+          }
+        }
+      }
     ];
     return {
       name: strings.name,
@@ -36,7 +36,7 @@ export default {
       }),
       mouseDown() {
         if (svgCanvas.getMode() === "ext-panning") {
-          svgEditor.setCursor(null, "hand-closed");
+          svgEditor.setCursor("hand-open", "hand-closed");
           svgEditor.setPanning(true);
           return { started: true };
         }
@@ -44,15 +44,15 @@ export default {
       },
       mouseUp() {
         if (svgCanvas.getMode() === "ext-panning") {
-          svgEditor.setCursor(null, "hand-open");
+          svgEditor.setCursor("hand-open", "hand-open");
           svgEditor.setPanning(false);
           return {
             keep: false,
-            element: null,
+            element: null
           };
         }
         return undefined;
-      },
+      }
     };
-  },
+  }
 };
