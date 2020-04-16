@@ -2179,7 +2179,7 @@ export const pathActions = (function() {
             // the first point was clicked on and there are less than 3 points
             // then leave the path open
             // otherwise, close the path
-            if (i <= 1 && len >= 2) {
+            if (i < 1 && len >= 2) {
               // Create end segment
               const absX = seglist.getItem(0).x;
               const absY = seglist.getItem(0).y;
@@ -2201,7 +2201,7 @@ export const pathActions = (function() {
               const endseg = drawnPath.createSVGPathSegClosePath();
               seglist.appendItem(newseg);
               seglist.appendItem(endseg);
-            } else if (len < 3) {
+            } else if (len < 2) {
               keep = false;
               return keep;
             }
