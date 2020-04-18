@@ -36,6 +36,7 @@ import {
   supportsPathReplaceItem,
   isWebkit
 } from "./browser.js";
+import slicePaths from "./slice.js";
 
 const $ = jQuery;
 
@@ -2050,6 +2051,19 @@ export const pathActions = (function() {
     return element;
   };
 
+  const getPaperPath = function() {
+    if (arguments.length == 0) {
+      return null;
+    }
+
+    const ppath = new paper.Path();
+    if (arguments.length == 1) {
+      return ppath.importSVG(arguments[0].outerHTML);
+    } else {
+      return Array.from(arguments).map(elem => ppath.importSVG(elem.outerHTML));
+    }
+  };
+
   return /** @lends module:path.pathActions */ {
     flip(elem, op) {
       const ppath = new paper.Path().importSVG(elem.outerHTML);
@@ -2060,7 +2074,20 @@ export const pathActions = (function() {
       }
       return ppath.pathData;
     },
+
+    slice(elems) {
+      if (elems.length > 1) {
+        const [p1, p2] = getPaperPath(...elems);
+        const paths = slicePaths(p1, p2);
+        return paths.map(p => p.pathData);
+      }
+    },
+
     merge(elems, op) {
+      if (op === "divide") {
+        return this.slice(elems);
+      }
+
       if (elems.length > 1) {
         let res = new paper.Path().importSVG(elems[0].outerHTML);
         for (let i = 1; i < elems.length; i++) {

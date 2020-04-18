@@ -2404,8 +2404,11 @@ class SvgCanvas {
        */
       const mouseMove = function(evt) {
         isShiftKey = evt.shiftKey;
-        const pt = transformPoint(evt.pageX, evt.pageY, rootSctm);
+        if (isShiftKey && currentMode !== "pathedit") {
+          return;
+        }
 
+        const pt = transformPoint(evt.pageX, evt.pageY, rootSctm);
         if (!started && !isShiftKey) {
           nearestPoint = pathActions.drawNearestPoint(); //reset
           if (currentMode === "pathedit") {
