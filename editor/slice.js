@@ -8,7 +8,9 @@ function openOpenSlice(openPath1, openPath2) {
   res.push(lastRes);
   for (const intersection of intersections) {
     lastRes = lastRes.split(intersection);
-    res.push(lastRes);
+    if (lastRes) {
+      res.push(lastRes);
+    }
   }
 
   return res;
@@ -24,20 +26,16 @@ function getSegHash(segments) {
   return res;
 }
 
-function openCloseSlice(openPath, closePath, lineSegments) {
-  if (lineSegments.length == 0) {
-    return;
+function openCloseSlice(openPath, closePath, innerSegments) {
+  if (innerSegments.length == 0) {
+    return [closePath.clone(false)];
   }
 
   const res = [];
   const segments = openOpenSlice(closePath, openPath);
   segments.shift();
 
-  // 1. Filtramos los segmentos pares/impares en función de la localización del primer punto
-  const modRes = closePath.contains(lineSegments[0].firstSegment.point) ? 1 : 0;
-  const closeSegments = lineSegments.filter((e, i) => i % 2 == modRes);
-
-  const linePointMap = getSegHash(closeSegments);
+  const linePointMap = getSegHash(innerSegments);
   const openPointMap = getSegHash(segments);
 
   const pointMaps = [openPointMap, linePointMap];
@@ -47,7 +45,7 @@ function openCloseSlice(openPath, closePath, lineSegments) {
       let i = 0;
       while (nextSeg) {
         nextSeg.used = true;
-        seg.join(nextSeg, 0.1);
+        seg.join(nextSeg, 2);
         if (seg.closed) {
           break;
         }
@@ -65,6 +63,11 @@ function openCloseSlice(openPath, closePath, lineSegments) {
 function slicePaths(p1, p2) {
   let res = [];
 
+  const intersections = p1.getIntersections(p2);
+  if (intersections.length == 0) {
+    return res;
+  }
+
   function addRes(p) {
     res.push(p.children || p);
   }
@@ -73,9 +76,33 @@ function slicePaths(p1, p2) {
     addRes(openOpenSlice(p1, p2));
     addRes(openOpenSlice(p2, p1));
   } else if (p1.closed && !p2.closed) {
-    const lineSements = openOpenSlice(p1, p2);
-    addRes(lineSements);
-    addRes(openCloseSlice(p1, p2, lineSements));
+    const lineSegments = openOpenSlice(p2, p1);
+
+    const modRes = p1.contains(lineSegments[0].firstSegment.point) ? 0 : 1;
+    const innerPaths = [];
+    const outerPaths = [];
+    lineSegments.forEach((seg, i) => {
+      if (i % 2 === modRes) {
+        innerPaths.push(seg);
+      } else {
+        outerPaths.push(seg);
+      }
+    });
+
+    if (innerPaths.length > 0) {
+      addRes(openCloseSlice(p2, p1, innerPaths));
+    } else {
+      addRes(p1);
+    }
+    addRes(outerPaths);
+  } else if (!p1.closed && p2.closed) {
+    return slicePaths(p2, p1);
+  } else {
+    const intersect = p1.intersect(p2);
+    if (intersect && intersect.closed) {
+      addRes(intersect);
+      addRes(p1.exclude(p2));
+    }
   }
 
   return res.flat();

@@ -2077,9 +2077,28 @@ export const pathActions = (function() {
 
     slice(elems) {
       if (elems.length > 1) {
-        const [p1, p2] = getPaperPath(...elems);
-        const paths = slicePaths(p1, p2);
-        return paths.map(p => p.pathData);
+        const paths = getPaperPath(...elems);
+        let res = [paths.shift()];
+
+        for (let i = 0; i < paths.length; i++) {
+          const partialRes = [];
+          let current = paths[i];
+
+          res.forEach(p => {
+            const slices = slicePaths(current, p);
+            if (slices.length > 0) {
+              current = slices.pop();
+              partialRes.push(slices);
+            } else {
+              partialRes.push(p);
+            }
+          });
+
+          partialRes.push(current);
+          res = partialRes.flat();
+        }
+
+        return res.map(p => p.pathData);
       }
     },
 
