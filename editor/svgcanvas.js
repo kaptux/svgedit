@@ -2404,7 +2404,10 @@ class SvgCanvas {
        */
       const mouseMove = function(evt) {
         isShiftKey = evt.shiftKey;
-        if (isShiftKey && currentMode !== "pathedit") {
+        if (
+          isShiftKey &&
+          (currentMode === "select" || currentMode === "multiselect")
+        ) {
           return;
         }
 
@@ -2821,6 +2824,27 @@ class SvgCanvas {
             if (started || isOverCtrlPointGrip || isOverPathPointGrip) {
               x *= currentZoom;
               y *= currentZoom;
+
+              if (curConfig.gridSnapping) {
+                x = snapToGrid(x);
+                y = snapToGrid(y);
+                startX = snapToGrid(startX);
+                startY = snapToGrid(startY);
+              }
+
+              if (evt.shiftKey) {
+                const { path } = pathModule;
+                let x1, y1;
+                if (path) {
+                  x1 = path.dragging ? path.dragging[0] : startX;
+                  y1 = path.dragging ? path.dragging[1] : startY;
+                } else {
+                  x1 = startX;
+                  y1 = startY;
+                }
+                xya = snapToAngle(x1, y1, x, y);
+                ({ x, y } = xya);
+              }
 
               if (rubberBox && rubberBox.getAttribute("display") !== "none") {
                 realX *= currentZoom;
