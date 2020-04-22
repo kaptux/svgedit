@@ -26,9 +26,33 @@ function getSegHash(segments) {
   return res;
 }
 
+function getCrossingsSegments(openPath, closePath) {
+  const lineSegments = openOpenSlice(openPath, closePath).filter(
+    s => s.segments.length > 1
+  );
+
+  const modRes = closePath.contains(lineSegments[0].firstSegment.point) ? 0 : 1;
+  const innerPaths = [];
+  const outerPaths = [];
+  lineSegments.forEach((seg, i) => {
+    if (i % 2 === modRes) {
+      innerPaths.push(seg);
+    } else {
+      outerPaths.push(seg);
+    }
+  });
+
+  return [innerPaths, outerPaths];
+}
+
 function openCloseSlice(openPath, closePath, innerSegments) {
   if (innerSegments.length == 0) {
     return [closePath.clone(false)];
+  }
+
+  const originalOpenPath = getOriginPath(openPath);
+  if (openPath !== originalOpenPath) {
+    innerSegments = getCrossingsSegments(originalOpenPath, closePath)[0];
   }
 
   const res = [];
@@ -45,7 +69,7 @@ function openCloseSlice(openPath, closePath, innerSegments) {
       let i = 0;
       while (nextSeg) {
         nextSeg.used = true;
-        seg.join(nextSeg, 2);
+        seg.join(nextSeg, 1);
         if (seg.closed) {
           break;
         }
@@ -60,52 +84,119 @@ function openCloseSlice(openPath, closePath, innerSegments) {
   return res;
 }
 
-function slicePaths(p1, p2) {
+function fromSameOrigin(p1, p2) {
+  return (
+    p1.sliceOrigin &&
+    p2.sliceOrigin &&
+    Object.keys(p1.sliceOrigin).find(k => p2.sliceOrigin[k])
+  );
+}
+
+function getOriginPath(p) {
+  let res = p;
+  while (res.parentPath) {
+    res = res.parentPath;
+  }
+  return res;
+}
+
+function addSliceId(p, sliceId) {
+  p.sliceOrigin = p.sliceOrigin || {};
+  p.sliceOrigin[`cut_${sliceId}`] = true;
+}
+
+function sliceTwoPaths(p1, p2, sliceId) {
   let res = [];
 
-  const intersections = p1.getIntersections(p2);
-  if (intersections.length == 0) {
+  if (fromSameOrigin(p1, p2)) {
     return res;
   }
 
-  function addRes(p) {
-    res.push(p.children || p);
+  const intersections = p1.getIntersections(p2);
+  if (intersections.length == 0) {
+    addSliceId(p1, sliceId);
+    addSliceId(p2, sliceId);
+    return res;
+  }
+
+  function addRes(p, parents) {
+    parents = parents || [p1, p2];
+    const slices = Array.isArray(p) ? p : p.children || [p];
+
+    for (const slice of slices) {
+      addSliceId(slice, sliceId);
+      for (const parent of parents) {
+        slice.parentPath = parent;
+        slice.sliceOrigin = Object.assign(
+          {},
+          slice.sliceOrigin,
+          { [`path_${parent.id}`]: true },
+          parent.sliceOrigin
+        );
+      }
+
+      res.push(slice);
+    }
   }
 
   if (!p1.closed && !p2.closed) {
-    addRes(openOpenSlice(p1, p2));
-    addRes(openOpenSlice(p2, p1));
+    addRes(openOpenSlice(p1, p2), [p1]);
+    addRes(openOpenSlice(p2, p1), [p2]);
   } else if (p1.closed && !p2.closed) {
-    const lineSegments = openOpenSlice(p2, p1);
-
-    const modRes = p1.contains(lineSegments[0].firstSegment.point) ? 0 : 1;
-    const innerPaths = [];
-    const outerPaths = [];
-    lineSegments.forEach((seg, i) => {
-      if (i % 2 === modRes) {
-        innerPaths.push(seg);
-      } else {
-        outerPaths.push(seg);
-      }
-    });
+    const [innerPaths, outerPaths] = getCrossingsSegments(p2, p1);
 
     if (innerPaths.length > 0) {
-      addRes(openCloseSlice(p2, p1, innerPaths));
-    } else {
-      addRes(p1);
+      addRes(openCloseSlice(p2, p1, innerPaths), [p1]);
+      addRes(outerPaths, [p2]);
     }
-    addRes(outerPaths);
   } else if (!p1.closed && p2.closed) {
-    return slicePaths(p2, p1);
+    return sliceTwoPaths(p2, p1, sliceId);
   } else {
     const intersect = p1.intersect(p2);
-    if (intersect && intersect.closed) {
-      addRes(intersect);
-      addRes(p1.exclude(p2));
+    if (intersect && intersect.closed && intersect.area > 1) {
+      addRes(intersect, [p1, p2]);
+      addRes(p1.subtract(intersect), [p1]);
+      addRes(p2.subtract(intersect), [p2]);
     }
   }
 
   return res.flat();
+}
+
+function slicePaths(paths) {
+  if (paths.length > 1) {
+    const finalSlices = [];
+    let slicesBag = [...paths];
+    let sliceCount = 0;
+
+    for (let i = 0; i < slicesBag.length - 1; i++) {
+      const current = slicesBag[i];
+      for (let j = i + 1; j < slicesBag.length; j++) {
+        const p = slicesBag[j];
+        const slices = sliceTwoPaths(current, p, ++sliceCount);
+        if (slices.length > 0) {
+          const newSliceBag = slicesBag.filter(
+            (s, idx) => idx > i && idx !== j
+          );
+          if (newSliceBag.length > 0) {
+            slicesBag = [...slices, ...newSliceBag];
+            i = -1;
+            break;
+          } else {
+            return [...finalSlices, ...slices];
+          }
+        }
+      }
+      if (i >= 0) {
+        finalSlices.push(current);
+        if (i === slicesBag.length - 2) {
+          finalSlices.push(slicesBag.pop());
+        }
+      }
+    }
+
+    return finalSlices;
+  }
 }
 
 export default slicePaths;
