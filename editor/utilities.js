@@ -1540,6 +1540,9 @@ export const updateCursor = (mode, submode) => {
       case "blend-curve":
         cursors = ["select-curve", "select-curve"];
         break;
+      case "knife":
+        cursors = ["knife", "knife"];
+        break;
     }
   }
 

@@ -3312,7 +3312,15 @@ class SvgCanvas {
             element.setAttribute("style", "pointer-events:inherit");
             cleanupElement(element);
             if (currentMode === "path") {
+              const currentSelectedElements = selectedElements;
               pathActions.toEditMode(element);
+
+              if (subMode === "knife") {
+                canvas.setSubMode(null);
+                pathActions.toSelectMode();
+                selectedElements = currentSelectedElements;
+                canvas.cutSelectionWith(element);
+              }
             } else if (curConfig.selectNew) {
               selectOnly([element], true);
             }
@@ -3935,10 +3943,6 @@ function hideCursor () {
           $(textinput).blur();
 
           curtext = false;
-
-          // if (supportsEditableText()) {
-          //   curtext.removeAttribute('editable');
-          // }
         },
         /**
          * @param {Element} elem
@@ -7399,38 +7403,57 @@ function hideCursor () {
       this.addToSelection([pathRes]);
     };
 
+    this.transforSelectedElems = function(op, opInfo) {
+      const elements = [...selectedElements];
+      for (let i = 0; i < elements.length; i++) {
+        const elem = elements[i];
+        if (elem.tagName !== "path") {
+          elements[i] = this.convertToPath(elem);
+        }
+      }
+
+      const pathDatas = op(elements);
+
+      const batchCmd = new BatchCommand(opInfo);
+      const json = getJsonFromSvgElement(elements[0]);
+      delete json.attr.transform;
+      for (const pathData of pathDatas) {
+        json.attr.d = pathData;
+        json.attr.id = getNextId();
+        const pathRes = addSVGElementFromJson(json);
+        // 3. Paper works with relative paths. Need convert to Abs.
+        const newD = pathActions.convertPath(pathRes);
+        pathRes.setAttribute("d", newD);
+        batchCmd.addSubCommand(new InsertElementCommand(pathRes));
+      }
+
+      // 4. Delete selected elements
+      selectedElements = elements;
+      this.deleteSelectedElements(batchCmd);
+    };
+
     this.merge = function(op) {
       if (selectedElements.length > 1) {
-        // 1. Transform shapes to Paths
-        const elements = [...selectedElements];
-        if (op === "subtract" || op === "divide") {
-          elements.reverse();
-        }
-        for (let i = 0; i < elements.length; i++) {
-          const elem = elements[i];
-          if (elem.tagName !== "path") {
-            elements[i] = this.convertToPath(elem);
+        this.transforSelectedElems(elements => {
+          if (op === "subtract" || op === "divide") {
+            elements.reverse();
           }
-        }
 
-        // 2. Exec merge op.
-        const pathDatas = pathActions.merge(elements, op);
-        const batchCmd = new BatchCommand("Merge - Union");
-        const json = getJsonFromSvgElement(elements[0]);
-        delete json.attr.transform;
-        for (const pathData of pathDatas) {
-          json.attr.d = pathData;
-          json.attr.id = getNextId();
-          const pathRes = addSVGElementFromJson(json);
-          // 3. Paper works with relative paths. Need convert to Abs.
-          const newD = pathActions.convertPath(pathRes);
-          pathRes.setAttribute("d", newD);
-          batchCmd.addSubCommand(new InsertElementCommand(pathRes));
-        }
+          return pathActions.merge(elements, op);
+        }, `Merge - ${op}`);
+      }
+    };
 
-        // 4. Delete selected elements
-        selectedElements = elements;
-        this.deleteSelectedElements(batchCmd);
+    this.cutSelectionWith = function(cutPath) {
+      if (selectedElements.length > 0) {
+        this.transforSelectedElems(elements => {
+          const res = [];
+          for (const elem of elements) {
+            res.push(pathActions.cut(cutPath, elem));
+          }
+          return res.flat();
+        });
+        cutPath.remove();
       }
     };
 

@@ -2294,6 +2294,7 @@ editor.init = function() {
     const layerName = svgCanvas.getCurrentDrawing().getCurrentLayerName();
     const unit = curConfig.baseUnit !== "px" ? curConfig.baseUnit : null;
     const mode = svgCanvas.getMode();
+    const subMode = svgCanvas.getSubMode();
     const stroke_color = null;
     const { x, y, width, height } = getBox(elem, mode);
     let { nodeName: type, tagName } = elem || {
@@ -2325,6 +2326,7 @@ editor.init = function() {
     return {
       type,
       mode,
+      subMode,
       isDeleted,
       isNew,
       layerName,
@@ -2348,7 +2350,7 @@ editor.init = function() {
   const updateContextPanel = function() {
     const info = getSelectedInfo();
 
-    Utils.updateCursor(info.mode);
+    Utils.updateCursor(info.mode, info.subMode);
 
     $("#panel_position, #panel_tranformar, #panel_documento, #panel_apariencia")
       .find(".g-property-row")
@@ -4196,6 +4198,14 @@ editor.init = function() {
   const clickMergeDivide = function() {
     svgCanvas.merge("divide");
   };
+  const clickKnife = function() {
+    if (svgCanvas.getSelectedElems().length > 0) {
+      if (toolButtonClick("#tool_knife")) {
+        svgCanvas.setMode("path");
+        svgCanvas.setSubMode("knife");
+      }
+    }
+  };
 
   /**
    *
@@ -5495,6 +5505,11 @@ editor.init = function() {
       {
         sel: "#tool_merge_divide",
         fn: clickMergeDivide,
+        evt: "click"
+      },
+      {
+        sel: "#tool_knife",
+        fn: clickKnife,
         evt: "click"
       },
       { sel: "#tool_ungroup", fn: clickGroup, evt: "click" },

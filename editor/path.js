@@ -2075,6 +2075,16 @@ export const pathActions = (function() {
       return ppath.pathData;
     },
 
+    cut(cutPath, elem) {
+      const p1 = getPaperPath(cutPath);
+      const p2 = getPaperPath(elem);
+
+      const res = slicePaths([p2, p1], { closePaths: false });
+
+      const cutPathId = `path_${p1.id}`;
+      return res.filter(p => !p.sliceOrigin[cutPathId]).map(p => p.pathData);
+    },
+
     slice(elems) {
       if (elems.length > 1) {
         const paths = getPaperPath(...elems);

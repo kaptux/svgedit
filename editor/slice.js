@@ -105,7 +105,7 @@ function addSliceId(p, sliceId) {
   p.sliceOrigin[`cut_${sliceId}`] = true;
 }
 
-function sliceTwoPaths(p1, p2, sliceId) {
+function sliceTwoPaths(p1, p2, sliceId, options) {
   let res = [];
 
   if (fromSameOrigin(p1, p2)) {
@@ -143,14 +143,21 @@ function sliceTwoPaths(p1, p2, sliceId) {
     addRes(openOpenSlice(p1, p2), [p1]);
     addRes(openOpenSlice(p2, p1), [p2]);
   } else if (p1.closed && !p2.closed) {
-    const [innerPaths, outerPaths] = getCrossingsSegments(p2, p1);
+    if (options.closePaths) {
+      const [innerPaths, outerPaths] = getCrossingsSegments(p2, p1);
+      if (innerPaths.length > 0) {
+        addRes(openCloseSlice(p2, p1, innerPaths), [p1]);
+        addRes(outerPaths, [p2]);
+      }
+    } else {
+      const res1 = openOpenSlice(p1, p2);
+      res1.shift(); // The first element is duplicated
 
-    if (innerPaths.length > 0) {
-      addRes(openCloseSlice(p2, p1, innerPaths), [p1]);
-      addRes(outerPaths, [p2]);
+      addRes(res1, [p1]);
+      addRes(openOpenSlice(p2, p1), [p2]);
     }
   } else if (!p1.closed && p2.closed) {
-    return sliceTwoPaths(p2, p1, sliceId);
+    return sliceTwoPaths(p2, p1, sliceId, options);
   } else {
     const intersect = p1.intersect(p2);
     if (intersect && intersect.closed && intersect.area > 1) {
@@ -163,7 +170,8 @@ function sliceTwoPaths(p1, p2, sliceId) {
   return res.flat();
 }
 
-function slicePaths(paths) {
+function slicePaths(paths, opts) {
+  const options = Object.assign({}, { closePaths: true }, opts);
   if (paths.length > 1) {
     const finalSlices = [];
     let slicesBag = [...paths];
@@ -173,7 +181,7 @@ function slicePaths(paths) {
       const current = slicesBag[i];
       for (let j = i + 1; j < slicesBag.length; j++) {
         const p = slicesBag[j];
-        const slices = sliceTwoPaths(current, p, ++sliceCount);
+        const slices = sliceTwoPaths(current, p, ++sliceCount, options);
         if (slices.length > 0) {
           const newSliceBag = slicesBag.filter(
             (s, idx) => idx > i && idx !== j
