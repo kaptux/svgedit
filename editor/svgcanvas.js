@@ -3021,6 +3021,8 @@ class SvgCanvas {
                 if (selected.tagName === "text") {
                   curText.font_size = selected.getAttribute("font-size");
                   curText.font_family = selected.getAttribute("font-family");
+                  curText.font_weight =
+                    selected.getAttribute("font-weight") || "normal";
                 }
                 selectorManager.requestSelector(selected).showGrips(true);
 
@@ -3940,7 +3942,9 @@ function hideCursor () {
             canvas.deleteSelectedElements();
           }
 
-          $(textinput).blur();
+          $(textinput)
+            .val("")
+            .blur();
 
           curtext = false;
         },
@@ -6610,12 +6614,7 @@ function hideCursor () {
       };
     })();
 
-    /**
-     * Check whether selected element is bold or not.
-     * @function module:svgcanvas.SvgCanvas#getBold
-     * @returns {boolean} Indicates whether or not element is bold
-     */
-    this.getBold = function() {
+    this.getTextAttr = function(name, value) {
       // should only have one element selected
       const selected = selectedElements[0];
       if (
@@ -6623,9 +6622,32 @@ function hideCursor () {
         selected.tagName === "text" &&
         isNullish(selectedElements[1])
       ) {
-        return selected.getAttribute("font-weight") === "bold";
+        return selected.getAttribute(name) === value;
       }
       return false;
+    };
+
+    this.setTextAttr = function(name, value) {
+      const selected = selectedElements[0];
+      if (
+        !isNullish(selected) &&
+        selected.tagName === "text" &&
+        isNullish(selectedElements[1])
+      ) {
+        changeSelectedAttribute(name, value);
+      }
+      if (!selectedElements[0].textContent) {
+        textActions.setCursor();
+      }
+    };
+
+    /**
+     * Check whether selected element is bold or not.
+     * @function module:svgcanvas.SvgCanvas#getBold
+     * @returns {boolean} Indicates whether or not element is bold
+     */
+    this.getBold = function() {
+      return this.getTextAttr("font-weight", "bold");
     };
 
     /**
@@ -6635,17 +6657,23 @@ function hideCursor () {
      * @returns {void}
      */
     this.setBold = function(b) {
-      const selected = selectedElements[0];
-      if (
-        !isNullish(selected) &&
-        selected.tagName === "text" &&
-        isNullish(selectedElements[1])
-      ) {
-        changeSelectedAttribute("font-weight", b ? "bold" : "normal");
-      }
-      if (!selectedElements[0].textContent) {
-        textActions.setCursor();
-      }
+      this.setTextAttr("font-weight", b ? "bold" : "normal");
+    };
+
+    this.setUnderline = function(b) {
+      this.setTextAttr("text-decoration", b ? "underline" : "");
+    };
+
+    this.getUnderline = function() {
+      return this.getTextAttr("text-decoration", "underline");
+    };
+
+    this.setLineThrough = function(b) {
+      this.setTextAttr("text-decoration", b ? "line-through" : "");
+    };
+
+    this.getLineThrough = function() {
+      return this.getTextAttr("text-decoration", "line-through");
     };
 
     /**
@@ -6653,16 +6681,8 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getItalic
      * @returns {boolean} Indicates whether or not element is italic
      */
-    this.getItalic = function() {
-      const selected = selectedElements[0];
-      if (
-        !isNullish(selected) &&
-        selected.tagName === "text" &&
-        isNullish(selectedElements[1])
-      ) {
-        return selected.getAttribute("font-style") === "italic";
-      }
-      return false;
+    this.setItalic = function() {
+      this.setTextAttr("font-style", "italic");
     };
 
     /**
@@ -6671,18 +6691,8 @@ function hideCursor () {
      * @param {boolean} i - Indicates italic (`true`) or normal (`false`)
      * @returns {void}
      */
-    this.setItalic = function(i) {
-      const selected = selectedElements[0];
-      if (
-        !isNullish(selected) &&
-        selected.tagName === "text" &&
-        isNullish(selectedElements[1])
-      ) {
-        changeSelectedAttribute("font-style", i ? "italic" : "normal");
-      }
-      if (!selectedElements[0].textContent) {
-        textActions.setCursor();
-      }
+    this.getItalic = function(i) {
+      return this.getTextAttr("font-style", "italic");
     };
 
     /**
@@ -6691,6 +6701,10 @@ function hideCursor () {
      */
     this.getFontFamily = function() {
       return curText.font_family;
+    };
+
+    this.getFontWeight = function() {
+      return curText.font_weight;
     };
 
     /**
@@ -6702,6 +6716,14 @@ function hideCursor () {
     this.setFontFamily = function(val) {
       curText.font_family = val;
       changeSelectedAttribute("font-family", val);
+      if (selectedElements[0] && !selectedElements[0].textContent) {
+        textActions.setCursor();
+      }
+    };
+
+    this.setFontWeight = function(val) {
+      curText.font_weight = val;
+      changeSelectedAttribute("font-weight", val);
       if (selectedElements[0] && !selectedElements[0].textContent) {
         textActions.setCursor();
       }

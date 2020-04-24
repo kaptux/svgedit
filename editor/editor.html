@@ -228,12 +228,20 @@
               </button>
             </div>
             <div class="toolbar-button dropdown">
-              <button id="tool_knife" class="action-button icon" data-title="Cuchillo">
+              <button
+                id="tool_knife"
+                class="action-button icon"
+                data-title="Cuchillo"
+              >
                 <span class="icon gravit-icon-scalpel"></span>
               </button>
             </div>
             <div class="toolbar-button">
-              <button class="action-button icon" data-title="Texto">
+              <button
+                id="tool_text"
+                class="action-button icon"
+                data-title="Texto"
+              >
                 <span class="icon gravit-icon-textbox"></span>
               </button>
             </div>
@@ -246,9 +254,7 @@
             </div>
           </div>
           <div class="section compound-section transform-section">
-            <div
-              class="toolbar-button"
-            >
+            <div class="toolbar-button">
               <button
                 class="action-button icon"
                 data-title="Voltear horizontalmente"
@@ -257,9 +263,7 @@
                 <span class="icon gravit-icon-flip-horizontal"></span>
               </button>
             </div>
-            <div
-              class="toolbar-button"
-            >
+            <div class="toolbar-button">
               <button
                 class="action-button icon"
                 data-title="Voltear verticalmente"
@@ -268,9 +272,7 @@
                 <span class="icon gravit-icon-flip-vertical"></span>
               </button>
             </div>
-            <div
-              class="toolbar-button"
-            >
+            <div class="toolbar-button">
               <button
                 class="action-button icon"
                 data-title="Girar 90° a la izquierda"
@@ -2411,63 +2413,42 @@
                   <div class="appearance-property-panel text-properties-panel">
                     <div class="g-property-row no-label">
                       <div class="columns">
-                        <div class="column no-padding" style="width: 70px;">
-                          <div class="content">
-                            <div
-                              data-property="_fc"
-                              class="g-pattern-chooser"
-                              style="margin-top: 8px;"
-                            >
-                              <span
-                                class="preview g-button"
-                                draggable="true"
-                                style="
-                                  height: 26px;
-                                  min-width: 20px;
-                                  background: linear-gradient(
-                                      rgb(95, 95, 95),
-                                      rgb(95, 95, 95)
-                                    ),
-                                    url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IndoaXRlIi8+PHJlY3Qgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0iI0NEQ0RDRCIvPjxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNDRENEQ0QiLz48L3N2Zz4=');
-                                "
-                              >
-                                <div
-                                  class="eyedropper"
-                                  data-title="Elija un color de cualquier parte del lienzo."
-                                >
-                                  <span class="gravit-icon-picker"></span>
-                                </div>
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <label class="column auto-grow">
-                          <div class="content">
-                            <input
-                              class="g-select"
-                              data-property="_tff"
-                              type="button"
-                              value="Knewave"
-                            />
-                          </div>
-                        </label>
-                      </div>
-                    </div>
-                    <div class="g-property-row no-label">
-                      <div class="columns">
                         <div class="column" style="width: 70px;">
                           <div class="content">
-                            <span
-                              style="display: flex; justify-content: center;"
-                              >Color</span
+                            <span style="display: flex; justify-content: left;"
+                              >Fuente</span
                             >
                           </div>
                         </div>
                         <label class="column auto-grow">
                           <div class="content">
-                            <select data-property="style">
-                              <option value="400#2635#N#2635#Knewave"
-                                >Normal</option
+                            <select
+                              data-attr="customProps.font-family"
+                              style="width: 100%;"
+                              id="font_family"
+                            >
+                              <option style="font-family:serif" value="serif"
+                                >Serif</option
+                              >
+                              <option
+                                style="font-family:sans-serif"
+                                value="sans-serif"
+                                >Sans-serif</option
+                              >
+                              <option
+                                style="font-family:cursive"
+                                value="cursive"
+                                >Cursive</option
+                              >
+                              <option
+                                style="font-family:fantasy"
+                                value="fantasy"
+                                >Fantasy</option
+                              >
+                              <option
+                                style="font-family:monospace"
+                                value="monospace"
+                                >Monospace</option
                               >
                             </select>
                           </div>
@@ -2476,19 +2457,17 @@
                           <div class="content">
                             <div>
                               <input
+                                id="font_size"
                                 type="text"
-                                data-property="_tfi"
+                                size="3"
+                                value="24"
                                 class="g-select g-unitbox"
                                 style="width: 100%;"
+                                data-attr="customProps.font-size"
                               />
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="labels">
-                        <label style="width: 70px;">&nbsp;</label
-                        ><label class="auto-grow"><span>Peso</span></label
-                        ><label style="width: 25%;"><span>Tamaño</span></label>
                       </div>
                     </div>
                     <div class="g-property-row">
@@ -2500,11 +2479,11 @@
                           <div class="content">
                             <button
                               class="g-button"
-                              data-property="decoration-bold"
+                              data-attr="customProps.isBold"
                               data-title="Negrita"
                               tabindex="-1"
                               style="width: 100%;"
-                              disabled=""
+                              id="tool_bold"
                             >
                               <span
                                 class="gravit-icon-text-decoration-bold"
@@ -2515,11 +2494,11 @@
                           <div class="content">
                             <button
                               class="g-button"
-                              data-property="decoration-italic"
+                              data-attr="customProps.isItalic"
                               data-title="Cursiva"
                               tabindex="-1"
                               style="width: 100%;"
-                              disabled=""
+                              id="tool_italic"
                             >
                               <span
                                 class="gravit-icon-text-decoration-italic"
@@ -2530,10 +2509,11 @@
                           <div class="content">
                             <button
                               class="g-button"
-                              data-property="decoration-underline"
+                              data-attr="customProps.isUnderline"
                               data-title="Subrayado"
                               tabindex="-1"
                               style="width: 100%;"
+                              id="tool_underline"
                             >
                               <span
                                 class="gravit-icon-text-decoration-underline"
@@ -2544,10 +2524,11 @@
                           <div class="content">
                             <button
                               class="g-button"
-                              data-property="decoration-strikeout"
+                              data-attr="customProps.isLineThrough"
                               data-title="Tachado"
                               tabindex="-1"
                               style="width: 100%;"
+                              id="tool_line_through"
                             >
                               <span
                                 class="gravit-icon-text-decoration-strikeout"
@@ -2555,102 +2536,6 @@
                             </button>
                           </div>
                         </label>
-                      </div>
-                    </div>
-                    <div class="g-property-row">
-                      <label
-                        ><span class="vertical-align">Alineación</span></label
-                      >
-                      <div class="columns">
-                        <div class="column" style="width: 100%;">
-                          <div class="content">
-                            <div>
-                              <button
-                                class="g-button g-group-start"
-                                data-property="_pal-l"
-                                data-title="Alinear a la izquierda"
-                                tabindex="-1"
-                                style="width: 25%; margin: 0px;"
-                              >
-                                <span
-                                  class="gravit-icon-text-align-left"
-                                ></span></button
-                              ><button
-                                class="g-button g-group-element g-active"
-                                data-property="_pal-c"
-                                data-title="Alinear centro"
-                                tabindex="-1"
-                                style="width: 25%; margin: 0px;"
-                              >
-                                <span
-                                  class="gravit-icon-text-align-center"
-                                ></span></button
-                              ><button
-                                class="g-button g-group-element"
-                                data-property="_pal-r"
-                                data-title="Alinear a la derecha"
-                                tabindex="-1"
-                                style="width: 25%; margin: 0px;"
-                              >
-                                <span
-                                  class="gravit-icon-text-align-right"
-                                ></span></button
-                              ><button
-                                class="g-button g-group-end"
-                                data-property="_pal-j"
-                                data-title="Justificar"
-                                tabindex="-1"
-                                style="width: 25%; margin: 0px;"
-                              >
-                                <span class="gravit-icon-text-justify"></span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="g-property-row">
-                      <label
-                        ><span class="vertical-align">Vertical</span></label
-                      >
-                      <div class="columns">
-                        <div class="column auto-grow">
-                          <div class="content">
-                            <div>
-                              <button
-                                class="g-button g-group-start g-active"
-                                data-property="va-t"
-                                data-title="Alinear borde superior"
-                                tabindex="-1"
-                                style="width: 25%; margin: 0px;"
-                              >
-                                <span
-                                  class="gravit-icon-text-align-top"
-                                ></span></button
-                              ><button
-                                class="g-button g-group-element"
-                                data-property="va-m"
-                                data-title="Alinear mitad"
-                                tabindex="-1"
-                                style="width: 25%; margin: 0px;"
-                              >
-                                <span
-                                  class="gravit-icon-text-align-middle"
-                                ></span></button
-                              ><button
-                                class="g-button g-group-end"
-                                data-property="va-b"
-                                data-title="Alinear borde inferior"
-                                tabindex="-1"
-                                style="width: 25%; margin: 0px;"
-                              >
-                                <span
-                                  class="gravit-icon-text-align-bottom"
-                                ></span>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
                       </div>
                     </div>
                     <div class="g-property-row">
@@ -2690,128 +2575,6 @@
                         <label style="width: 30%;"><span>Carácter</span></label
                         ><label style="width: 30%;"><span>Palabra</span></label
                         ><label style="width: 40%;"><span>Línea</span></label>
-                      </div>
-                    </div>
-                    <div class="g-property-row">
-                      <label
-                        ><span class="vertical-align"
-                          >Cambio de tamaño</span
-                        ></label
-                      >
-                      <div class="columns">
-                        <div class="column" style="width: 50%;">
-                          <div class="content">
-                            <div data-property="aw">
-                              <button
-                                class="g-group-start g-button"
-                                tabindex="-1"
-                                style="width: 50%;"
-                              >
-                                Autom.</button
-                              ><button
-                                class="g-group-end g-button g-active"
-                                tabindex="-1"
-                                style="width: 50%;"
-                              >
-                                Fijo
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="column" style="width: 50%;">
-                          <div class="content">
-                            <div data-property="ah">
-                              <button
-                                class="g-group-start g-button"
-                                tabindex="-1"
-                                style="width: 50%;"
-                              >
-                                Autom.</button
-                              ><button
-                                class="g-group-end g-button g-active"
-                                tabindex="-1"
-                                style="width: 50%;"
-                              >
-                                Fijo
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="labels">
-                        <label style="width: 50%;"><span>Anchura</span></label
-                        ><label style="width: 50%;"><span>Altura</span></label>
-                      </div>
-                    </div>
-                    <div class="g-property-row">
-                      <label
-                        ><span class="vertical-align">Alfabeto</span></label
-                      >
-                      <div class="columns">
-                        <label class="column" style="width: 50%;">
-                          <div class="content">
-                            <select data-property="dir">
-                              <option value="0">De izquierda a derecha</option>
-                              <option value="1">De derecha a izquierda</option>
-                              <option value="2">De arriba abajo</option>
-                            </select>
-                          </div> </label
-                        ><label class="column" style="width: 50%;">
-                          <div class="content">
-                            <select data-property="_tlsc">
-                              <option value="auto">Autom.</option>
-                              <option value="LATIN">Latino</option>
-                            </select>
-                          </div>
-                        </label>
-                      </div>
-                    </div>
-                    <div major-item-only="true" class="g-property-row no-label">
-                      <div class="columns">
-                        <div class="column auto-grow">
-                          <div class="content">
-                            <label
-                              ><input type="checkbox" data-property="sc" /><span
-                                >Escalar fuente al cambiar de tamaño</span
-                              ></label
-                            >
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="g-property-row" style="display: none;">
-                      <label
-                        ><span class="vertical-align">En trayecto</span></label
-                      >
-                      <div class="columns">
-                        <div class="column" style="width: 30%;">
-                          <div class="content">
-                            <label class="g-switch"
-                              ><input type="checkbox" data-property="tpths" />
-                              <div></div>
-                            </label>
-                          </div>
-                        </div>
-                        <div class="column" style="width: 30%;">
-                          <div class="content">
-                            <label class="g-switch"
-                              ><input type="checkbox" data-property="tpthd" />
-                              <div></div>
-                            </label>
-                          </div>
-                        </div>
-                        <label class="column" style="width: 40%;">
-                          <div class="content">
-                            <input type="text" data-property="tptho" />
-                          </div>
-                        </label>
-                      </div>
-                      <div class="labels">
-                        <label style="width: 30%;"><span>Fuera</span></label
-                        ><label style="width: 30%;"><span>Invertir</span></label
-                        ><label style="width: 40%;"
-                          ><span>Distancia</span></label
-                        >
                       </div>
                     </div>
                   </div>
@@ -4310,5 +4073,12 @@
         </li>
       </ul>
     </div>
+    <input
+      id="text"
+      type="text"
+      size="35"
+      autocomplete="off"
+      title="Change text contents"
+    />
   </body>
 </html>

@@ -2242,12 +2242,19 @@ editor.init = function() {
       polygon: ["sides:points"],
       text: [
         "font-family",
+        "font-weight",
         "font-size",
         function isItalic() {
           return svgCanvas.getItalic();
         },
         function isBold() {
           return svgCanvas.getBold();
+        },
+        function isLineThrough() {
+          return svgCanvas.getLineThrough();
+        },
+        function isUnderline() {
+          return svgCanvas.getUnderline();
         }
       ],
       use: [
@@ -2365,7 +2372,11 @@ editor.init = function() {
       rect:
         "#panel_position .g-property-row,.g-property-row.corner-radius,.g-property-row.opacity,.g-property-row.blur",
       polygon:
-        "#panel_position .g-property-row, #panel_apariencia .g-property-row:eq(0)"
+        "#panel_position .g-property-row, #panel_apariencia .g-property-row:eq(0)",
+      text:
+        "#panel_position .g-property-row, #panel_position, #panel_apariencia .text-properties-panel .g-property-row",
+      textedit:
+        "#panel_position .g-property-row, #panel_apariencia .text-properties-panel .g-property-row"
     }[info.type];
 
     if (panels) {
@@ -3189,6 +3200,10 @@ editor.init = function() {
     svgCanvas.setFontFamily(this.value);
   });
 
+  $("#font_weight").change(function() {
+    svgCanvas.setFontWeight(this.value);
+  });
+
   $("#seg_type").change(function() {
     svgCanvas.setSegType($(this).val());
   });
@@ -4004,6 +4019,18 @@ editor.init = function() {
    */
   const clickBold = function() {
     svgCanvas.setBold(!svgCanvas.getBold());
+    updateContextPanel();
+    return false;
+  };
+
+  const clickUnderline = function() {
+    svgCanvas.setUnderline(!svgCanvas.getUnderline());
+    updateContextPanel();
+    return false;
+  };
+
+  const clickLineThrough = function() {
+    svgCanvas.setLineThrough(!svgCanvas.getLineThrough());
     updateContextPanel();
     return false;
   };
@@ -5520,6 +5547,8 @@ editor.init = function() {
       // {sel: '#tools_ellipse_show', fn: clickEllipse, evt: 'click'},
       { sel: "#tool_bold", fn: clickBold, evt: "mousedown" },
       { sel: "#tool_italic", fn: clickItalic, evt: "mousedown" },
+      { sel: "#tool_underline", fn: clickUnderline, evt: "mousedown" },
+      { sel: "#tool_line_through", fn: clickLineThrough, evt: "mousedown" },
       { sel: "#sidepanel_handle", fn: toggleSidePanel, key: ["X"] },
       { sel: "#copy_save_done", fn: cancelOverlays, evt: "click" },
 
@@ -5927,7 +5956,7 @@ editor.init = function() {
     callback: changeRotationAngle
   });
   $("#font_size").SpinButton({
-    min: 0.001,
+    min: 5,
     stepfunc: stepFontSize,
     stateObj,
     callback: changeFontSize
