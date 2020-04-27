@@ -21,6 +21,7 @@ import "./svgpathseg.js";
 import jQueryPluginSVG from "./jQuery.attr.js"; // Needed for SVG attribute setting and array form with `attr`
 import jQueryPluginDBox from "./dbox.js";
 import * as draw from "./draw.js";
+import AnchorSystem from "./anchor-system.js";
 // eslint-disable-next-line no-duplicate-imports
 import {
   identifyLayers,
@@ -125,6 +126,8 @@ const {
   UndoManager,
   HistoryEventTypes
 } = hstry;
+
+const anchorSys = AnchorSystem({ delta: 8 });
 
 let nearestPoint = null;
 let isOverPathPointGrip = false;
@@ -707,6 +710,12 @@ class SvgCanvas {
         getCurrentZoom
       }
     );
+
+    this.xGuide = getElem("xGuide");
+    this.xGuideValue = null;
+    this.yGuide = getElem("yGuide");
+    this.yGuideValue = null;
+
     /**
      * This object manages selectors for us.
      * @name module:svgcanvas.SvgCanvas#selectorManager
@@ -2393,6 +2402,28 @@ class SvgCanvas {
         });
       };
 
+      const drawGuide = function(guide, value, attr1, attr2) {
+        if (value != null) {
+          guide.setAttribute("display", "inline");
+          guide.setAttribute(attr1, value);
+          guide.setAttribute(attr2, value);
+        } else {
+          guide.setAttribute("display", "none");
+        }
+      };
+
+      const drawGuides = function(pt) {
+        const guides = anchorSys.getGuidesForPoint(pt);
+        if (guides.y !== canvas.xGuideValue) {
+          canvas.xGuideValue = guides.y;
+          drawGuide(canvas.xGuide, canvas.xGuideValue, "y1", "y2");
+        }
+        if (guides.x !== canvas.yGuideValue) {
+          canvas.yGuideValue = guides.x;
+          drawGuide(canvas.yGuide, canvas.yGuideValue, "x1", "x2");
+        }
+      };
+
       // in this function we do not record any state changes yet (but we do update
       // any elements that are still being created, moved or resized on the canvas)
       /**
@@ -2403,6 +2434,9 @@ class SvgCanvas {
        * @returns {void}
        */
       const mouseMove = function(evt) {
+        const pt = transformPoint(evt.pageX, evt.pageY, rootSctm);
+        drawGuides({ x: pt.x, y: pt.y });
+
         isShiftKey = evt.shiftKey;
         if (
           isShiftKey &&
@@ -2411,7 +2445,6 @@ class SvgCanvas {
           return;
         }
 
-        const pt = transformPoint(evt.pageX, evt.pageY, rootSctm);
         if (!started && !isShiftKey) {
           nearestPoint = pathActions.drawNearestPoint(); //reset
           if (currentMode === "pathedit") {
@@ -3278,6 +3311,7 @@ class SvgCanvas {
            * @type {boolean}
            */
           canvas.addedNew = true;
+          anchorSys.addSahpe(element);
 
           if (useUnit) {
             convertAttrs(element);
@@ -7185,6 +7219,9 @@ function hideCursor () {
 
       for (let i = 0; i < len; ++i) {
         const selected = selectedElements[i];
+
+        anchorSys.removeShape(selected);
+
         if (isNullish(selected)) {
           break;
         }

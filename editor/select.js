@@ -438,10 +438,44 @@ export class SelectorManager {
       }
     });
 
+    const xGuide = svgFactory_.createSVGElement({
+      element: "line",
+      attr: {
+        id: "xGuide",
+        x1: 0,
+        y1: 0,
+        x2: width,
+        y2: 0,
+        stroke: "cyan",
+        "stroke-width": 1,
+        "fill-opacity": 1,
+        "stroke-opacity": 1,
+        display: "none"
+      }
+    });
+
+    const yGuide = svgFactory_.createSVGElement({
+      element: "line",
+      attr: {
+        id: "yGuide",
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: height,
+        stroke: "cyan",
+        "stroke-width": 1,
+        "fill-opacity": 1,
+        "stroke-opacity": 1,
+        display: "none"
+      }
+    });
+
     // Both Firefox and WebKit are too slow with this filter region (especially at higher
     // zoom levels) and Opera has at least one bug
     // if (!isOpera()) rect.setAttribute('filter', 'url(#canvashadow)');
     canvasbg.append(rect);
+    canvasbg.append(xGuide);
+    canvasbg.append(yGuide);
     svgFactory_.svgRoot().insertBefore(canvasbg, svgFactory_.svgContent());
     // Ok to replace above with `svgFactory_.svgContent().before(canvasbg);`?
   }
