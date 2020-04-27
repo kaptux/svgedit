@@ -2374,7 +2374,7 @@ editor.init = function() {
       polygon:
         "#panel_position .g-property-row, #panel_apariencia .g-property-row:eq(0)",
       text:
-        "#panel_position .g-property-row, #panel_position, #panel_apariencia .text-properties-panel .g-property-row",
+        "#panel_position .g-property-row,#panel_position, #panel_apariencia .text-properties-panel .g-property-row",
       textedit:
         "#panel_position .g-property-row, #panel_apariencia .text-properties-panel .g-property-row"
     }[info.type];

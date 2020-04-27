@@ -1559,8 +1559,9 @@ export const setCursor = (elemsCursor, canvasCursor) => {
     ? `url("assets/cursor/${canvasCursor}.cur"), auto !important`
     : "default";
 
+  console.log(elemsCursorStr, "***", canvasCursorStr);
   $("#styleoverrides").text(`
-      #svgcanvas svg * {
+      #svgcontent * {
         cursor: ${elemsCursorStr};
         pointer-events: all;
       }

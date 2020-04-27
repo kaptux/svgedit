@@ -450,7 +450,9 @@ export class SelectorManager {
         "stroke-width": 1,
         "fill-opacity": 1,
         "stroke-opacity": 1,
-        display: "none"
+        "shape-rendering": "crispEdges",
+        display: "none",
+        cursor: "default"
       }
     });
 
@@ -466,7 +468,9 @@ export class SelectorManager {
         "stroke-width": 1,
         "fill-opacity": 1,
         "stroke-opacity": 1,
-        display: "none"
+        "shape-rendering": "crispEdges",
+        display: "none",
+        cursor: "default"
       }
     });
 
@@ -561,6 +565,7 @@ export class SelectorManager {
             stroke: "#22C",
             "stroke-width": 0.5,
             display: "none",
+            "shape-rendering": "crispEdges",
             style: "pointer-events:none"
           }
         })

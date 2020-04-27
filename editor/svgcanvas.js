@@ -127,7 +127,7 @@ const {
   HistoryEventTypes
 } = hstry;
 
-const anchorSys = AnchorSystem({ delta: 8 });
+const anchorSys = AnchorSystem({ delta: 5 });
 
 let nearestPoint = null;
 let isOverPathPointGrip = false;
@@ -2405,8 +2405,8 @@ class SvgCanvas {
       const drawGuide = function(guide, value, attr1, attr2) {
         if (value != null) {
           guide.setAttribute("display", "inline");
-          guide.setAttribute(attr1, value);
-          guide.setAttribute(attr2, value);
+          guide.setAttribute(attr1, value || 0.5);
+          guide.setAttribute(attr2, value || 0.5);
         } else {
           guide.setAttribute("display", "none");
         }
@@ -8283,6 +8283,20 @@ function hideCursor () {
       const oldY = svgcontent.getAttribute("y");
       const x = (w - this.contentW * currentZoom) / 2;
       const y = (h - this.contentH * currentZoom) / 2;
+
+      rootSctm = $("#svgcontent g")[0]
+        .getScreenCTM()
+        .inverse();
+
+      anchorSys.setCanvas(
+        {
+          x: 0,
+          y: 0,
+          width: this.contentW,
+          height: this.contentH
+        },
+        rootSctm
+      );
 
       assignAttributes(svgcontent, {
         width: this.contentW * currentZoom,
