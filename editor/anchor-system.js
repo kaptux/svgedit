@@ -41,14 +41,14 @@ function AnchorSystem(opts) {
       }
 
       if (diff1 < diff2 && diff1 <= options.delta) {
-        return v1;
+        return [v1, v1 - v];
       }
 
       if (diff2 < diff1 && diff2 <= options.delta) {
-        return v2;
+        return [v2, v2 - v];
       }
     }
-    return null;
+    return [null, null];
   }
 
   function getBboxPoints(box) {
@@ -136,6 +136,8 @@ function AnchorSystem(opts) {
     const elemId = getElemIdInt(elem.id);
     const points = shapeHashmap[elemId];
     removePoints(points, elemId);
+    delete shapeHashmap[elemId];
+    return points;
   }
 
   function addPoints(points, elemId) {
@@ -148,7 +150,7 @@ function AnchorSystem(opts) {
     }
   }
 
-  function addSahpe(elem) {
+  function addShape(elem) {
     if (!elem) {
       return;
     }
@@ -157,6 +159,7 @@ function AnchorSystem(opts) {
     const points = getShapePoints(elem);
     shapeHashmap[elemId] = points;
     addPoints(points, elemId);
+    return points;
   }
 
   function transformPoints(points, matrix) {
@@ -175,40 +178,64 @@ function AnchorSystem(opts) {
 
   function updateShape(elem) {
     removeShape(elem);
-    addSahpe(elem);
+    return addShape(elem);
   }
 
-  function getGuidesForPoint(point) {
-    const res = {};
+  function getGuidesForPoint(point, delta) {
+    delta = delta || { x: 0, y: 0 };
+    let res = {};
     if (point) {
       const { x, y } = point;
-      res.x = getNearestValue(x, xTree);
-      res.y = getNearestValue(y, yTree);
+      const [vX, dX] = getNearestValue(x + delta.x, xTree);
+      const [vY, dY] = getNearestValue(y + delta.y, yTree);
+
+      res = {
+        x: vX,
+        y: vY,
+        dX,
+        dY
+      };
     }
     return res;
   }
 
-  function getGuidesForShape(bbox) {
-    const points = getBboxPoints(bbox);
+  function getGuidesForShapes(shapes, pointsHashmap, delta) {
+    const res = {};
+    for (const shape of shapes) {
+      const points = pointsHashmap[shape.id];
+      if (points) {
+        for (const point of points) {
+          const guides = getGuidesForPoint(point, delta);
+          if (res.x == null && guides.x != null) {
+            res.x = guides.x;
+            res.dX = guides.dX;
+          }
+          if (res.y == null && guides.y != null) {
+            res.y = guides.y;
+            res.dY = guides.dY;
+          }
 
-    for (let index = 0; index < points.length; index++) {
-      const point = points[index];
-      const guides = getGuidesForPoint(point);
-      if (guides.x || guides.y) {
-        guides.index = i;
-        return guides;
+          if (res.x != null && res.y != null) {
+            return res;
+          }
+        }
       }
     }
 
-    return {};
+    return res;
+  }
+
+  function getPointsOfInteres(elem) {
+    return getShapePoints(elem);
   }
 
   return {
-    addSahpe,
+    addShape,
     removeShape,
     updateShape,
     getGuidesForPoint,
-    getGuidesForShape,
+    getGuidesForShapes,
+    getPointsOfInteres,
     setCanvas
   };
 }

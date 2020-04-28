@@ -357,6 +357,7 @@ class SvgCanvas {
     // Array with all the currently selected elements
     // default size of 1 until it needs to grow bigger
     let selectedElements = [];
+    let selectedPoints = {};
 
     /**
      * @function module:svgcanvas.SvgCanvas#getContentElem
@@ -711,6 +712,7 @@ class SvgCanvas {
       }
     );
 
+    this.guidesValue = null;
     this.xGuide = getElem("xGuide");
     this.xGuideValue = null;
     this.yGuide = getElem("yGuide");
@@ -807,8 +809,10 @@ class SvgCanvas {
           continue;
         }
 
+        // ??
+        selectedPoints[elem.id] = anchorSys.removeShape(elem);
+
         if (elem.tagName === "a" && elem.childNodes.length === 1) {
-          // Make "a" element's child be the selected element
           elem = elem.firstChild;
         }
 
@@ -1774,6 +1778,8 @@ class SvgCanvas {
         if (cmd) {
           batchCmd.addSubCommand(cmd);
         }
+
+        selectedPoints[elem.id] = anchorSys.updateShape(elem);
       }
 
       if (!batchCmd.isEmpty()) {
@@ -1951,6 +1957,19 @@ class SvgCanvas {
           y: spline.y
         };
       };
+
+      const snapToGuides = function(pt) {
+        if (canvas.guidesValue) {
+          if (canvas.guidesValue.dX) {
+            pt.x += canvas.guidesValue.dX;
+          }
+          if (canvas.guidesValue.dY) {
+            pt.y += canvas.guidesValue.dY;
+          }
+        }
+        return pt;
+      };
+
       /**
        * Follows these conditions:
        * - When we are in a create mode, the element is added to the canvas but the
@@ -1978,9 +1997,9 @@ class SvgCanvas {
           .inverse();
         isShiftKey = evt.shiftKey;
 
-        const pt = transformPoint(evt.pageX, evt.pageY, rootSctm),
-          mouseX = pt.x * currentZoom,
-          mouseY = pt.y * currentZoom;
+        const pt = snapToGuides(transformPoint(evt.pageX, evt.pageY, rootSctm));
+        const mouseX = pt.x * currentZoom;
+        const mouseY = pt.y * currentZoom;
 
         evt.preventDefault();
 
@@ -1988,11 +2007,6 @@ class SvgCanvas {
           currentMode = "select";
           lastClickPoint = pt;
         }
-
-        // This would seem to be unnecessary...
-        // if (!['select', 'resize'].includes(currentMode)) {
-        //   setGradient();
-        // }
 
         let x = mouseX / currentZoom,
           y = mouseY / currentZoom;
@@ -2412,14 +2426,28 @@ class SvgCanvas {
         }
       };
 
-      const drawGuides = function(pt) {
-        const guides = anchorSys.getGuidesForPoint(pt);
-        if (guides.y !== canvas.xGuideValue) {
-          canvas.xGuideValue = guides.y;
+      const drawGuides = function(pt, dragging) {
+        if (dragging && selectedElements.length > 0) {
+          const delta = {
+            x: pt.x - startX,
+            y: pt.y - startY
+          };
+
+          canvas.guidesValue = anchorSys.getGuidesForShapes(
+            selectedElements,
+            selectedPoints,
+            delta
+          );
+        } else {
+          canvas.guidesValue = anchorSys.getGuidesForPoint(pt);
+        }
+
+        if (canvas.guidesValue.y !== canvas.xGuideValue) {
+          canvas.xGuideValue = canvas.guidesValue.y;
           drawGuide(canvas.xGuide, canvas.xGuideValue, "y1", "y2");
         }
-        if (guides.x !== canvas.yGuideValue) {
-          canvas.yGuideValue = guides.x;
+        if (canvas.guidesValue.x !== canvas.yGuideValue) {
+          canvas.yGuideValue = canvas.guidesValue.x;
           drawGuide(canvas.yGuide, canvas.yGuideValue, "x1", "x2");
         }
       };
@@ -2434,8 +2462,12 @@ class SvgCanvas {
        * @returns {void}
        */
       const mouseMove = function(evt) {
-        const pt = transformPoint(evt.pageX, evt.pageY, rootSctm);
-        drawGuides({ x: pt.x, y: pt.y });
+        let pt = transformPoint(evt.pageX, evt.pageY, rootSctm);
+        drawGuides(
+          { x: pt.x, y: pt.y },
+          evt.buttons === 1 && currentMode == "select"
+        );
+        pt = snapToGuides(pt);
 
         isShiftKey = evt.shiftKey;
         if (
@@ -2507,14 +2539,6 @@ class SvgCanvas {
                 dy = snapToGrid(dy);
               }
 
-              /*
-      // Commenting out as currently has no effect
-      if (evt.shiftKey) {
-        xya = snapToAngle(startX, startY, x, y);
-        ({x, y} = xya);
-      }
-      */
-
               if (dx !== 0 || dy !== 0) {
                 len = selectedElements.length;
                 for (i = 0; i < len; ++i) {
@@ -2522,11 +2546,6 @@ class SvgCanvas {
                   if (isNullish(selected)) {
                     break;
                   }
-                  // if (i === 0) {
-                  //   const box = utilsGetBBox(selected);
-                  //     selectedBBoxes[i].x = box.x + dx;
-                  //     selectedBBoxes[i].y = box.y + dy;
-                  // }
 
                   // update the dummy transform in our transform list
                   // to be a translate
@@ -2990,7 +3009,7 @@ class SvgCanvas {
         if (!started) {
           return;
         }
-        const pt = transformPoint(evt.pageX, evt.pageY, rootSctm),
+        const pt = snapToGuides(transformPoint(evt.pageX, evt.pageY, rootSctm)),
           mouseX = pt.x * currentZoom,
           mouseY = pt.y * currentZoom,
           x = mouseX / currentZoom,
@@ -3311,7 +3330,7 @@ class SvgCanvas {
            * @type {boolean}
            */
           canvas.addedNew = true;
-          anchorSys.addSahpe(element);
+          anchorSys.addShape(element);
 
           if (useUnit) {
             convertAttrs(element);
@@ -7221,6 +7240,7 @@ function hideCursor () {
         const selected = selectedElements[i];
 
         anchorSys.removeShape(selected);
+        delete selectedPoints[selected.id];
 
         if (isNullish(selected)) {
           break;
