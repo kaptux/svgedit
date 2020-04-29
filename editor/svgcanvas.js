@@ -277,13 +277,8 @@ class SvgCanvas {
           "xmlns:xlink": NS.XLINK
         })
         .appendTo(svgroot);
-
-      // TODO: make this string optional and set by the client
-      const comment = svgdoc.createComment(
-        " Created with SVG-edit - https://github.com/SVG-Edit/svgedit"
-      );
-      svgcontent.append(comment);
     });
+
     clearSvgContentElement();
 
     // Prefix string for element IDs
@@ -2417,10 +2412,12 @@ class SvgCanvas {
       };
 
       const drawGuide = function(guide, value, attr1, attr2) {
+        const zoomedValue = value * currentZoom;
+
         if (value != null) {
           guide.setAttribute("display", "inline");
-          guide.setAttribute(attr1, value || 0.5);
-          guide.setAttribute(attr2, value || 0.5);
+          guide.setAttribute(attr1, zoomedValue || 0.5);
+          guide.setAttribute(attr2, zoomedValue || 0.5);
         } else {
           guide.setAttribute("display", "none");
         }
@@ -8299,6 +8296,8 @@ function hideCursor () {
       svgroot.setAttribute("width", w);
       svgroot.setAttribute("height", h);
       const bg = $("#canvasBackground")[0];
+      const overlay = $("#canvasOverlay")[0];
+
       const oldX = svgcontent.getAttribute("x");
       const oldY = svgcontent.getAttribute("y");
       const x = (w - this.contentW * currentZoom) / 2;
@@ -8327,6 +8326,13 @@ function hideCursor () {
       });
 
       assignAttributes(bg, {
+        width: svgcontent.getAttribute("width"),
+        height: svgcontent.getAttribute("height"),
+        x,
+        y
+      });
+
+      assignAttributes(overlay, {
         width: svgcontent.getAttribute("width"),
         height: svgcontent.getAttribute("height"),
         x,

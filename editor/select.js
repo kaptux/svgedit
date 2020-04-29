@@ -335,6 +335,8 @@ export class SelectorManager {
    * @returns {void}
    */
   initGroup() {
+    const [width, height] = config_.dimensions;
+
     // remove old selector parent group if it existed
     if (this.selectorParentGroup && this.selectorParentGroup.parentNode) {
       this.selectorParentGroup.remove();
@@ -351,6 +353,58 @@ export class SelectorManager {
     });
     this.selectorParentGroup.append(this.selectorGripsGroup);
     svgFactory_.svgRoot().append(this.selectorParentGroup);
+
+    const canvasOverlay = svgFactory_.createSVGElement({
+      element: "svg",
+      attr: {
+        id: "canvasOverlay",
+        width,
+        height,
+        x: 0,
+        y: 0,
+        overflow: isWebkit() ? "none" : "visible", // Chrome 7 has a problem with this when zooming out
+        style: "pointer-events:none"
+      }
+    });
+
+    const xGuide = svgFactory_.createSVGElement({
+      element: "line",
+      attr: {
+        id: "xGuide",
+        x1: 0,
+        y1: 0,
+        x2: "100%",
+        y2: 0,
+        stroke: "cyan",
+        "stroke-width": 1,
+        "fill-opacity": 1,
+        "stroke-opacity": 1,
+        "shape-rendering": "crispEdges",
+        display: "none",
+        cursor: "default"
+      }
+    });
+
+    const yGuide = svgFactory_.createSVGElement({
+      element: "line",
+      attr: {
+        id: "yGuide",
+        x1: 0,
+        y1: 0,
+        x2: 0,
+        y2: "100%",
+        stroke: "cyan",
+        "stroke-width": 1,
+        "fill-opacity": 1,
+        "stroke-opacity": 1,
+        "shape-rendering": "crispEdges",
+        display: "none",
+        cursor: "default"
+      }
+    });
+    canvasOverlay.append(xGuide);
+    canvasOverlay.append(yGuide);
+    svgFactory_.svgRoot().append(canvasOverlay);
 
     this.selectorMap = {};
     this.selectors = [];
@@ -410,7 +464,6 @@ export class SelectorManager {
       return;
     }
 
-    const [width, height] = config_.dimensions;
     const canvasbg = svgFactory_.createSVGElement({
       element: "svg",
       attr: {
@@ -438,50 +491,11 @@ export class SelectorManager {
       }
     });
 
-    const xGuide = svgFactory_.createSVGElement({
-      element: "line",
-      attr: {
-        id: "xGuide",
-        x1: 0,
-        y1: 0,
-        x2: "100%",
-        y2: 0,
-        stroke: "cyan",
-        "stroke-width": 1,
-        "fill-opacity": 1,
-        "stroke-opacity": 1,
-        "shape-rendering": "crispEdges",
-        display: "none",
-        cursor: "default"
-      }
-    });
-
-    const yGuide = svgFactory_.createSVGElement({
-      element: "line",
-      attr: {
-        id: "yGuide",
-        x1: 0,
-        y1: 0,
-        x2: 0,
-        y2: "100%",
-        stroke: "cyan",
-        "stroke-width": 1,
-        "fill-opacity": 1,
-        "stroke-opacity": 1,
-        "shape-rendering": "crispEdges",
-        display: "none",
-        cursor: "default"
-      }
-    });
-
     // Both Firefox and WebKit are too slow with this filter region (especially at higher
     // zoom levels) and Opera has at least one bug
     // if (!isOpera()) rect.setAttribute('filter', 'url(#canvashadow)');
     canvasbg.append(rect);
-    canvasbg.append(xGuide);
-    canvasbg.append(yGuide);
     svgFactory_.svgRoot().insertBefore(canvasbg, svgFactory_.svgContent());
-    // Ok to replace above with `svgFactory_.svgContent().before(canvasbg);`?
   }
 
   /**
