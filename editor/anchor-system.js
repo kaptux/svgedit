@@ -3,17 +3,25 @@ import { getBBox } from "./utilities.js";
 import { transformPoint } from "./math.js";
 
 function comparator(a, b) {
-  return a - b;
+  return a.value - b.value;
+}
+
+function logTree(sh, tree) {
+  console.log("======== tree =========");
+  console.log(sh);
+  console.log("--------------");
+  tree.each(obj => {
+    console.log(obj.value, obj.elements);
+  });
+  console.log("=======================");
 }
 
 function AnchorSystem(opts) {
-  const CANVAS_ID = 0;
+  const CANVAS_ID = "canvas";
 
   const shapeHashmap = {};
   const xTree = new BT(comparator);
   const yTree = new BT(comparator);
-  const xHashmap = {};
-  const yHashmap = {};
 
   const options = Object.assign(
     {},
@@ -24,14 +32,14 @@ function AnchorSystem(opts) {
   );
 
   function getElemIdInt(id) {
-    return parseInt(id.split("_")[1], 10);
+    return hashCode(id);
   }
 
   function getNearestValue(v, tree) {
-    const it = tree.upperBound(v);
-    if (it) {
-      const v1 = it.data();
-      const v2 = it.prev();
+    const it = tree.upperBound({ value: v });
+    if (it && it.data()) {
+      const v1 = it.data().value;
+      const v2 = (it.prev() || { value: null }).value;
 
       const diff1 = Math.abs(v1 - v);
       let diff2 = Number.MAX_SAFE_INTEGER;
@@ -57,12 +65,12 @@ function AnchorSystem(opts) {
       const { x, y, width, height } = box;
       res = [
         { x, y }, //TopLeft
-        { x: x + width / 2, y }, //TopMiddle
-        { x: x + width, y }, //TopRight
-        { x: x + width, y: y + height / 2 }, //RightMiddle
+        // { x: x + width / 2, y }, //TopMiddle
+        // { x: x + width, y }, //TopRight
+        // { x: x + width, y: y + height / 2 }, //RightMiddle
         { x: x + width, y: y + height }, //BotomRight
-        { x: x + width / 2, y: y + height }, //BottomMiddle
-        { x, y: y + height }, //BottomLeft
+        // { x: x + width / 2, y: y + height }, //BottomMiddle
+        // { x, y: y + height }, //BottomLeft
         { x: x + width / 2, y: y + height / 2 } //Center
       ];
     }
@@ -76,22 +84,19 @@ function AnchorSystem(opts) {
       const bbox = getBBox(elem);
       const { x, y, width, height } = bbox;
       switch (elem.tagName) {
-        case "line":
-          const x1 = elem.getAttribute("x1"),
-            y1 = elem.getAttribute("y1"),
-            x2 = elem.getAttribute("x2"),
-            y2 = elem.getAttribute("y2");
-
-          res.push({ x: x1, y: y1 });
-          res.push({ x: x2, y: y2 });
-          res.push({ x: Math.abs(x2 - x1), y: Math.abs(y2 - y1) }); //Middle of the line
-          break;
         case "polygon":
           const pt = elem.getAttribute("points");
           res = pt.split(" ").map(v => {
             const [x, y] = v.split(",");
             return { x, y };
           });
+          res.push({ x: x + width / 2, y: y + height / 2 }); //Shape center
+          break;
+        case "path":
+          for (let i = 0; i < elem.pathSegList.length; i++) {
+            const { x, y } = elem.pathSegList[i];
+            res.push({ x, y });
+          }
           res.push({ x: x + width / 2, y: y + height / 2 }); //Shape center
           break;
         default:
@@ -108,22 +113,27 @@ function AnchorSystem(opts) {
     hm[coor].insert(elemId);
   }
 
-  function removeFromHashmap(hm, coor, elemId, tree) {
-    const ids = hm[coor];
-    if (ids) {
-      ids.remove(elemId);
-      if (ids.size == 0) {
-        tree.remove(coor);
-      }
+  function removeFromHashmap(tree, coor, elemId) {
+    let item = { value: coor };
+    item = tree.find(item);
+    delete item.elements[elemId];
+    if (Object.keys(item.elements).length == 0) {
+      tree.remove(item);
     }
+  }
+
+  function insertPoint(tree, coor, point, elemId) {
+    let data = { value: coor, elements: {} };
+    data = tree.insert(data);
+    data.elements[elemId] = point;
   }
 
   function removePoints(points, elemId) {
     if (points && points.length) {
       for (const point of points) {
         const { x, y } = point;
-        removeFromHashmap(xHashmap, x, elemId, xTree);
-        removeFromHashmap(yHashmap, y, elemId, yTree);
+        removeFromHashmap(xTree, x, elemId);
+        removeFromHashmap(yTree, y, elemId);
       }
     }
   }
@@ -133,32 +143,48 @@ function AnchorSystem(opts) {
       return;
     }
 
-    const elemId = getElemIdInt(elem.id);
+    let res = [];
+    const elemId = elem.id;
     const points = shapeHashmap[elemId];
-    removePoints(points, elemId);
-    delete shapeHashmap[elemId];
-    return points;
+
+    if (points) {
+      removePoints(points, elemId);
+      delete shapeHashmap[elemId];
+      res = points;
+    }
+
+    logTree(shapeHashmap, xTree);
+    return res;
   }
 
   function addPoints(points, elemId) {
     for (const point of points) {
       const { x, y } = point;
-      xTree.insert(x);
-      yTree.insert(y);
-      addToHashmap(xHashmap, x, elemId);
-      addToHashmap(yHashmap, y, elemId);
+      insertPoint(xTree, x, point, elemId);
+      insertPoint(yTree, y, point, elemId);
     }
   }
 
-  function addShape(elem) {
+  function addShape(elem, newPoints) {
     if (!elem) {
       return;
     }
 
-    const elemId = getElemIdInt(elem.id);
-    const points = getShapePoints(elem);
+    const elemId = elem.id;
+
+    // remove current points
+    let points = shapeHashmap[elemId];
+    if (points) {
+      removePoints(points, elemId);
+    }
+
+    // add new ones
+    points = newPoints || getShapePoints(elem);
     shapeHashmap[elemId] = points;
     addPoints(points, elemId);
+
+    logTree(shapeHashmap, xTree);
+
     return points;
   }
 

@@ -37,6 +37,7 @@ import {
   isWebkit
 } from "./browser.js";
 import slicePaths from "./slice.js";
+import editor from "./svg-editor.js";
 
 const $ = jQuery;
 
@@ -434,6 +435,9 @@ export const addPointGrip = function(index, x, y) {
       cy: y,
       display: "inline"
     });
+
+    pointGrip.pt = { x, y };
+    editorContext_.addToAnchorSystem(pointGrip, pointGrip.pt);
   }
   return pointGrip;
 };
@@ -605,6 +609,7 @@ export const getPointGrip = function(seg, update) {
       cy: pt.y,
       display: "inline"
     });
+    pointGrip.pt = pt;
   }
 
   return pointGrip;
@@ -648,12 +653,16 @@ export const getControlPoints = function(seg) {
 
     // create it
     const pointGrip = (cpt["c" + i] = addCtrlGrip(id));
+    pointGrip.pt = pt;
 
     assignAttributes(pointGrip, {
       cx: pt.x,
       cy: pt.y,
       display: "inline"
     });
+    if (!path.dragging) {
+      editorContext_.addToAnchorSystem(pointGrip, pt);
+    }
     cpt["c" + i] = pointGrip;
   }
   return cpt;
@@ -832,7 +841,13 @@ export class Segment {
   showCtrlPts(y) {
     for (const i in this.ctrlpts) {
       if ({}.hasOwnProperty.call(this.ctrlpts, i)) {
-        this.ctrlpts[i].setAttribute("display", y ? "inline" : "none");
+        const ctrlpt = this.ctrlpts[i];
+        ctrlpt.setAttribute("display", y ? "inline" : "none");
+        if (y) {
+          editorContext_.addToAnchorSystem(ctrlpt, ctrlpt.pt);
+        } else {
+          editorContext_.removeFromAnchorSystem(ctrlpt);
+        }
       }
     }
   }
@@ -855,6 +870,9 @@ export class Segment {
     if (this.ptgrip) {
       this.ptgrip.setAttribute("display", y ? "inline" : "none");
       this.segsel.setAttribute("display", y ? "inline" : "none");
+      y
+        ? editorContext_.addToAnchorSystem(this.ptgrip, this.ptgrip.pt)
+        : editorContext_.removeFromAnchorSystem(this.ptgrip);
       // Show/hide all control points if available
       this.showCtrlPts(y);
     }
@@ -895,6 +913,9 @@ export class Segment {
         cx: pt.x,
         cy: pt.y
       });
+      if (!path.dragging) {
+        editorContext_.addToAnchorSystem(this.ptgrip, pt);
+      }
 
       getSegSelector(this, true);
 
@@ -2339,7 +2360,10 @@ export const pathActions = (function() {
       if (id.substr(0, 14) === "pathpointgrip_") {
         // Select this point
         curPt = path.cur_pt = parseInt(id.substr(14));
+        startX = parseInt(evt.target.getAttribute("cx"));
+        startY = parseInt(evt.target.getAttribute("cy"));
         path.dragging = [startX, startY];
+        editorContext_.removeFromAnchorSystem(evt.target);
         const seg = path.segs[curPt];
 
         // only clear selection if shift is not pressed (otherwise, add
@@ -2355,6 +2379,8 @@ export const pathActions = (function() {
           path.addPtsToSelection(curPt);
         }
       } else if (id.startsWith("ctrlpointgrip_") || subMode === "blend-curve") {
+        startX = parseInt(evt.target.getAttribute("cx"));
+        startY = parseInt(evt.target.getAttribute("cy"));
         path.dragging = [startX, startY];
 
         setLinkControlPoints(evt.shiftKey);
@@ -2419,6 +2445,9 @@ export const pathActions = (function() {
         addNearestPointGrip();
         return null;
       }
+    },
+    isDragging() {
+      return path && path.dragging;
     },
     /**
      * @param {Float} mouseX

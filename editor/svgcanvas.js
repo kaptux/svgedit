@@ -805,7 +805,7 @@ class SvgCanvas {
         }
 
         // ??
-        selectedPoints[elem.id] = anchorSys.removeShape(elem);
+        selectedPoints[elem.id] = anchorSys.getPointsOfInteres(elem);
 
         if (elem.tagName === "a" && elem.childNodes.length === 1) {
           elem = elem.firstChild;
@@ -966,6 +966,23 @@ class SvgCanvas {
     function resetD(p) {
       p.setAttribute("d", pathActions.convertPath(p));
     }
+
+    function addToAnchorSystem(elem, pt) {
+      console.log("add", elem.id, pt);
+      if (pt) {
+        anchorSys.addShape(elem, [
+          { x: pt.x / currentZoom, y: pt.y / currentZoom }
+        ]);
+      } else {
+        console.log(elem.id, pt);
+      }
+    }
+
+    function removeFromAnchorSystem(elem) {
+      console.log("remove", elem.id);
+      anchorSys.removeShape(elem);
+    }
+
     pathModule.init(
       /**
        * @implements {module:path.EditorContext}
@@ -986,6 +1003,8 @@ class SvgCanvas {
         getSelectedElements,
         setIsOverPathPointGrip,
         setIsOverCtrlPointGrip,
+        addToAnchorSystem,
+        removeFromAnchorSystem,
         getContainer() {
           return container;
         },
@@ -2423,8 +2442,18 @@ class SvgCanvas {
         }
       };
 
-      const drawGuides = function(pt, dragging) {
-        if (dragging && selectedElements.length > 0) {
+      const drawGuides = function(pt, leftButtonPushed) {
+        const isSelectMode =
+          currentMode == "select" || currentMode == "multiselect";
+        const isDragging =
+          leftButtonPushed && isSelectMode && selectedElements.length > 0;
+
+        if (
+          (isSelectMode && !isDragging) ||
+          (currentMode == "pathedit" && !pathActions.isDragging())
+        ) {
+          canvas.guidesValue = { x: null, y: null };
+        } else if (isDragging) {
           const delta = {
             x: pt.x - startX,
             y: pt.y - startY
@@ -2460,10 +2489,7 @@ class SvgCanvas {
        */
       const mouseMove = function(evt) {
         let pt = transformPoint(evt.pageX, evt.pageY, rootSctm);
-        drawGuides(
-          { x: pt.x, y: pt.y },
-          evt.buttons === 1 && currentMode == "select"
-        );
+        drawGuides({ x: pt.x, y: pt.y }, evt.buttons === 1);
         pt = snapToGuides(pt);
 
         isShiftKey = evt.shiftKey;

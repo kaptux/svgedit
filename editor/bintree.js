@@ -257,7 +257,7 @@ BinTree.prototype.insert = function(data) {
     // empty tree
     this._root = new Node(data);
     this.size++;
-    return true;
+    return data;
   }
 
   var dir = 0;
@@ -273,12 +273,12 @@ BinTree.prototype.insert = function(data) {
       node = new Node(data);
       p.set_child(dir, node);
       this.size++;
-      return true;
+      return node.data;
     }
 
     // stop if found
     if (this._comparator(node.data, data) === 0) {
-      return false;
+      return node.data;
     }
 
     dir = this._comparator(node.data, data) < 0;
