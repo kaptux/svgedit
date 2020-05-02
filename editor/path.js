@@ -1085,6 +1085,7 @@ export class Path {
       .find("*")
       .each(function() {
         $(this).attr("display", "none");
+        editorContext_.removeFromAnchorSystem(this);
       });
 
     const segList = this.elem.pathSegList;

@@ -968,7 +968,6 @@ class SvgCanvas {
     }
 
     function addToAnchorSystem(elem, pt) {
-      console.log("add", elem.id, pt);
       if (pt) {
         anchorSys.addShape(elem, [
           { x: pt.x / currentZoom, y: pt.y / currentZoom }
@@ -979,7 +978,6 @@ class SvgCanvas {
     }
 
     function removeFromAnchorSystem(elem) {
-      console.log("remove", elem.id);
       anchorSys.removeShape(elem);
     }
 
@@ -2443,13 +2441,13 @@ class SvgCanvas {
       };
 
       const drawGuides = function(pt, leftButtonPushed) {
-        const isSelectMode =
-          currentMode == "select" || currentMode == "multiselect";
+        const isSelectMode = currentMode == "select";
         const isDragging =
-          leftButtonPushed && isSelectMode && selectedElements.length > 0;
+          leftButtonPushed && isSelectMode && selectedElements.length == 1;
 
         if (
           (isSelectMode && !isDragging) ||
+          currentMode == "multiselect" ||
           (currentMode == "pathedit" && !pathActions.isDragging())
         ) {
           canvas.guidesValue = { x: null, y: null };

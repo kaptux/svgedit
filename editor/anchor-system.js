@@ -38,22 +38,22 @@ function AnchorSystem(opts) {
   function getNearestValue(v, tree) {
     const it = tree.upperBound({ value: v });
     if (it && it.data()) {
-      const v1 = it.data().value;
-      const v2 = (it.prev() || { value: null }).value;
+      const v1 = it.data();
+      const v2 = it.prev() || { value: null };
 
-      const diff1 = Math.abs(v1 - v);
+      const diff1 = Math.abs(v1.value - v);
       let diff2 = Number.MAX_SAFE_INTEGER;
 
-      if (v2 !== null) {
-        diff2 = Math.abs(v2 - v);
+      if (v2.value !== null) {
+        diff2 = Math.abs(v2.value - v);
       }
 
       if (diff1 < diff2 && diff1 <= options.delta) {
-        return [v1, v1 - v];
+        return [v1.value, v1.value - v, v1.elements];
       }
 
       if (diff2 < diff1 && diff2 <= options.delta) {
-        return [v2, v2 - v];
+        return [v2.value, v2.value - v, v2.elements];
       }
     }
     return [null, null];
@@ -93,9 +93,12 @@ function AnchorSystem(opts) {
           res.push({ x: x + width / 2, y: y + height / 2 }); //Shape center
           break;
         case "path":
-          for (let i = 0; i < elem.pathSegList.length; i++) {
-            const { x, y } = elem.pathSegList[i];
-            res.push({ x, y });
+          const segList = elem.pathSegList;
+          for (let i = 0; i < segList.numberOfItems; i++) {
+            const { x, y } = segList.getItem(i);
+            if (typeof x !== "undefined" && typeof y !== "undefined") {
+              res.push({ x, y });
+            }
           }
           res.push({ x: x + width / 2, y: y + height / 2 }); //Shape center
           break;
@@ -116,9 +119,11 @@ function AnchorSystem(opts) {
   function removeFromHashmap(tree, coor, elemId) {
     let item = { value: coor };
     item = tree.find(item);
-    delete item.elements[elemId];
-    if (Object.keys(item.elements).length == 0) {
-      tree.remove(item);
+    if (item) {
+      delete item.elements[elemId];
+      if (Object.keys(item.elements).length == 0) {
+        tree.remove(item);
+      }
     }
   }
 
@@ -153,7 +158,6 @@ function AnchorSystem(opts) {
       res = points;
     }
 
-    logTree(shapeHashmap, xTree);
     return res;
   }
 
@@ -183,8 +187,6 @@ function AnchorSystem(opts) {
     shapeHashmap[elemId] = points;
     addPoints(points, elemId);
 
-    logTree(shapeHashmap, xTree);
-
     return points;
   }
 
@@ -212,14 +214,16 @@ function AnchorSystem(opts) {
     let res = {};
     if (point) {
       const { x, y } = point;
-      const [vX, dX] = getNearestValue(x + delta.x, xTree);
-      const [vY, dY] = getNearestValue(y + delta.y, yTree);
+      const [vX, dX, elementsX] = getNearestValue(x + delta.x, xTree);
+      const [vY, dY, elementsY] = getNearestValue(y + delta.y, yTree);
 
       res = {
         x: vX,
         y: vY,
         dX,
-        dY
+        dY,
+        elementsX,
+        elementsY
       };
     }
     return res;
@@ -232,11 +236,19 @@ function AnchorSystem(opts) {
       if (points) {
         for (const point of points) {
           const guides = getGuidesForPoint(point, delta);
-          if (res.x == null && guides.x != null) {
+          if (
+            res.x == null &&
+            guides.x != null &&
+            !guides.elementsX[shape.id]
+          ) {
             res.x = guides.x;
             res.dX = guides.dX;
           }
-          if (res.y == null && guides.y != null) {
+          if (
+            res.y == null &&
+            guides.y != null &&
+            !guides.elementsY[shape.id]
+          ) {
             res.y = guides.y;
             res.dY = guides.dY;
           }
