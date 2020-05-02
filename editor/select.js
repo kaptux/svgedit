@@ -337,23 +337,6 @@ export class SelectorManager {
   initGroup() {
     const [width, height] = config_.dimensions;
 
-    // remove old selector parent group if it existed
-    if (this.selectorParentGroup && this.selectorParentGroup.parentNode) {
-      this.selectorParentGroup.remove();
-    }
-
-    // create parent selector group and add it to svgroot
-    this.selectorParentGroup = svgFactory_.createSVGElement({
-      element: "g",
-      attr: { id: "selectorParentGroup" }
-    });
-    this.selectorGripsGroup = svgFactory_.createSVGElement({
-      element: "g",
-      attr: { display: "none" }
-    });
-    this.selectorParentGroup.append(this.selectorGripsGroup);
-    svgFactory_.svgRoot().append(this.selectorParentGroup);
-
     const canvasOverlay = svgFactory_.createSVGElement({
       element: "svg",
       attr: {
@@ -406,6 +389,23 @@ export class SelectorManager {
     canvasOverlay.append(yGuide);
     svgFactory_.svgRoot().append(canvasOverlay);
 
+    // remove old selector parent group if it existed
+    if (this.selectorParentGroup && this.selectorParentGroup.parentNode) {
+      this.selectorParentGroup.remove();
+    }
+
+    // create parent selector group and add it to svgroot
+    this.selectorParentGroup = svgFactory_.createSVGElement({
+      element: "g",
+      attr: { id: "selectorParentGroup" }
+    });
+    this.selectorGripsGroup = svgFactory_.createSVGElement({
+      element: "g",
+      attr: { display: "none" }
+    });
+    this.selectorParentGroup.append(this.selectorGripsGroup);
+    svgFactory_.svgRoot().append(this.selectorParentGroup);
+
     this.selectorMap = {};
     this.selectors = [];
     this.rubberBandBox = null;
@@ -450,7 +450,7 @@ export class SelectorManager {
         element: "circle",
         attr: {
           id: "selectorGrip_rotate",
-          fill: "lime",
+          fill: "#fff",
           r: gripRadius,
           stroke: "#22C",
           "stroke-width": 2,

@@ -3994,6 +3994,8 @@ function hideCursor () {
          */
         toSelectMode(selectElem) {
           currentMode = "select";
+          subMode = "";
+
           clearInterval(blinker);
           blinker = null;
           if (selblock) {

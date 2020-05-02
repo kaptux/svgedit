@@ -78,7 +78,7 @@ svgEditor.setConfig({
   //   opacity: 1
   // },
   initStroke: {
-    width: 2,
+    width: 1,
     color: "000000", // solid black
     opacity: 1
   }

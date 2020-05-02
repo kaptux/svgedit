@@ -399,9 +399,9 @@ export const addPointGrip = function(index, x, y) {
       id: "pathpointgrip_" + index,
       display: "none",
       r: 4,
-      fill: "#0FF",
       stroke: "#00F",
-      "stroke-width": 2,
+      fill: "transparent",
+      "stroke-width": 1,
       cursor: "move",
       style: "pointer-events:all"
     };
@@ -455,9 +455,9 @@ export const addNearestPointGrip = function(x, y) {
       id,
       display: "none",
       r: 4,
-      fill: "#0FF",
+      fill: "transparent",
       stroke: "#00F",
-      "stroke-width": 2,
+      "stroke-width": 1,
       cursor: "none",
       style: "pointer-events:none"
     };
@@ -490,8 +490,7 @@ export const addCursorPointGrip = function(x, y) {
     const atts = {
       id,
       display: "none",
-      r: 4,
-      fill: "#0FF",
+      r: 5,
       stroke: "#00F",
       "stroke-width": 2,
       cursor: "none",
@@ -546,10 +545,9 @@ export const addCtrlGrip = function(index) {
   const atts = {
     id,
     display: "none",
-    r: 4,
-    fill: "#0FF",
-    stroke: "#55F",
-    "stroke-width": 1,
+    r: 3,
+    fill: "#00F",
+    "stroke-width": 0,
     cursor: "move",
     style: "pointer-events:all"
   };
@@ -859,7 +857,7 @@ export class Segment {
   selectCtrls(y) {
     $(
       "#ctrlpointgrip_" + this.index + "c1, #ctrlpointgrip_" + this.index + "c2"
-    ).attr("fill", y ? "#0FF" : "#EEE");
+    ).attr("fill", y ? "#0FF" : "#0FF");
   }
 
   /**
@@ -1084,7 +1082,7 @@ export class Path {
     $(getGripContainer())
       .find("*")
       .each(function() {
-        $(this).attr("display", "none");
+        $(this).remove();
         editorContext_.removeFromAnchorSystem(this);
       });
 
@@ -2380,8 +2378,14 @@ export const pathActions = (function() {
           path.addPtsToSelection(curPt);
         }
       } else if (id.startsWith("ctrlpointgrip_") || subMode === "blend-curve") {
-        startX = parseInt(evt.target.getAttribute("cx"));
-        startY = parseInt(evt.target.getAttribute("cy"));
+        if (subMode === "blend-curve") {
+          startX = nearestPoint.x;
+          startY = nearestPoint.y;
+        } else {
+          startX = parseInt(evt.target.getAttribute("cx"));
+          startY = parseInt(evt.target.getAttribute("cy"));
+        }
+
         path.dragging = [startX, startY];
 
         setLinkControlPoints(evt.shiftKey);

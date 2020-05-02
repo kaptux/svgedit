@@ -1535,7 +1535,7 @@ export const updateCursor = (mode, submode) => {
         cursors = ["pen-plus", "pen-plus"];
         break;
       case "remove-point":
-        cursors = ["pen-minus", null];
+        cursors = ["pen-minus", "pen-minus"];
         break;
       case "blend-curve":
         cursors = ["select-curve", "select-curve"];
@@ -1560,7 +1560,7 @@ export const setCursor = (elemsCursor, canvasCursor) => {
     : "default";
 
   $("#styleoverrides").text(`
-      #svgcontent * {
+      #svgcontent *, #selectorParentGroup *, #canvasOverlay * {
         cursor: ${elemsCursorStr};
         pointer-events: all;
       }
