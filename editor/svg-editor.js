@@ -2389,8 +2389,8 @@ editor.init = function() {
     }
 
     // update history buttons
-    $("#tool_undo").toggleClass("disabled", undoMgr.getUndoStackSize() === 0);
-    $("#tool_redo").toggleClass("disabled", undoMgr.getRedoStackSize() === 0);
+    $("#tool_undo").prop("disabled", undoMgr.getUndoStackSize() === 0);
+    $("#tool_redo").prop("disabled", undoMgr.getRedoStackSize() === 0);
     $("#menuDropDown").hide();
 
     svgCanvas.addedNew = false;
@@ -3832,9 +3832,7 @@ editor.init = function() {
    * @returns {void}
    */
   const moveToTopSelected = function() {
-    if (!Utils.isNullish(selectedElement)) {
-      svgCanvas.moveToTopSelectedElement();
-    }
+    svgCanvas.moveToTopSelectedElements();
   };
 
   /**
@@ -3842,9 +3840,7 @@ editor.init = function() {
    * @returns {void}
    */
   const moveToBottomSelected = function() {
-    if (!Utils.isNullish(selectedElement)) {
-      svgCanvas.moveToBottomSelectedElement();
-    }
+    svgCanvas.moveToBottomSelectedElements();
   };
 
   /**

@@ -922,7 +922,14 @@ class SvgCanvas {
       // If it's root-like, select the root
       const currentLayer = getCurrentDrawing().getCurrentLayer();
       if (
-        [svgroot, container, svgcontent, currentLayer].includes(mouseTarget)
+        [
+          svgroot,
+          container,
+          svgcontent,
+          currentLayer,
+          canvas.xGuide,
+          canvas.yGuide
+        ].includes(mouseTarget)
       ) {
         return svgroot;
       }
@@ -7262,12 +7269,12 @@ function hideCursor () {
       for (let i = 0; i < len; ++i) {
         const selected = selectedElements[i];
 
-        anchorSys.removeShape(selected);
-        delete selectedPoints[selected.id];
-
         if (isNullish(selected)) {
           break;
         }
+
+        anchorSys.removeShape(selected);
+        delete selectedPoints[selected.id];
 
         let parent = selected.parentNode;
         let t = selected;
@@ -7939,8 +7946,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.moveToTopSelectedElement = function() {
-      const [selected] = selectedElements;
+    this.moveToTopSelectedElement = function(selected) {
       if (!isNullish(selected)) {
         let t = selected;
         const oldParent = t.parentNode;
@@ -7957,6 +7963,12 @@ function hideCursor () {
       }
     };
 
+    this.moveToTopSelectedElements = function() {
+      for (const selected of selectedElements) {
+        this.moveToTopSelectedElement(selected);
+      }
+    };
+
     /**
      * Repositions the selected element to the top in the DOM to appear under
      * other elements.
@@ -7964,8 +7976,7 @@ function hideCursor () {
      * @fires module:svgcanvas.SvgCanvas#event:changed
      * @returns {void}
      */
-    this.moveToBottomSelectedElement = function() {
-      const [selected] = selectedElements;
+    this.moveToBottomSelectedElement = function(selected) {
       if (!isNullish(selected)) {
         let t = selected;
         const oldParent = t.parentNode;
@@ -7988,6 +7999,12 @@ function hideCursor () {
           );
           call("changed", [t]);
         }
+      }
+    };
+
+    this.moveToBottomSelectedElements = function() {
+      for (const selected of selectedElements) {
+        this.moveToBottomSelectedElement(selected);
       }
     };
 

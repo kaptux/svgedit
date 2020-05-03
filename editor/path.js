@@ -2178,17 +2178,33 @@ export const pathActions = (function() {
         const drawnPath = editorContext_.getDrawnPath();
         if (!drawnPath) {
           const dAttr = "M" + x + "," + y + " "; // Was this meant to work with the other `dAttr`? (was defined globally so adding `var` to at least avoid a global)
-          /* drawnPath = */ editorContext_.setDrawnPath(
-            editorContext_.addSVGElementFromJson({
-              element: "path",
-              curStyles: true,
-              attr: {
-                d: dAttr,
-                id: editorContext_.getNextId(),
-                opacity: editorContext_.getOpacity() / 2
-              }
-            })
-          );
+          if (subMode === "knife") {
+            editorContext_.setDrawnPath(
+              editorContext_.addSVGElementFromJson({
+                element: "path",
+                attr: {
+                  d: dAttr,
+                  id: editorContext_.getNextId(),
+                  opacity: 1,
+                  "stroke-width": 1,
+                  "fill-opacity": 0,
+                  stroke: "#ff007f"
+                }
+              })
+            );
+          } else {
+            editorContext_.setDrawnPath(
+              editorContext_.addSVGElementFromJson({
+                element: "path",
+                curStyles: true,
+                attr: {
+                  d: dAttr,
+                  id: editorContext_.getNextId(),
+                  opacity: editorContext_.getOpacity() / 2
+                }
+              })
+            );
+          }
           // set stretchy line to first point
           stretchy.setAttribute(
             "d",
