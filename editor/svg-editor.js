@@ -4221,6 +4221,9 @@ editor.init = function() {
   const clickMergeDivide = function() {
     svgCanvas.merge("divide");
   };
+  const clickAnchor = function() {
+    svgCanvas.resetAnchorSys();
+  };
   const clickKnife = function() {
     if (svgCanvas.getSelectedElems().length > 0) {
       if (toolButtonClick("#tool_knife")) {
@@ -5533,6 +5536,11 @@ editor.init = function() {
       {
         sel: "#tool_knife",
         fn: clickKnife,
+        evt: "click"
+      },
+      {
+        sel: "#tool_anchor",
+        fn: clickAnchor,
         evt: "click"
       },
       { sel: "#tool_ungroup", fn: clickGroup, evt: "click" },

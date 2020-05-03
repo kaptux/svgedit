@@ -7541,6 +7541,10 @@ function hideCursor () {
       this.deleteSelectedElements(batchCmd);
     };
 
+    this.resetAnchorSys = function() {
+      anchorSys.reset();
+    };
+
     this.merge = function(op) {
       if (selectedElements.length > 1) {
         this.transforSelectedElems(elements => {

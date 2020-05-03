@@ -19,9 +19,9 @@ function logTree(sh, tree) {
 function AnchorSystem(opts) {
   const CANVAS_ID = "canvas";
 
-  const shapeHashmap = {};
-  const xTree = new BT(comparator);
-  const yTree = new BT(comparator);
+  let shapeHashmap = {};
+  let xTree = new BT(comparator);
+  let yTree = new BT(comparator);
 
   const options = Object.assign(
     {},
@@ -30,10 +30,6 @@ function AnchorSystem(opts) {
     },
     opts
   );
-
-  function getElemIdInt(id) {
-    return hashCode(id);
-  }
 
   function getNearestValue(v, tree) {
     const it = tree.upperBound({ value: v });
@@ -201,6 +197,7 @@ function AnchorSystem(opts) {
     }
 
     points = getBboxPoints(rect);
+    shapeHashmap[CANVAS_ID] = points;
     addPoints(points, CANVAS_ID);
   }
 
@@ -267,6 +264,17 @@ function AnchorSystem(opts) {
     return getShapePoints(elem);
   }
 
+  function reset() {
+    const canvasPoints = shapeHashmap[CANVAS_ID];
+
+    shapeHashmap = {};
+    xTree = new BT(comparator);
+    yTree = new BT(comparator);
+
+    addPoints(canvasPoints, CANVAS_ID);
+    shapeHashmap[CANVAS_ID] = canvasPoints;
+  }
+
   return {
     addShape,
     removeShape,
@@ -274,7 +282,8 @@ function AnchorSystem(opts) {
     getGuidesForPoint,
     getGuidesForShapes,
     getPointsOfInteres,
-    setCanvas
+    setCanvas,
+    reset
   };
 }
 
