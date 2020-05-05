@@ -2118,11 +2118,24 @@ export const pathActions = (function() {
         return this.slice(elems);
       }
 
-      if (elems.length > 1) {
-        let res = new paper.Path().importSVG(elems[0].outerHTML);
+      const paths = getPaperPath(...elems);
+
+      // Substract inner path case
+      if (
+        op === "subtract" &&
+        paths.length == 2 &&
+        paths[0].getIntersections(paths[1]).length == 0
+      ) {
+        const res = paths[0].subtract(paths[1]);
+        return [res.pathData];
+      }
+
+      if (paths.length > 1) {
+        let res = paths[0];
         for (let i = 1; i < elems.length; i++) {
-          res = res[op](new paper.Path().importSVG(elems[i].outerHTML));
+          res = res[op](paths[i]);
         }
+
         return res.children
           ? res.children.map(p => p.pathData)
           : [res.pathData];
