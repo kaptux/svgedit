@@ -1330,7 +1330,7 @@ editor.init = function() {
 
   let resizeTimer, curScrollPos;
   let exportWindow = null,
-    defaultImageURL = curConfig.imgPath + "logo.png",
+    defaultImageURL = curConfig.imgPath + "image.png",
     zoomInIcon = "crosshair",
     zoomOutIcon = "crosshair",
     uiContext = "toolbars";
@@ -2155,7 +2155,7 @@ editor.init = function() {
       $("#g_panel").show();
     }
 
-    if (elem.parentNode.tagName === "a") {
+    if (elem.parentNode && elem.parentNode.tagName === "a") {
       if (!$(elem).siblings().length) {
         $("#a_panel").show();
         linkHref = svgCanvas.getHref(elem.parentNode);
@@ -2376,7 +2376,9 @@ editor.init = function() {
       text:
         "#panel_position .g-property-row,#panel_position, #panel_apariencia .text-properties-panel .g-property-row",
       textedit:
-        "#panel_position .g-property-row, #panel_apariencia .text-properties-panel .g-property-row"
+        "#panel_position .g-property-row, #panel_apariencia .text-properties-panel .g-property-row",
+      image:
+        "#panel_position .g-property-row, #panel_apariencia .image-properties-panel .g-property-row"
     }[info.type];
 
     if (panels) {
@@ -4905,7 +4907,7 @@ editor.init = function() {
 
   // Test for embedImage support (use timeout to not interfere with page load)
   setTimeout(function() {
-    svgCanvas.embedImage("images/logo.png", function(datauri) {
+    svgCanvas.embedImage("images/image.png", function(datauri) {
       if (!datauri) {
         // Disable option
         $("#image_save_opts [value=embed]").attr("disabled", "disabled");

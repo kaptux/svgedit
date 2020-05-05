@@ -168,6 +168,49 @@ function sliceTwoPaths(p1, p2, sliceId, options) {
   }
 
   return res.flat();
+  // res = res.flat();
+  // joinPoints(res, 8);
+  // return res;
+}
+
+function joinPoints(paths, tolerance) {
+  if (paths.length > 1) {
+    let points = paths[0].segments.map(s => s.point);
+    for (let i = 1; i < paths.length; i++) {
+      paths[i].segments.forEach(s => {
+        const newPoints = [];
+        for (const p of points) {
+          if (p.getDistance(s.point) < tolerance) {
+            s.point = p;
+            break;
+          } else {
+            newPoints.push(s.point);
+          }
+        }
+        points = [...points, ...newPoints];
+      });
+    }
+  }
+}
+
+function reduce(path, tolerance) {
+  if (path.segments.length > 1) {
+    let i = 0;
+    do {
+      var current = path.segments[i];
+      var next = path.segments[i + 1];
+      var distance = current.point.getDistance(next.point);
+
+      if (distance < tolerance) {
+        current.point = next.point;
+        current.handleOut = current.handleOut.add(next.handleOut);
+        current.handleOut.add(distance);
+        path.removeSegment(i + 1);
+      }
+
+      i++;
+    } while (i < path.segments.length - 1);
+  }
 }
 
 function slicePaths(paths, opts) {

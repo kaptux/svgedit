@@ -31,7 +31,10 @@ function AnchorSystem(opts) {
     opts
   );
 
-  function getNearestValue(v, tree) {
+  function getNearestValue(v, tree, zoom) {
+    zoom = zoom || 1;
+    const delta = options.delta / zoom;
+
     const it = tree.upperBound({ value: v });
     if (it && it.data()) {
       const v1 = it.data();
@@ -44,11 +47,11 @@ function AnchorSystem(opts) {
         diff2 = Math.abs(v2.value - v);
       }
 
-      if (diff1 < diff2 && diff1 <= options.delta) {
+      if (diff1 < diff2 && diff1 <= delta) {
         return [v1.value, v1.value - v, v1.elements];
       }
 
-      if (diff2 < diff1 && diff2 <= options.delta) {
+      if (diff2 < diff1 && diff2 <= delta) {
         return [v2.value, v2.value - v, v2.elements];
       }
     }
@@ -206,13 +209,13 @@ function AnchorSystem(opts) {
     return addShape(elem);
   }
 
-  function getGuidesForPoint(point, delta) {
+  function getGuidesForPoint(point, zoom, delta) {
     delta = delta || { x: 0, y: 0 };
     let res = {};
     if (point) {
       const { x, y } = point;
-      const [vX, dX, elementsX] = getNearestValue(x + delta.x, xTree);
-      const [vY, dY, elementsY] = getNearestValue(y + delta.y, yTree);
+      const [vX, dX, elementsX] = getNearestValue(x + delta.x, xTree, zoom);
+      const [vY, dY, elementsY] = getNearestValue(y + delta.y, yTree, zoom);
 
       res = {
         x: vX,
@@ -226,13 +229,13 @@ function AnchorSystem(opts) {
     return res;
   }
 
-  function getGuidesForShapes(shapes, pointsHashmap, delta) {
+  function getGuidesForShapes(shapes, pointsHashmap, zoom, delta) {
     const res = {};
     for (const shape of shapes) {
       const points = pointsHashmap[shape.id];
       if (points) {
         for (const point of points) {
-          const guides = getGuidesForPoint(point, delta);
+          const guides = getGuidesForPoint(point, zoom, delta);
           if (
             res.x == null &&
             guides.x != null &&

@@ -1156,7 +1156,7 @@ class SvgCanvas {
       removedElements = {};
 
     let // String with image URL of last loadable image
-      lastGoodImgUrl = curConfig.imgPath + "logo.png",
+      lastGoodImgUrl = curConfig.imgPath + "image.png",
       // Boolean indicating whether or not a draw action has been started
       started = false,
       // String with an element's initial transform attribute value
@@ -2467,10 +2467,11 @@ class SvgCanvas {
           canvas.guidesValue = anchorSys.getGuidesForShapes(
             selectedElements,
             selectedPoints,
+            currentZoom,
             delta
           );
         } else {
-          canvas.guidesValue = anchorSys.getGuidesForPoint(pt);
+          canvas.guidesValue = anchorSys.getGuidesForPoint(pt, currentZoom);
         }
 
         if (canvas.guidesValue.y !== canvas.xGuideValue) {
