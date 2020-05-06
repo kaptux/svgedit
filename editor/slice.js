@@ -217,7 +217,7 @@ function slicePaths(paths, opts) {
   const options = Object.assign({}, { closePaths: true }, opts);
   if (paths.length > 1) {
     const finalSlices = [];
-    let slicesBag = [...paths];
+    let slicesBag = paths.map(p => p.children || p).flat();
     let sliceCount = 0;
 
     for (let i = 0; i < slicesBag.length - 1; i++) {
