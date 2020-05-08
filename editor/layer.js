@@ -87,6 +87,9 @@ class Layer {
    * @returns {void}
    */
   deactivate () {
+    walkTree(this.group_, function (e) {
+      e.setAttribute('style', 'pointer-events:inherit');
+    });
     this.group_.setAttribute('style', 'pointer-events:none');
   }
 
