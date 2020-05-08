@@ -6048,40 +6048,21 @@ editor.init = function() {
    * @param {{x: Float, y: Float, docX: Float, docY: Float}} pos
    * @returns {void}
    */
-  const lmenuFunc = function(action, el, pos) {
-    switch (action) {
-      case "dupe":
-        /* await */ cloneLayer();
-        break;
-      case "delete":
-        deleteLayer();
-        break;
-      case "merge_down":
-        mergeLayer();
-        break;
-      case "merge_all":
-        svgCanvas.mergeAllLayers();
-        updateContextPanel();
-        populateLayers();
-        break;
-    }
-  };
 
-  $("#layerlist").contextMenu(
-    {
-      menu: "cmenu_layers",
-      inSpeed: 0
-    },
-    lmenuFunc
-  );
+  $("#layer_moreopts").dropdown({ hideButtons: true });
 
-  $("#layer_moreopts").click(function() {
-    const dropdown = $("#layer_moreopts_dropdown");
-    dropdown.css({
-      top: dropdown.data("top"),
-      left: dropdown.data("left")
-    });
-    dropdown.show();
+  $("#layer_merge_down").click(function() {
+    mergeLayer();
+  });
+
+  $("#layer_merge_all").click(function() {
+    svgCanvas.mergeAllLayers();
+    updateContextPanel();
+    populateLayers();
+  });
+
+  $("#layer_duplicate").click(function() {
+    cloneLayer();
   });
 
   $(".contextMenu li").mousedown(function(ev) {

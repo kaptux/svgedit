@@ -251,6 +251,11 @@ video {
   background-image: url(./jgraduate/images/NoColor.svg);
 }
 
+
+.gravit-icon-vertical-dots:before {
+  content: "\e0f8";
+}
+
 /* HTML5 display-role reset for older browsers */
 article,
 aside,

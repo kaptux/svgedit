@@ -26,22 +26,28 @@ export default function jQueryDropdown($) {
       });
   }
 
-  function addClickEvent(rootPanel, container) {
+  function addClickEvent(rootPanel, container, options) {
     container.children("li").click(function() {
       const buttonId = $(this).data("id");
       const event = $(this).data("trigger") || "click";
 
-      $(rootPanel)
-        .children(".action-button")
-        .hide();
-      $(`#${buttonId}`)
-        .show()
-        .trigger(event);
+      if (options.hideButtons) {
+        $(`#${buttonId}`).trigger(event);
+      } else {
+        $(rootPanel)
+          .children(".action-button")
+          .hide();
+        $(`#${buttonId}`)
+          .show()
+          .trigger(event);
+      }
     });
   }
 
-  $.fn.dropdown = function() {
+  $.fn.dropdown = function(opts) {
     const menuDropDown = $("#menuDropDown");
+    const options = Object.assign({}, { hideButtons: false }, opts);
+
     this.each(function(_, rootPanel) {
       $(rootPanel)
         .children(".dropdown-button")
@@ -51,8 +57,14 @@ export default function jQueryDropdown($) {
           const top = $(rootPanel).data("top");
           menuDropDown.children("li").remove();
 
-          createMenu(rootPanel, menuDropDown);
-          addClickEvent(rootPanel, menuDropDown);
+          if (options.hideButtons) {
+            $(rootPanel)
+              .children(".action-button")
+              .hide();
+          }
+
+          createMenu(rootPanel, menuDropDown, options);
+          addClickEvent(rootPanel, menuDropDown, options);
 
           menuDropDown.css({ top, left }).show();
         });
