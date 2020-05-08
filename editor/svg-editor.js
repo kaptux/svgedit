@@ -1422,7 +1422,7 @@ editor.init = function() {
    */
   const populateLayers = function() {
     svgCanvas.clearSelection();
-    const layerlist = $("#layerlist tbody").empty();
+    const layerlist = $("#layerlist").empty();
     const selLayerNames = $("#selLayerNames").empty();
     const drawing = svgCanvas.getCurrentDrawing();
     const currentLayerName = drawing.getCurrentLayerName();
@@ -1431,53 +1431,50 @@ editor.init = function() {
     // we get the layers in the reverse z-order (the layer rendered on top is listed first)
     while (layer--) {
       const name = drawing.getLayerName(layer);
-      const layerTr = $('<tr class="layer">').toggleClass(
-        "layersel",
-        name === currentLayerName
-      );
-      const layerVis = $('<td class="layervis">').toggleClass(
-        "layerinvis",
-        !drawing.getLayerVisibility(name)
-      );
-      const layerName = $('<td class="layername">' + name + "</td>");
-      layerlist.append(layerTr.append(layerVis, layerName));
+      const isSelected = name === currentLayerName;
+      const isVisible = drawing.getLayerVisibility(name);
+
+      const rowTemplate = `<div class="layer-row ${
+        isSelected ? "g-selected" : ""
+      }" draggable="false"><span class="layer-arrow gravit-icon-right"></span> <span class="layer-title-group"> <span class="layer-icon" style="opacity: initial;" ></span> <span class="layer-title">${name}</span> </span><span style="margin-right: 7px" class="layer-action layer-visibility ${
+        isVisible ? "gravit-icon-display" : "gravit-icon-hide"
+      } g-active" data-title="Alternar visibilidad" ></span> </div>`;
+
+      $(rowTemplate).appendTo(layerlist);
+
       selLayerNames.append(
         '<option value="' + name + '">' + name + "</option>"
       );
     }
-    if (icon !== undefined) {
-      const copy = icon.clone();
-      $("td.layervis", layerlist).append(copy);
-      $.resizeSvgIcons({ "td.layervis .svg_icon": 14 });
-    }
+
     // handle selection of layer
-    $("#layerlist td.layername")
+    $("#layerlist .layer-row")
       .mouseup(function(evt) {
-        $("#layerlist tr.layer").removeClass("layersel");
-        $(this.parentNode).addClass("layersel");
-        svgCanvas.setCurrentLayer(this.textContent);
+        $("#layerlist .layer-row").removeClass("g-selected");
+        $(this).addClass("g-selected");
+        svgCanvas.setCurrentLayer(this.textContent.trim());
         evt.preventDefault();
       })
       .mouseover(function() {
-        toggleHighlightLayer(this.textContent);
+        toggleHighlightLayer(this.textContent.trim());
       })
       .mouseout(function() {
         toggleHighlightLayer();
+      })
+      .dblclick(function() {
+        layerRename();
       });
-    $("#layerlist td.layervis").click(function() {
-      const row = $(this.parentNode).prevAll().length;
-      const name = $("#layerlist tr.layer:eq(" + row + ") td.layername").text();
-      const vis = $(this).hasClass("layerinvis");
-      svgCanvas.setLayerVisibility(name, vis);
-      $(this).toggleClass("layerinvis");
-    });
+    $("#layerlist .layer-visibility").click(function() {
+      const name = $(this)
+        .parent()
+        .text()
+        .trim();
 
-    // if there were too few rows, let's add a few to make it not so lonely
-    let num = 5 - $("#layerlist tr.layer").size();
-    while (num-- > 0) {
-      // TODO: there must a better way to do this
-      layerlist.append('<tr><td style="color:white">_</td><td/></tr>');
-    }
+      const vis = $(this).hasClass("gravit-icon-display");
+      svgCanvas.setLayerVisibility(name, !vis);
+      $(this).removeClass(vis ? "gravit-icon-display" : "gravit-icon-hide");
+      $(this).addClass(vis ? "gravit-icon-hide" : "gravit-icon-display");
+    });
   };
 
   let editingsource = false;
@@ -4985,7 +4982,8 @@ editor.init = function() {
 
     const newName = await $.prompt(
       uiStrings.notification.enterUniqueLayerName,
-      uniqName
+      uniqName,
+      { height: 115 }
     );
     if (!newName) {
       return;
@@ -5010,9 +5008,32 @@ editor.init = function() {
       // This matches what SvgCanvas does
       // TODO: make this behavior less brittle (svg-editor should get which
       // layer is selected from the canvas and then select that one in the UI)
-      $("#layerlist tr.layer").removeClass("layersel");
-      $("#layerlist tr.layer:first").addClass("layersel");
+      $("#layerlist .layer-row").removeClass("layersel");
+      $("#layerlist .layer-row:first").addClass("layersel");
     }
+  }
+
+  async function layerRename() {
+    // const curIndex = $('#layerlist tr.layersel').prevAll().length; // Currently unused
+    const oldName = $("#layerlist tr.layersel td.layername").text();
+    const newName = await $.prompt(
+      uiStrings.notification.enterNewLayerName,
+      "",
+      { height: 115 }
+    );
+    if (!newName) {
+      return;
+    }
+    if (
+      oldName === newName ||
+      svgCanvas.getCurrentDrawing().hasLayer(newName)
+    ) {
+      /* await */ $.alert(uiStrings.notification.layerHasThatName);
+      return;
+    }
+
+    svgCanvas.renameCurrentLayer(newName);
+    populateLayers();
   }
 
   /**
@@ -5061,7 +5082,7 @@ editor.init = function() {
   function moveLayer(pos) {
     const total = svgCanvas.getCurrentDrawing().getNumLayers();
 
-    let curIndex = $("#layerlist tr.layersel").index();
+    let curIndex = $("#layerlist .g-selected").index();
     if (curIndex > 0 || curIndex < total - 1) {
       curIndex += pos;
       svgCanvas.setCurrentLayerPosition(total - curIndex - 1);
@@ -5077,28 +5098,6 @@ editor.init = function() {
 
   $("#layer_down").click(() => {
     moveLayer(1);
-  });
-
-  $("#layer_rename").click(async function() {
-    // const curIndex = $('#layerlist tr.layersel').prevAll().length; // Currently unused
-    const oldName = $("#layerlist tr.layersel td.layername").text();
-    const newName = await $.prompt(
-      uiStrings.notification.enterNewLayerName,
-      ""
-    );
-    if (!newName) {
-      return;
-    }
-    if (
-      oldName === newName ||
-      svgCanvas.getCurrentDrawing().hasLayer(newName)
-    ) {
-      /* await */ $.alert(uiStrings.notification.layerHasThatName);
-      return;
-    }
-
-    svgCanvas.renameCurrentLayer(newName);
-    populateLayers();
   });
 
   const SIDEPANEL_MAXWIDTH = 300;
@@ -6076,14 +6075,14 @@ editor.init = function() {
     lmenuFunc
   );
 
-  $("#layer_moreopts").contextMenu(
-    {
-      menu: "cmenu_layers",
-      inSpeed: 0,
-      allowLeft: true
-    },
-    lmenuFunc
-  );
+  $("#layer_moreopts").click(function() {
+    const dropdown = $("#layer_moreopts_dropdown");
+    dropdown.css({
+      top: dropdown.data("top"),
+      left: dropdown.data("left")
+    });
+    dropdown.show();
+  });
 
   $(".contextMenu li").mousedown(function(ev) {
     ev.preventDefault();

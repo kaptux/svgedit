@@ -141,6 +141,53 @@ video {
 #workarea.wireframe #canvasBackground > rect {
   fill: #fff !important;
 }
+
+.overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: black;
+  opacity: 0.3;
+  z-index: 5;
+}
+
+#dialog_container {
+  position: absolute;
+  font-family: Verdana;
+  text-align: center;
+  left: 50%;
+  top: 50%;
+  width: 400px;
+  margin-left: -200px;
+  height: 250px;
+  margin-top: -125px;
+  position: fixed;
+  z-index: 50001;
+
+  border: 1px solid white;
+  background: white;
+  padding: 4px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#dialog_content > * {
+  padding: 10px 20px;
+  line-height: 20px;
+  background-color: transparent;
+}
+
+#dialog_buttons {
+  margin-top: 10px;
+  border-top: 1px solid #dfdfdf;
+  padding-top: 10px;
+}
+
+#dialog_buttons > input[type="button"] {
+  margin-left: 10px;
+}
+
 /* Rulers
 ——————————————————————————————————————*/
 
@@ -3117,7 +3164,6 @@ div.g-form > div:not(:last-child) > div > label:last-child {
   margin: 0;
   border-bottom: 1px solid #dfdfdf;
   box-sizing: border-box;
-  position: absolute;
   width: 100% !important;
   *width: auto;
   max-width: 100%;
@@ -3307,6 +3353,7 @@ div.g-form > div:not(:last-child) > div > label:last-child {
 }
 .g-layer-panel > div.layer-row.g-selected > .layer-title-group > .layer-title {
   color: black;
+  font-weight: bold;
 }
 .g-layer-panel > div.layer-row.g-selected > .layer-arrow {
   color: black;

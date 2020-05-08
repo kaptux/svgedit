@@ -72,7 +72,14 @@ export default function jQueryPluginDBox(
    * @param {module:jQueryPluginDBox.CheckboxInfo} [checkbox]
    * @returns {jQueryPluginDBox.ResultPromise}
    */
-  function dbox(type, msg, defaultVal, opts, changeListener, checkbox) {
+  function dbox(type, msg, defaultVal, dimensions, opts, changeListener, checkbox) {
+    dimensions = Object.assign({}, {width: 400, height: 250}, dimensions);
+    $("#dialog_container").css({
+      width: dimensions.width,
+      height: dimensions.height,
+      "margin-left": -(dimensions.width / 2),
+      "margin-top": -(dimensions.height / 2)
+    })
     dialogContent
       .html("<p>" + msg.replace(/\n/g, "</p><p>") + "</p>")
       .toggleClass("prompt", type === "prompt");
@@ -99,7 +106,7 @@ export default function jQueryPluginDBox(
 
       let ctrl, chkbx;
       if (type === "prompt") {
-        ctrl = $('<input type="text">').prependTo(btnHolder);
+        ctrl = $('<input type="text">').appendTo(dialogContent);
         ctrl.val(defaultVal || "");
         ctrl.bind("keydown", "return", function() {
           ok.click();
@@ -187,11 +194,11 @@ export default function jQueryPluginDBox(
    * @param {string} [defaultText=''] The default text to show for the prompt
    * @returns {jQueryPluginDBox.ResultPromise}
    */
-  $.prompt = function(msg, defaultText = "") {
-    return dbox("prompt", msg, defaultText);
+  $.prompt = function(msg, defaultText = "", dimensions) {
+    return dbox("prompt", msg, defaultText, dimensions);
   };
   $.select = function(msg, opts, changeListener, txt, checkbox) {
-    return dbox("select", msg, txt, opts, changeListener, checkbox);
+    return dbox("select", msg, txt, dimensions, opts, changeListener, checkbox);
   };
   return $;
 }
