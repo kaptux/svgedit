@@ -301,6 +301,9 @@ export class SelectorManager {
   constructor() {
     // this will hold the <g> element that contains all selector rects/grips
     this.selectorParentGroup = null;
+    this.canvasOverlay = null;
+    this.xGuide = null;
+    this.yGuide = null;
 
     // this is a special rect that is used for multi-select
     this.rubberBandBox = null;
@@ -337,7 +340,12 @@ export class SelectorManager {
   initGroup() {
     const [width, height] = config_.dimensions;
 
-    const canvasOverlay = svgFactory_.createSVGElement({
+    // remove old selector parent group if it existed
+    if (this.canvasOverlay && this.canvasOverlay.parentNode) {
+      this.canvasOverlay.remove();
+    }
+
+    this.canvasOverlay = svgFactory_.createSVGElement({
       element: "svg",
       attr: {
         id: "canvasOverlay",
@@ -350,7 +358,7 @@ export class SelectorManager {
       }
     });
 
-    const xGuide = svgFactory_.createSVGElement({
+    this.xGuide = svgFactory_.createSVGElement({
       element: "line",
       attr: {
         id: "xGuide",
@@ -368,7 +376,7 @@ export class SelectorManager {
       }
     });
 
-    const yGuide = svgFactory_.createSVGElement({
+    this.yGuide = svgFactory_.createSVGElement({
       element: "line",
       attr: {
         id: "yGuide",
@@ -385,8 +393,9 @@ export class SelectorManager {
         cursor: "default"
       }
     });
-    canvasOverlay.append(xGuide);
-    canvasOverlay.append(yGuide);
+    this.canvasOverlay.append(this.xGuide);
+    this.canvasOverlay.append(this.yGuide);
+    svgFactory_.svgRoot().append(this.canvasOverlay);
 
     // remove old selector parent group if it existed
     if (this.selectorParentGroup && this.selectorParentGroup.parentNode) {
@@ -404,7 +413,6 @@ export class SelectorManager {
     });
 
     this.selectorParentGroup.append(this.selectorGripsGroup);
-    svgFactory_.svgRoot().append(canvasOverlay);
     svgFactory_.svgRoot().append(this.selectorParentGroup);
 
     this.selectorMap = {};

@@ -708,9 +708,7 @@ class SvgCanvas {
     );
 
     this.guidesValue = null;
-    this.xGuide = getElem("xGuide");
     this.xGuideValue = null;
-    this.yGuide = getElem("yGuide");
     this.yGuideValue = null;
 
     /**
@@ -927,8 +925,8 @@ class SvgCanvas {
           container,
           svgcontent,
           currentLayer,
-          canvas.xGuide,
-          canvas.yGuide
+          selectorManager.xGuide,
+          selectorManager.yGuide
         ].includes(mouseTarget)
       ) {
         return svgroot;
@@ -2476,11 +2474,11 @@ class SvgCanvas {
 
         if (canvas.guidesValue.y !== canvas.xGuideValue) {
           canvas.xGuideValue = canvas.guidesValue.y;
-          drawGuide(canvas.xGuide, canvas.xGuideValue, "y1", "y2");
+          drawGuide(selectorManager.xGuide, canvas.xGuideValue, "y1", "y2");
         }
         if (canvas.guidesValue.x !== canvas.yGuideValue) {
           canvas.yGuideValue = canvas.guidesValue.x;
-          drawGuide(canvas.yGuide, canvas.yGuideValue, "x1", "x2");
+          drawGuide(selectorManager.yGuide, canvas.yGuideValue, "x1", "x2");
         }
       };
 
@@ -5407,6 +5405,7 @@ function hideCursor () {
         resetListMap();
         clearSelection();
         pathModule.clearData();
+        svgroot.append(selectorManager.canvasOverlay);
         svgroot.append(selectorManager.selectorParentGroup);
 
         if (!preventUndo) addCommandToHistory(batchCmd);
