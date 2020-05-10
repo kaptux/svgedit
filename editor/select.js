@@ -387,7 +387,6 @@ export class SelectorManager {
     });
     canvasOverlay.append(xGuide);
     canvasOverlay.append(yGuide);
-    svgFactory_.svgRoot().append(canvasOverlay);
 
     // remove old selector parent group if it existed
     if (this.selectorParentGroup && this.selectorParentGroup.parentNode) {
@@ -403,7 +402,9 @@ export class SelectorManager {
       element: "g",
       attr: { display: "none" }
     });
+
     this.selectorParentGroup.append(this.selectorGripsGroup);
+    svgFactory_.svgRoot().append(canvasOverlay);
     svgFactory_.svgRoot().append(this.selectorParentGroup);
 
     this.selectorMap = {};
