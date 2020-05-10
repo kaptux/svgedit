@@ -1423,7 +1423,7 @@ editor.init = function() {
       ellipse: { text: "Ellipse", icon: "ellipse" },
       foreignObject: { text: "Foreign object", icon: "clip-content" },
       g: { text: "Group", icon: "group" },
-      image: { text: "Image", icon: "image-icon" },
+      image: { text: "Image", icon: "upload-image-icon" },
       line: { text: "Line", icon: "line" },
       path: { text: "Path", icon: "pen" },
       polygon: { text: "Polygon", icon: "polygon" },
@@ -2438,7 +2438,10 @@ editor.init = function() {
     $("#tool_redo").prop("disabled", undoMgr.getRedoStackSize() === 0);
     $("#menuDropDown").hide();
 
-    svgCanvas.addedNew = false;
+    if (info.isNew) {
+      populateElements();
+      svgCanvas.addedNew = false;
+    }
   };
 
   /**
@@ -2624,6 +2627,8 @@ editor.init = function() {
       paintBox.fill.update();
       paintBox.stroke.update();
     }
+
+    populateElements();
 
     svgCanvas.runExtensions(
       "elementChanged",
@@ -3834,6 +3839,7 @@ editor.init = function() {
   const deleteSelected = function() {
     if (!Utils.isNullish(selectedElement) || multiselected) {
       svgCanvas.deleteSelectedElements();
+      populateElements();
     }
   };
 
@@ -3878,6 +3884,7 @@ editor.init = function() {
    */
   const moveToTopSelected = function() {
     svgCanvas.moveToTopSelectedElements();
+    populateElements();
   };
 
   /**
@@ -3886,6 +3893,7 @@ editor.init = function() {
    */
   const moveToBottomSelected = function() {
     svgCanvas.moveToBottomSelectedElements();
+    populateElements();
   };
 
   /**
@@ -3895,6 +3903,7 @@ editor.init = function() {
   const moveUpDownSelected = function(dir) {
     if (!Utils.isNullish(selectedElement)) {
       svgCanvas.moveUpDownSelected(dir);
+      populateElements();
     }
   };
 
@@ -3905,6 +3914,7 @@ editor.init = function() {
   const convertToPath = function() {
     if (!Utils.isNullish(selectedElement)) {
       svgCanvas.convertToPath();
+      populateElements();
     }
   };
 
@@ -4249,6 +4259,8 @@ editor.init = function() {
     } else if (selectedElement) {
       svgCanvas.ungroupSelectedElement();
     }
+
+    populateElements();
   };
 
   const clickMergeUnion = function() {
