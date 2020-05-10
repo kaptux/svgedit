@@ -1423,7 +1423,7 @@ editor.init = function() {
       ellipse: { text: "Ellipse", icon: "ellipse" },
       foreignObject: { text: "Foreign object", icon: "clip-content" },
       g: { text: "Group", icon: "group" },
-      image: { text: "Image", icon: "image" },
+      image: { text: "Image", icon: "image-icon" },
       line: { text: "Line", icon: "line" },
       path: { text: "Path", icon: "pen" },
       polygon: { text: "Polygon", icon: "polygon" },

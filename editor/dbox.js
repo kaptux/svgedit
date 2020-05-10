@@ -72,14 +72,22 @@ export default function jQueryPluginDBox(
    * @param {module:jQueryPluginDBox.CheckboxInfo} [checkbox]
    * @returns {jQueryPluginDBox.ResultPromise}
    */
-  function dbox(type, msg, defaultVal, dimensions, opts, changeListener, checkbox) {
-    dimensions = Object.assign({}, {width: 400, height: 250}, dimensions);
+  function dbox(
+    type,
+    msg,
+    defaultVal,
+    dimensions,
+    opts,
+    changeListener,
+    checkbox
+  ) {
+    dimensions = Object.assign({}, { width: 400, height: 250 }, dimensions);
     $("#dialog_container").css({
       width: dimensions.width,
       height: dimensions.height,
       "margin-left": -(dimensions.width / 2),
       "margin-top": -(dimensions.height / 2)
-    })
+    });
     dialogContent
       .html("<p>" + msg.replace(/\n/g, "</p><p>") + "</p>")
       .toggleClass("prompt", type === "prompt");
@@ -197,7 +205,7 @@ export default function jQueryPluginDBox(
   $.prompt = function(msg, defaultText = "", dimensions) {
     return dbox("prompt", msg, defaultText, dimensions);
   };
-  $.select = function(msg, opts, changeListener, txt, checkbox) {
+  $.select = function(msg, opts, dimensions, changeListener, txt, checkbox) {
     return dbox("select", msg, txt, dimensions, opts, changeListener, checkbox);
   };
   return $;
