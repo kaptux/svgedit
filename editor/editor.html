@@ -513,7 +513,11 @@
                   data-title="Duplicate layer"
                   id="layer_duplicate"
                 />
-                <button id="layer_moreopts" class="dropdown-button" style="padding: 0">
+                <button
+                  id="layer_moreopts"
+                  class="dropdown-button"
+                  style="padding: 0"
+                >
                   <span class="gravit-icon-vertical-dots"></span>
                 </button>
               </div>
@@ -523,8 +527,7 @@
                 id="layerlist"
                 class="g-layer-panel g-virtual-list g-virtual-tree"
                 style="position: relative;"
-              >
-              </div>
+              ></div>
             </div>
             <div id="page-layer-divider">
               <hr />
@@ -535,1949 +538,866 @@
               ><button data-title="Eliminar capa o elemento">
                 <span class="gravit-icon-trash"></span></button
               ><button data-title="Nueva capa">
-                <span class="gravit-icon-addlayer"></span>
+                <span class="gravit-icon-plus"></span>
               </button>
             </div>
             <div class="layers-container">
               <div
+                id="elemlist"
                 class="layers g-layer-panel g-virtual-list g-virtual-tree"
-                style="overflow: auto; position: relative;"
-              >
-                <div
-                  class="vscroller"
-                  style="height: 415px; border-right: none;"
-                ></div>
-                <div
-                  id="rowId"
-                  class="layer-row"
-                  draggable="false"
-                  style="top: 0px; padding-left: 15px; width: 249px;"
-                >
-                  <span class="layer-title-group" draggable="true"
-                    ><span
-                      class="layer-icon gravit-icon-textbox"
-                      style="opacity: initial;"
-                    ></span
-                    ><span class="layer-title">Texto</span></span
-                  ><span
-                    class="layer-action layer-lock gravit-icon-unlock"
-                    data-title="Alternar bloqueo"
-                  ></span
-                  ><span
-                    class="layer-action layer-visibility gravit-icon-display"
-                    data-title="Alternar visibilidad"
-                  ></span>
-                </div>
-                <div
-                  id="rowId"
-                  class="layer-row"
-                  draggable="false"
-                  style="top: 34px; padding-left: 15px; width: 249px;"
-                >
-                  <span class="layer-title-group" draggable="true"
-                    ><span
-                      class="layer-icon gravit-icon-pen"
-                      style="opacity: initial;"
-                    ></span
-                    ><span class="layer-title">Trayecto compuesto</span></span
-                  ><span
-                    class="layer-action layer-lock gravit-icon-unlock"
-                    data-title="Alternar bloqueo"
-                  ></span
-                  ><span
-                    class="layer-action layer-visibility gravit-icon-display"
-                    data-title="Alternar visibilidad"
-                  ></span>
-                </div>
-                <div
-                  id="rowId"
-                  class="layer-row"
-                  draggable="false"
-                  style="top: 68px; padding-left: 15px; width: 249px;"
-                >
-                  <span class="layer-title-group" draggable="true"
-                    ><span
-                      class="layer-icon gravit-icon-pen"
-                      style="opacity: initial;"
-                    ></span
-                    ><span class="layer-title">Trayecto compuesto</span></span
-                  ><span
-                    class="layer-action layer-lock gravit-icon-unlock"
-                    data-title="Alternar bloqueo"
-                  ></span
-                  ><span
-                    class="layer-action layer-visibility gravit-icon-display"
-                    data-title="Alternar visibilidad"
-                  ></span>
-                </div>
-                <div
-                  id="rowId"
-                  class="layer-row"
-                  draggable="false"
-                  style="top: 102px; padding-left: 15px; width: 249px;"
-                >
-                  <span class="layer-title-group" draggable="true"
-                    ><span
-                      class="layer-icon gravit-icon-textbox"
-                      style="opacity: initial;"
-                    ></span
-                    ><span class="layer-title">Texto</span></span
-                  ><span
-                    class="layer-action layer-lock gravit-icon-unlock"
-                    data-title="Alternar bloqueo"
-                  ></span
-                  ><span
-                    class="layer-action layer-visibility gravit-icon-display"
-                    data-title="Alternar visibilidad"
-                  ></span>
-                </div>
-                <div
-                  id="rowId"
-                  class="layer-row g-selected"
-                  draggable="false"
-                  style="top: 136px; padding-left: 15px; width: 249px;"
-                >
-                  <span class="layer-title-group" draggable="true"
-                    ><span
-                      class="layer-icon gravit-icon-textbox"
-                      style="opacity: initial;"
-                    ></span
-                    ><span class="layer-title">Texto</span></span
-                  ><span
-                    class="layer-action layer-lock gravit-icon-unlock"
-                    data-title="Alternar bloqueo"
-                  ></span
-                  ><span
-                    class="layer-action layer-visibility gravit-icon-display"
-                    data-title="Alternar visibilidad"
-                  ></span>
-                </div>
-                <div
-                  id="rowId"
-                  class="layer-row"
-                  draggable="false"
-                  style="top: 170px; padding-left: 15px; width: 249px;"
-                >
-                  <span id="xpndId" class="layer-arrow gravit-icon-right"></span
-                  ><span class="layer-title-group" draggable="true"
-                    ><span
-                      class="layer-icon gravit-icon-group"
-                      style="opacity: initial;"
-                    ></span
-                    ><span class="layer-title">Grupo</span></span
-                  ><span
-                    class="layer-action layer-lock gravit-icon-unlock"
-                    data-title="Alternar bloqueo"
-                  ></span
-                  ><span
-                    class="layer-action layer-visibility gravit-icon-display"
-                    data-title="Alternar visibilidad"
-                  ></span>
-                </div>
-                <div
-                  id="rowId"
-                  class="layer-row"
-                  draggable="false"
-                  style="top: 204px; padding-left: 15px; width: 249px;"
-                >
-                  <span id="xpndId" class="layer-arrow gravit-icon-right"></span
-                  ><span class="layer-title-group" draggable="true"
-                    ><span
-                      class="layer-icon gravit-icon-group"
-                      style="opacity: initial;"
-                    ></span
-                    ><span class="layer-title">Grupo</span></span
-                  ><span
-                    class="layer-action layer-lock gravit-icon-unlock"
-                    data-title="Alternar bloqueo"
-                  ></span
-                  ><span
-                    class="layer-action layer-visibility gravit-icon-display"
-                    data-title="Alternar visibilidad"
-                  ></span>
-                </div>
-                <div
-                  id="rowId"
-                  class="layer-row"
-                  draggable="false"
-                  style="top: 238px; padding-left: 15px; width: 249px;"
-                >
-                  <span id="xpndId" class="layer-arrow gravit-icon-right"></span
-                  ><span class="layer-title-group" draggable="true"
-                    ><span
-                      class="layer-icon gravit-icon-group"
-                      style="opacity: initial;"
-                    ></span
-                    ><span class="layer-title">Grupo</span></span
-                  ><span
-                    class="layer-action layer-lock gravit-icon-unlock"
-                    data-title="Alternar bloqueo"
-                  ></span
-                  ><span
-                    class="layer-action layer-visibility gravit-icon-display"
-                    data-title="Alternar visibilidad"
-                  ></span>
-                </div>
-                <div
-                  id="rowId"
-                  class="layer-row"
-                  draggable="false"
-                  style="top: 272px; padding-left: 15px; width: 249px;"
-                >
-                  <span id="clpsId" class="layer-arrow gravit-icon-down"></span
-                  ><span class="layer-title-group" draggable="true"
-                    ><span
-                      class="layer-icon gravit-icon-group"
-                      style="opacity: initial;"
-                    ></span
-                    ><span class="layer-title">Grupo</span></span
-                  ><span
-                    class="layer-action layer-lock gravit-icon-unlock"
-                    data-title="Alternar bloqueo"
-                  ></span
-                  ><span
-                    class="layer-action layer-visibility gravit-icon-display"
-                    data-title="Alternar visibilidad"
-                  ></span>
-                </div>
-                <div
-
-                  id="rowId"
-
-                  class="layer-row"
-
-                  draggable="false"
-
-                  style="top: 306px; padding-left: 36px; width: 249px;"
-
-                >
-
-                  <span class="layer-title-group" draggable="true"
-
-                    ><span
-
-                      class="layer-icon gravit-icon-pen"
-
-                      style="opacity: initial;"
-
-                    ></span
-
-                    ><span class="layer-title">Trayecto compuesto</span></span
-
-                  ><span
-
-                    class="layer-action layer-lock gravit-icon-unlock"
-
-                    data-title="Alternar bloqueo"
-
-                  ></span
-
-                  ><span
-
-                    class="layer-action layer-visibility gravit-icon-display"
-
-                    data-title="Alternar visibilidad"
-
-                  ></span>
-
-                </div>
-
-                <div
-
-                  id="rowId"
-
-                  class="layer-row"
-
-                  draggable="false"
-
-                  style="top: 340px; padding-left: 36px; width: 249px;"
-
-                >
-
-                  <span class="layer-title-group" draggable="true"
-
-                    ><span
-
-                      class="layer-icon gravit-icon-pen"
-
-                      style="opacity: initial;"
-
-                    ></span
-
-                    ><span class="layer-title">Trayecto compuesto</span></span
-
-                  ><span
-
-                    class="layer-action layer-lock gravit-icon-unlock"
-
-                    data-title="Alternar bloqueo"
-
-                  ></span
-
-                  ><span
-
-                    class="layer-action layer-visibility gravit-icon-display"
-
-                    data-title="Alternar visibilidad"
-
-                  ></span>
-
-                </div>
-
-                <div
-
-                  id="rowId"
-
-                  class="layer-row"
-
-                  draggable="false"
-
-                  style="top: 374px; padding-left: 15px; width: 249px;"
-
-                >
-
-                  <span class="layer-title-group" draggable="true"
-
-                    ><span
-
-                      class="layer-icon gravit-icon-rectangle"
-
-                      style="opacity: initial;"
-
-                    ></span
-
-                    ><span class="layer-title">Rectángulo</span></span
-
-                  ><span
-
-                    class="layer-action layer-lock gravit-icon-unlock"
-
-                    data-title="Alternar bloqueo"
-
-                  ></span
-
-                  ><span
-
-                    class="layer-action layer-visibility gravit-icon-display"
-
-                    data-title="Alternar visibilidad"
-
-                  ></span>
-
-                </div>
-
-                <div
-
-                  style="
-
-                    position: absolute;
-
-                    height: 7px;
-
-                    top: 408px;
-
-                    width: 249px;
-
-                  "
-
-                ></div>
-
-              </div>
-
+                style="position: relative;"
+              ></div>
             </div>
-
-            <hr />
-
-            <div class="toolbar list-toolbar accordion empty-list">
-
-              <label class="panel-title">Convertir en exportable</label
-
-              ><button class="g-accordion">
-
-                <span class="gravit-icon-down"></span>
-
-              </button>
-
-              <div class="g-accordion-ghost"></div>
-
-              <button
-
-                class="btn-export"
-
-                data-title="Exportar..."
-
-                style="display: none;"
-
-              >
-
-                <span class="gravit-icon-export"></span></button
-
-              ><button data-title="Crear segmento">
-
-                <span class="gravit-icon-slice"></span></button
-
-              ><button data-title="Añadir exportación">
-
-                <span class="gravit-icon-plus"></span>
-
-              </button>
-
-            </div>
-
-            <div
-
-              class="properties-panel export-panel"
-
-              style="margin: 0px;"
-
-            ></div>
-
           </div>
 
           <div
-
             class="sidebar-container sidebar-library multiple"
-
             style="display: none;"
-
           >
-
             <div class="library-container" style="overflow: auto;">
-
               <div class="overlay">
-
                 <div class="box">
-
                   <span
-
                     >Esta función no está disponible sin conexión. Establezca
-
                     una conexión a Internet para continuar.</span
-
                   >
-
                 </div>
-
               </div>
 
               <div class="g-library-panel">
-
                 <div class="library-search">
-
                   <input
-
                     type="text"
-
                     class="g-input"
-
                     placeholder="Buscar..."
-
                   /><span class="gravit-icon-search"></span>
-
                 </div>
 
                 <div class="assets" style="display: none;">
-
                   <div class="assets-content">
-
                     <div class="indicator"></div>
 
                     <div class="assets-wrapper">
-
                       <div class="assets-wrapper images"></div>
-
                     </div>
-
                   </div>
-
                 </div>
 
                 <div class="category-row">
-
                   <div class="category">
-
                     <div class="content">
-
                       <img class="icon" src="./assets/shape" /><span
-
                         class="title"
-
                         >Formas</span
-
                       >
-
                     </div>
-
                   </div>
 
                   <div class="category">
-
                     <div class="content">
-
                       <img class="icon" src="./assets/illustration" /><span
-
                         class="title"
-
                         >Ilustraciones</span
-
                       >
-
                     </div>
-
                   </div>
 
                   <div class="category">
-
                     <div class="content">
-
                       <img class="icon" src="./assets/icon" /><span
-
                         class="title"
-
                         >Iconos</span
-
                       >
-
                     </div>
-
                   </div>
-
                 </div>
 
                 <div class="assets" style="display: none;">
-
                   <div class="assets-content">
-
                     <div class="indicator"></div>
 
                     <div class="assets-wrapper"></div>
-
                   </div>
-
                 </div>
 
                 <div class="category-row">
-
                   <div class="category">
-
                     <div class="content">
-
                       <img class="icon" src="./assets/emoji" /><span
-
                         class="title"
-
                         >Emojis</span
-
                       >
-
                     </div>
-
                   </div>
 
                   <div class="category">
-
                     <div class="content">
-
                       <img class="icon" src="./assets/sticker" /><span
-
                         class="title"
-
                         >Pegatinas</span
-
                       >
-
                     </div>
-
                   </div>
 
                   <div class="category">
-
                     <div class="content">
-
                       <img class="icon" src="./assets/frame" /><span
-
                         class="title"
-
                         >Marcos</span
-
                       >
-
                     </div>
-
                   </div>
-
                 </div>
 
                 <div class="assets" style="display: none;">
-
                   <div class="assets-content">
-
                     <div class="indicator"></div>
 
                     <div class="assets-wrapper"></div>
-
                   </div>
-
                 </div>
 
                 <div class="category-row">
-
                   <div class="category">
-
                     <div class="content">
-
                       <img class="icon" src="./assets/line" /><span
-
                         class="title"
-
                         >Líneas</span
-
                       >
-
                     </div>
-
                   </div>
 
                   <div class="category">
-
                     <div class="content">
-
                       <img class="icon" src="./assets/image" /><span
-
                         class="title"
-
                         >Fotos de Unsplash</span
-
                       >
-
                     </div>
-
                   </div>
-
                 </div>
 
                 <div class="assets" style="display: none;">
-
                   <div class="assets-content">
-
                     <div class="indicator"></div>
 
                     <div class="assets-wrapper"></div>
-
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
           </div>
 
           <div
-
             class="sidebar-container sidebar-symbols multiple"
-
             style="display: none;"
-
           >
-
             <div class="toolbar symbols-toolbar">
-
               <label style="flex-grow: 1;">Símbolos</label
-
               ><button data-title="Eliminar símbolo">
-
                 <span class="gravit-icon-trash"></span></button
-
               ><button data-title="Crear nuevo símbolo" class="">
-
                 <span class="gravit-icon-plus"></span>
-
               </button>
-
             </div>
 
             <div class="symbols-container">
-
               <div class="symbols g-symbols-panel">
-
                 <div>
-
                   <div class="symbol-panel-info">
-
                     <div class="symbol-panel-infotitle">
-
                       No se definió ningún símbolo.
-
                     </div>
 
                     <span
-
                       >Los símbolos le permiten reutilizar contenido en el
-
                       diseño. Cree un símbolo con el icono “+” de sus elementos
-
                       seleccionados.</span
-
                     >
-
                   </div>
-
                 </div>
-
               </div>
-
             </div>
-
           </div>
-
         </div>
 
         <div
-
           id="right-sidebars"
-
           style="width: 358px; top: 37px; height: 837px;"
-
         >
-
           <div class="sidebar-container sidebar-inspector">
-
             <div class="panels scrolling-panels">
-
               <div id="color_picker"></div>
 
               <hr style="display: none;" />
 
               <div class="toolbar main-toolbar" id="tool_position">
-
                 <button
-
                   data-title="Distribuir horizontalmente"
-
                   data-action="arrange.distribute.horizontal"
-
                   class="svg-button primary"
-
                   disabled=""
-
                 >
-
                   <span
-
                     ><svg
-
                       class="align-svg"
-
                       xmlns="http://www.w3.org/2000/svg"
-
                       style="isolation: isolate;"
-
                       viewBox="3 2 20 20"
-
                       width="20"
-
                       height="20"
-
                     >
-
                       <rect
-
                         id="align-area"
-
                         x="4"
-
                         y="6"
-
                         width="4"
-
                         height="12"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-area"
-
                         x="18"
-
                         y="8"
-
                         width="4"
-
                         height="8"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-shape"
-
                         x="10"
-
                         y="3"
-
                         width="2"
-
                         height="18"
-
                         fill="#3A98FF"
-
                       ></rect>
 
                       <rect
-
                         id="align-shape"
-
                         x="14"
-
                         y="3"
-
                         width="2"
-
                         height="18"
-
                         fill="#3A98FF"
-
                       ></rect></svg
-
                   ></span></button
-
                 ><button
-
                   data-title="Distribuir verticalmente"
-
                   data-action="arrange.distribute.vertical"
-
                   class="svg-button primary"
-
                   disabled=""
-
                 >
-
                   <span
-
                     ><svg
-
                       class="align-svg"
-
                       xmlns="http://www.w3.org/2000/svg"
-
                       style="isolation: isolate;"
-
                       viewBox="28 2 20 20"
-
                       width="20"
-
                       height="20"
-
                     >
-
                       <rect
-
                         id="align-area"
-
                         x="36"
-
                         y="13"
-
                         width="4"
-
                         height="12"
-
                         transform="rotate(-90 38 19)"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-area"
-
                         x="36"
-
                         y="1"
-
                         width="4"
-
                         height="8"
-
                         transform="rotate(-90 38 5)"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-shape"
-
                         x="37"
-
                         y="5"
-
                         width="2"
-
                         height="18"
-
                         transform="rotate(-90 38 14)"
-
                         fill="#3A98FF"
-
                       ></rect>
 
                       <rect
-
                         id="align-shape"
-
                         x="37"
-
                         y="1"
-
                         width="2"
-
                         height="18"
-
                         transform="rotate(-90 38 10)"
-
                         fill="#3A98FF"
-
                       ></rect></svg
-
                   ></span></button
-
                 ><span class="divider"></span
-
                 ><button
-
                   data-title="Alinear a la izquierda"
-
                   data-action="left"
-
                   class="svg-button secondary"
-
                 >
-
                   <span style="stroke: transparent;"
-
                     ><svg
-
                       class="align-svg"
-
                       xmlns="http://www.w3.org/2000/svg"
-
                       style="isolation: isolate;"
-
                       viewBox="53 2 20 20"
-
                       width="20"
-
                       height="20"
-
                     >
-
                       <rect
-
                         id="align-area"
-
                         x="62"
-
                         y="9"
-
                         width="4"
-
                         height="12"
-
                         transform="rotate(-90 64 15)"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-area"
-
                         x="60"
-
                         y="5"
-
                         width="4"
-
                         height="8"
-
                         transform="rotate(-90 62 9)"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-shape"
-
                         x="54"
-
                         y="3"
-
                         width="2"
-
                         height="18"
-
                         transform="rotate(-180 55 12)"
-
                         fill="#3A98FF"
-
                       ></rect></svg
-
                   ></span></button
-
                 ><button
-
                   data-title="Alinear centro"
-
                   data-action="center"
-
                   class="svg-button secondary"
-
                 >
-
                   <span style="stroke: transparent;"
-
                     ><svg
-
                       class="align-svg"
-
                       xmlns="http://www.w3.org/2000/svg"
-
                       style="isolation: isolate;"
-
                       viewBox="77 2 20 20"
-
                       width="20"
-
                       height="20"
-
                     >
-
                       <rect
-
                         id="align-shape"
-
                         x="86"
-
                         y="3"
-
                         width="2"
-
                         height="18"
-
                         transform="rotate(180 87 12)"
-
                         fill="#3A98FF"
-
                       ></rect>
 
                       <rect
-
                         id="align-area"
-
                         x="85"
-
                         y="3"
-
                         width="4"
-
                         height="12"
-
                         transform="rotate(90 87 9)"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-area"
-
                         x="85"
-
                         y="11"
-
                         width="4"
-
                         height="8"
-
                         transform="rotate(90 87 15)"
-
                         fill="#FFF"
-
                       ></rect></svg
-
                   ></span></button
-
                 ><button
-
                   data-title="Alinear a la derecha"
-
                   data-action="right"
-
                   class="svg-button secondary"
-
                 >
-
                   <span style="stroke: transparent;"
-
                     ><svg
-
                       class="align-svg"
-
                       xmlns="http://www.w3.org/2000/svg"
-
                       style="isolation: isolate;"
-
                       viewBox="103 2 20 20"
-
                       width="20"
-
                       height="20"
-
                     >
-
                       <rect
-
                         id="align-area"
-
                         x="110"
-
                         y="9"
-
                         width="4"
-
                         height="12"
-
                         transform="rotate(90 112 15)"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-area"
-
                         x="112"
-
                         y="5"
-
                         width="4"
-
                         height="8"
-
                         transform="rotate(90 114 9)"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-shape"
-
                         x="120"
-
                         y="3"
-
                         width="2"
-
                         height="18"
-
                         transform="rotate(180 121 12)"
-
                         fill="#3A98FF"
-
                       ></rect></svg
-
                   ></span></button
-
                 ><span class="divider"></span
-
                 ><button
-
                   data-title="Alinear borde superior"
-
                   data-action="top"
-
                   class="svg-button secondary"
-
                 >
-
                   <span style="stroke: transparent;"
-
                     ><svg
-
                       class="align-svg"
-
                       xmlns="http://www.w3.org/2000/svg"
-
                       style="isolation: isolate;"
-
                       viewBox="128 2 20 20"
-
                       width="20"
-
                       height="20"
-
                     >
-
                       <rect
-
                         id="align-area"
-
                         x="133"
-
                         y="7"
-
                         width="4"
-
                         height="12"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-area"
-
                         x="139"
-
                         y="7"
-
                         width="4"
-
                         height="8"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-shape"
-
                         x="137"
-
                         y="-5"
-
                         width="2"
-
                         height="18"
-
                         transform="rotate(-90 138 4)"
-
                         fill="#3A98FF"
-
                       ></rect></svg
-
                   ></span></button
-
                 ><button
-
                   data-title="Alinear mitad"
-
                   data-action="middle"
-
                   class="svg-button secondary"
-
                 >
-
                   <span style="stroke: transparent;"
-
                     ><svg
-
                       class="align-svg"
-
                       xmlns="http://www.w3.org/2000/svg"
-
                       style="isolation: isolate;"
-
                       viewBox="156 1.9999999999999982 20 20"
-
                       width="20"
-
                       height="20"
-
                     >
-
                       <rect
-
                         id="align-shape"
-
                         x="165"
-
                         y="3"
-
                         width="2"
-
                         height="18"
-
                         transform="rotate(90 166 12)"
-
                         fill="#3A98FF"
-
                       ></rect>
 
                       <rect
-
                         id="align-area"
-
                         x="161"
-
                         y="6"
-
                         width="4"
-
                         height="12"
-
                         transform="rotate(-180 163 12)"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-area"
-
                         x="167"
-
                         y="8"
-
                         width="4"
-
                         height="8"
-
                         transform="rotate(-180 169 12)"
-
                         fill="#FFF"
-
                       ></rect></svg
-
                   ></span></button
-
                 ><button
-
                   data-title="Alinear borde inferior"
-
                   data-action="bottom"
-
                   class="svg-button secondary"
-
                 >
-
                   <span style="stroke: transparent;"
-
                     ><svg
-
                       class="align-svg"
-
                       xmlns="http://www.w3.org/2000/svg"
-
                       style="isolation: isolate;"
-
                       viewBox="181 2 20 20"
-
                       width="20"
-
                       height="20"
-
                     >
-
                       <rect
-
                         id="align-area"
-
                         x="186"
-
                         y="5"
-
                         width="4"
-
                         height="12"
-
                         transform="rotate(180 188 11)"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-area"
-
                         x="192"
-
                         y="9"
-
                         width="4"
-
                         height="8"
-
                         transform="rotate(180 194 13)"
-
                         fill="#FFF"
-
                       ></rect>
 
                       <rect
-
                         id="align-shape"
-
                         x="190"
-
                         y="11"
-
                         width="2"
-
                         height="18"
-
                         transform="rotate(-90 191 20)"
-
                         fill="#3A98FF"
-
                       ></rect></svg
-
                   ></span>
-
                 </button>
-
               </div>
 
               <div id="panel_position" class="root-panel">
-
                 <div class="properties-panel">
-
                   <div class="g-property-row">
-
                     <label><span class="vertical-align">Posición</span></label>
 
                     <div class="columns">
-
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">x</span
-
                             ><input
-
                               type="text"
-
                               class="attr_changer"
-
                               data-attr="x"
-
                               style="padding-left: 20px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div class="column no-padding" style="width: 12%;">
-
                         &nbsp;
-
                       </div>
 
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">y</span
-
                             ><input
-
                               type="text"
-
                               class="attr_changer"
-
                               data-attr="y"
-
                               style="padding-left: 20px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div class="g-property-row">
-
                     <label><span class="vertical-align">Tamaño</span></label>
 
                     <div class="columns">
-
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">An.</span
-
                             ><input
-
                               type="text"
-
                               class="attr_changer"
-
                               data-attr="width"
-
                               style="padding-left: 24px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div class="column" style="width: 12%;">
-
                         <div class="content">
-
                           <span
-
                             class="gravit-icon-unlinked"
-
                             data-title="Mantener proporción"
-
                             data-ratio="no"
-
                             style="text-align: center; cursor: pointer;"
-
                           ></span>
-
                         </div>
-
                       </div>
 
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">Alt.</span
-
                             ><input
-
                               type="text"
-
                               class="attr_changer"
-
                               data-attr="height"
-
                               style="padding-left: 25px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div class="g-property-row">
-
                     <label><span class="vertical-align">Ángulo</span></label>
 
                     <div class="columns">
-
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">R</span
-
                             ><input
-
                               id="angle"
-
                               type="text"
-
                               data-attr="angle"
-
                               style="padding-left: 20px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div class="column no-padding" style="width: 12%;">
-
                         &nbsp;
-
                       </div>
 
                       <label class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <button class="transform-button">Transformar</button>
-
                         </div>
-
                       </label>
-
                     </div>
-
                   </div>
-
                 </div>
 
                 <hr style="display: none;" />
-
               </div>
 
               <div id="panel_transformar" class="root-panel">
-
                 <div class="toolbar" style="display: none;">
-
                   <label>Transformar</label
-
                   ><button
-
                     data-action="stroke-settings"
-
                     data-title="Configuración avanzada"
-
                   >
-
                     <span class="gravit-icon-settings"></span>
-
                   </button>
-
                 </div>
 
                 <div class="properties-panel" style="display: none;">
-
                   <div class="g-property-row">
-
                     <label><span class="vertical-align">Mover</span></label>
 
                     <div class="columns">
-
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">x</span
-
                             ><input
-
                               type="text"
-
                               data-property="move-x"
-
                               style="padding-left: 20px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div class="column no-padding" style="width: 12%;">
-
                         &nbsp;
-
                       </div>
 
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">y</span
-
                             ><input
-
                               type="text"
-
                               data-property="move-y"
-
                               style="padding-left: 20px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div class="g-property-row">
-
                     <label><span class="vertical-align">Escala</span></label>
 
                     <div class="columns">
-
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">An.</span
-
                             ><input
-
                               type="text"
-
                               data-property="scale-x"
-
                               style="padding-left: 20px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div class="column no-padding" style="width: 12%;">
-
                         &nbsp;
-
                       </div>
 
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">Alt.</span
-
                             ><input
-
                               type="text"
-
                               data-property="scale-y"
-
                               style="padding-left: 20px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div class="g-property-row">
-
                     <label><span class="vertical-align">Girar</span></label>
 
                     <div class="columns">
-
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">↑</span
-
                             ><input
-
                               type="text"
-
                               data-property="rotate"
-
                               style="padding-left: 20px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div class="column no-padding" style="width: 12%;">
-
                         &nbsp;
-
                       </div>
 
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">↓</span
-
                             ><input
-
                               type="text"
-
                               data-property="reflect"
-
                               style="padding-left: 20px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div class="g-property-row">
-
                     <label><span class="vertical-align">Sesgar</span></label>
 
                     <div class="columns">
-
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">X</span
-
                             ><input
-
                               type="text"
-
                               data-property="skew-x"
-
                               style="padding-left: 20px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div class="column no-padding" style="width: 12%;">
-
                         &nbsp;
-
                       </div>
 
                       <div class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">Y</span
-
                             ><input
-
                               type="text"
-
                               data-property="skew-y"
-
                               style="padding-left: 20px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <hr />
 
                   <div class="g-property-row">
-
                     <label><span class="vertical-align">Copias</span></label>
 
                     <div class="columns">
-
                       <label class="column" style="width: 44%;">
-
                         <div class="content">
-
                           <input type="text" data-property="copies" />
-
                         </div>
-
                       </label>
 
                       <div class="column no-padding" style="width: 12%;">
-
                         &nbsp;
-
                       </div>
 
                       <div class="column no-padding" style="width: 44%;">
-
                         <div
-
                           style="
 
                             width: 100%;
@@ -2487,19 +1407,12 @@
                             justify-content: center;
 
                           "
-
                         >
-
                           <div
-
                             data-property="pivot"
-
                             class="g-pivot"
-
                             style="align-self: center;"
-
                           >
-
                             <div class="borderline"></div>
 
                             <div class="side" data-side="tl"></div>
@@ -2519,85 +1432,50 @@
                             <div class="side" data-side="lc"></div>
 
                             <div class="side g-active" data-side="cc"></div>
-
                           </div>
-
                         </div>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div class="g-property-row">
-
                     <label><span class="vertical-align"></span></label>
 
                     <div class="columns">
-
                       <label class="column" style="width: 100%;">
-
                         <div class="content">
-
                           <button
-
                             class="transform-button"
-
                             style="margin-top: 5px;"
-
                           >
-
                             Aplicar
-
                           </button>
-
                         </div>
-
                       </label>
-
                     </div>
-
                   </div>
-
                 </div>
 
                 <hr style="display: none;" />
-
               </div>
 
               <div id="panel_documento" class="root-panel">
-
                 <div class="toolbar filled page-toolbar" style="display: none;">
-
                   <label>Página (Page 1)</label>
-
                 </div>
 
                 <div class="properties-panel">
-
                   <div
-
                     data-property-row="canvas-size"
-
                     class="g-property-row no-label"
-
                   >
-
                     <div class="columns">
-
                       <div class="column" style="width: 25%;">
-
                         <div class="content">
-
                           <div data-property="bck" class="g-pattern-chooser">
-
                             <span
-
                               class="preview g-button"
-
                               draggable="true"
-
                               style="
 
                                 height: 26px;
@@ -2615,1139 +1493,650 @@
                                   url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IndoaXRlIi8+PHJlY3Qgd2lkdGg9IjQiIGhlaWdodD0iNCIgZmlsbD0iI0NEQ0RDRCIvPjxyZWN0IHg9IjQiIHk9IjQiIHdpZHRoPSI0IiBoZWlnaHQ9IjQiIGZpbGw9IiNDRENEQ0QiLz48L3N2Zz4=');
 
                               "
-
                             >
-
                               <div
-
                                 class="eyedropper"
-
                                 default-data-title="Elija un color de cualquier parte del lienzo."
-
                                 data-title="Elija un color de cualquier parte del lienzo."
-
                               >
-
                                 <span class="gravit-icon-picker"></span>
-
                               </div>
-
                             </span>
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div class="column" style="width: 25%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">An.</span
-
                             ><input
-
                               type="text"
-
                               data-property="box.width"
-
                               style="padding-left: 24px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div class="column" style="width: 25%;">
-
                         <div class="content">
-
                           <div>
-
                             <span class="g-input-label">Alt.</span
-
                             ><input
-
                               type="text"
-
                               data-property="box.height"
-
                               style="padding-left: 25px; width: 100%;"
-
                             />
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <label class="column" style="width: 25%;">
-
                         <div class="content">
-
                           <input type="text" data-property="bop" />
-
                         </div>
-
                       </label>
-
                     </div>
 
                     <div class="labels">
-
                       <label style="width: 25%;"><span>Color</span></label
-
                       ><label style="width: 25%;"><span>Anchura</span></label
-
                       ><label style="width: 25%;"><span>Altura</span></label
-
                       ><label style="width: 25%;"><span>Opacidad</span></label>
-
                     </div>
-
                   </div>
 
                   <hr />
 
                   <div class="g-property-row no-label">
-
                     <div class="columns">
-
                       <div class="column" style="width: 25%;">
-
                         <div class="content"><span>Tamaño de página</span></div>
-
                       </div>
 
                       <label class="column" style="width: 60%;">
-
                         <div class="content">
-
                           <select
-
                             data-property="preset-size"
-
                             style="width: 100%;"
-
                           >
-
                             <optgroup label="Tamaño personalizado">
-
                               <option value="@infinite">Lienzo infinito</option>
-
                             </optgroup>
 
                             <optgroup label="Web/Escritorio">
-
                               <option
-
                                 data-preset-id="preset-web"
-
                                 data-preset-locale-en="Blog Cover"
-
                                 value="560x315x72"
-
                               >
-
                                 Portada de blog</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-web"
-
                                 data-preset-locale-en="Blog Graphic"
-
                                 value="800x1200x72"
-
                               >
-
                                 Gráfico de blog</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-web"
-
                                 data-preset-locale-en="Website - Small"
-
                                 value="1024x768x72"
-
                                 >Sitio web - Pequeño</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-web"
-
                                 data-preset-locale-en="Website - Normal"
-
                                 value="1280x800x72"
-
                                 >Sitio web - Normal</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-web"
-
                                 data-preset-locale-en="Website - Medium"
-
                                 value="1366x768x72"
-
                                 >Sitio web - Medio</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-web"
-
                                 data-preset-locale-en="Website - Large"
-
                                 value="1440x900x72"
-
                                 >Sitio web - Grande</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-web"
-
                                 data-preset-locale-en="Website - Huge"
-
                                 value="1920x1280x72"
-
                                 >Sitio web - Enorme</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-web"
-
                                 data-preset-locale-en="Full Website"
-
                                 value="1440x3072x72"
-
                               >
-
                                 Sitio web entero</option
-
                               >
-
                             </optgroup>
 
                             <optgroup label="Redes sociales">
-
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Facebook Cover"
-
                                 value="851x315x72"
-
                                 >Portada de Facebook</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Twitter Cover"
-
                                 value="1500x500x72"
-
                                 >Portada de Twitter</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="YouTube Cover"
-
                                 value="2560x1440x72"
-
                                 >Portada de YouTube</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Google+ Cover"
-
                                 value="1080x608x72"
-
                                 >Portada de Google+</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="LinkedIn Cover"
-
                                 value="1440x425x72"
-
                                 >Portada de LinkedIn</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Twitch Cover"
-
                                 value="900x480x72"
-
                                 >Portada de Twitch</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Twitter Post"
-
                                 value="1024x512x72"
-
                                 >Mensaje de Twitter</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Facebook Post"
-
                                 value="940x788x72"
-
                                 >Mensaje de Facebook</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Facebook App"
-
                                 value="810x450x72"
-
                                 >App de Facebook</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Facebook Ad"
-
                                 value="1200x627x72"
-
                                 >Anuncio de Facebook</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Instagram Post"
-
                                 value="1080x1080x72"
-
                                 >Mensaje de Instagram</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Tumblr Graphic"
-
                                 value="540x810x72"
-
                                 >Gráfico de Tumblr</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Pinterest Pin"
-
                                 value="735x600x72"
-
                                 >Pin de Pinterest</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Twitch Video"
-
                                 value="1206x708x72"
-
                                 >Vídeo de Twitch</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="LinkedIn Banner"
-
                                 value="646x220x72"
-
                                 >Anuncio de LinkedIn</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Dribbble Shot"
-
                                 value="400x300x72"
-
                                 >Shot de Dribbble 400x300</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-social"
-
                                 data-preset-locale-en="Dribbble Shot"
-
                                 value="800x600x72"
-
                                 >Shot de Dribbble 800x600</option
-
                               >
-
                             </optgroup>
 
                             <optgroup label="Dispositivos">
-
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="375x812x72"
-
                                 >iPhone X</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="828x1792x72"
-
                                 >iPhone XR</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="1242x2688x72"
-
                                 >iPhone XS Max</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="414x736x72"
-
                                 >iPhone 6/7/8 Plus</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="375x667x72"
-
                                 >iPhone 6/7/8</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="320x568x72"
-
                                 >iPhone 5/SE</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="411x731x72"
-
                                 >Google Pixel 2/XL</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 data-preset-locale-en="Android mobile"
-
                                 value="360x640x72"
-
                                 >Dispositivo móvil Android</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="272x340x72"
-
                                 >Apple Watch 38 mm</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="312x390x72"
-
                                 >Apple Watch 42 mm</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="324x394x72"
-
                                 >Apple Watch 4 40 mm</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="368x448x72"
-
                                 >Apple Watch 4 44 mm</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="768x1024x72"
-
                                 >iPad 3/4/Air/Mini</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="1024x1366x72"
-
                                 >iPad Pro 12.9in</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="600x960x72"
-
                                 >Nexus 7</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="1024x768x72"
-
                                 >Nexus 9</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="1280x800x72"
-
                                 >Nexus 10</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="1440x960x72"
-
                                 >Surface Pro 3</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-screen"
-
                                 value="1368x912x72"
-
                                 >Surface Pro 4</option
-
                               >
-
                             </optgroup>
 
                             <optgroup
-
                               label="Imprimir a petición"
-
                               style="display: none;"
-
                             >
-
                               <option
-
                                 data-preset-id="preset-merch"
-
                                 data-preset-locale-en="Amazon Popsocket"
-
                                 value="485x485x72"
-
                                 >Popsocket de Amazon</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-merch"
-
                                 data-preset-locale-en="Teepublic T-Shirt"
-
                                 value="1500x1995x72"
-
                                 >Camiseta de Teepublic</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-merch"
-
                                 data-preset-locale-en="Redbubble Standard"
-
                                 value="2400x3200x72"
-
                                 >Redbubble estándar 2400x3200</option
-
                               >
 
                               <option
-
                                 data-preset-id="preset-merch"
-
                                 data-preset-locale-en="Redbubble Long"
-
                                 value="2875x3900x72"
-
                                 >Redbubble largo 2875x3900</option
-
                               >
-
                             </optgroup>
-
                           </select>
-
                         </div> </label
-
                       ><label class="column" style="width: 15%;">
-
                         <div class="content">
-
                           <button
-
                             data-property="rotate-canvas"
-
                             default-data-title="Girar lienzo"
-
                             data-title="Girar lienzo"
-
                           >
-
                             <span class="gravit-icon-flip-canvas"></span>
-
                           </button>
-
                         </div>
-
                       </label>
-
                     </div>
-
                   </div>
 
                   <hr data-property-row="fixed-size" />
 
                   <div
-
                     data-property-row="fixed-size"
-
                     class="g-property-row no-label"
-
                   >
-
                     <div class="columns">
-
                       <div class="column" style="width: 25%;">
-
                         <div class="content"><span>Margen</span></div>
-
                       </div>
 
                       <label class="column" style="width: 15%;">
-
                         <div class="content">
-
                           <input type="text" data-property="ml" />
-
                         </div> </label
-
                       ><label class="column" style="width: 15%;">
-
                         <div class="content">
-
                           <input type="text" data-property="mt" />
-
                         </div> </label
-
                       ><label class="column" style="width: 15%;">
-
                         <div class="content">
-
                           <input type="text" data-property="mr" />
-
                         </div> </label
-
                       ><label class="column" style="width: 15%;">
-
                         <div class="content">
-
                           <input type="text" data-property="mb" />
-
                         </div>
-
                       </label>
 
                       <div class="column" style="width: 15%;">
-
                         <div class="content">
-
                           <span
-
                             class="g-button g-flat"
-
                             data-lock-margin="yes"
-
                             default-data-title="Igualar márgenes"
-
                             data-title="Igualar márgenes"
-
                             ><span class="gravit-icon-linked"></span
-
                           ></span>
-
                         </div>
-
                       </div>
-
                     </div>
 
                     <div class="labels">
-
                       <label style="width: 25%;">&nbsp;</label
-
                       ><label style="width: 15%;"><span>Izquierda</span></label
-
                       ><label style="width: 15%;"><span>Arriba</span></label
-
                       ><label style="width: 15%;"><span>Derecha</span></label
-
                       ><label style="width: 15%;"><span>Abajo</span></label
-
                       ><label style="width: 15%;">&nbsp;</label>
-
                     </div>
-
                   </div>
-
                 </div>
-
               </div>
 
               <div id="panel_apariencia" class="root-panel">
-
                 <div class="toolbar appearance-toolbar accordion">
-
                   <label>Apariencia</label>
 
                   <button class="g-accordion">
-
                     <span class="gravit-icon-down"></span>
-
                   </button>
 
                   <div class="g-accordion-ghost"></div>
-
                 </div>
 
                 <div class="properties-panel appearance-properties-panel">
-
                   <div class="appearance-property-panel">
-
                     <div class="g-property-row">
-
                       <label><span class="vertical-align">Puntos</span></label>
 
                       <div class="columns">
-
                         <div class="column auto-grow">
-
                           <div class="content">
-
                             <div
-
                               id="slider-points"
-
                               data-property="pts"
-
                               class="g-input-slider generic"
-
                               value="25"
-
                               min="3"
-
                               max="25"
-
                             >
-
                               <div class="g-input-slider-track generic">
-
                                 <div
-
                                   class="ui-slider-handle g-input-slider-thumb generic"
-
                                   style="height: 10px; width: 10px;"
-
                                 ></div>
-
                               </div>
-
                             </div>
-
                           </div>
-
                         </div>
 
                         <label class="column" style="width: 40px;">
-
                           <div class="content">
-
                             <input
-
                               id="inputPoints"
-
                               type="text"
-
                               data-property="customProps.points"
-
                             />
-
                           </div>
-
                         </label>
-
                       </div>
-
                     </div>
 
                     <div data-plain-edges="false" class="g-property-row">
-
                       <label><span class="vertical-align">Tamaño</span></label>
 
                       <div class="columns">
-
                         <div class="column auto-grow">
-
                           <div class="content">
-
                             <div
-
                               data-property="size"
-
                               class="g-input-slider generic"
-
                               value="50"
-
                               min="0"
-
                               max="100"
-
                             >
-
                               <div class="g-input-slider-track generic">
-
                                 <div
-
                                   class="g-input-slider-thumb generic"
-
                                   style="height: 10px; width: 10px;"
-
                                 ></div>
-
                               </div>
-
                             </div>
-
                           </div>
-
                         </div>
 
                         <label class="column" style="width: 40px;">
-
                           <div class="content">
-
                             <input type="text" data-property="size" />
-
                           </div>
-
                         </label>
-
                       </div>
-
                     </div>
 
                     <div class="g-property-row corner-radius">
-
                       <label
-
                         ><span class="vertical-align">Esquinas</span></label
-
                       >
 
                       <div class="columns">
-
                         <div class="column" style="width: 44%;">
-
                           <div class="content">
-
                             <input
-
                               id="rect_rx"
-
                               type="text"
-
                               data-attr="customProps.rx"
-
                               class="corner-radius"
-
                             />
-
                           </div>
-
                         </div>
 
                         <div class="column no-padding" style="width: 5px;">
-
                           &nbsp;
-
                         </div>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div class="appearance-property-panel" style="display: none;">
-
                     <div path-only="true" class="g-property-row no-label">
-
                       <div class="columns">
-
                         <div class="column" style="width: 40%;">
-
                           <div class="content">
-
                             <label
-
                               ><input
-
                                 type="checkbox"
-
                                 data-path-property="closed"
-
                                 disabled=""
-
                               /><span>Cerrado</span></label
-
                             >
-
                           </div>
-
                         </div>
 
                         <div class="column" style="width: 60%;">
-
                           <div class="content">
-
                             <label
-
                               ><input
-
                                 type="checkbox"
-
                                 data-path-property="csc"
-
                               /><span>Autoescalar esquinas</span></label
-
                             >
-
                           </div>
-
                         </div>
-
                       </div>
-
                     </div>
 
                     <div
-
                       point-only="true"
-
                       class="g-property-row"
-
                       style="display: none;"
-
                     >
-
                       <label
-
                         ><span class="vertical-align">Posición</span></label
-
                       >
 
                       <div class="columns">
-
                         <div class="column" style="width: 32%;">
-
                           <div class="content">
-
                             <div>
-
                               <span class="g-input-label">x</span
-
                               ><input
-
                                 type="text"
-
                                 data-point-property="x"
-
                                 style="padding-left: 20px; width: 100%;"
-
                               />
-
                             </div>
-
                           </div>
-
                         </div>
 
                         <div class="column" style="width: 32%;">
-
                           <div class="content">
-
                             <div>
-
                               <span class="g-input-label">y</span
-
                               ><input
-
                                 type="text"
-
                                 data-point-property="y"
-
                                 style="padding-left: 20px; width: 100%;"
-
                               />
-
                             </div>
-
                           </div>
-
                         </div>
 
                         <label class="column auto-grow">
-
                           <div class="content">
-
                             <select data-point-property="tp">
-
                               <option value="-">Recta</option>
 
                               <option value="TM">Reflejada</option>
@@ -3757,857 +2146,477 @@
                               <option value="TS">Asimétrica</option>
 
                               <option value="TC">Conexión</option>
-
                             </select>
-
                           </div>
-
                         </label>
-
                       </div>
-
                     </div>
 
                     <div
-
                       point-only="true"
-
                       class="g-property-row joint"
-
                       style="display: none;"
-
                     >
-
                       <label><span class="vertical-align">Unión</span></label>
 
                       <div class="columns">
-
                         <label class="column no-padding" style="width: 25%;">
-
                           <div class="content">
-
                             <button
-
                               class="g-button"
-
                               data-node-type="-"
-
                               data-title="Recta"
-
                               style="border-radius: 3px 0px 0px 3px;"
-
                             >
-
                               <span class="gravit-icon-node-straight"></span>
-
                             </button>
-
                           </div> </label
-
                         ><label class="column no-padding" style="width: 25%;">
-
                           <div class="content">
-
                             <button
-
                               class="g-button"
-
                               data-node-type="TM"
-
                               data-title="Reflejada"
-
                               style="border-radius: 0px;"
-
                             >
-
                               <span class="gravit-icon-node-mirrored"></span>
-
                             </button>
-
                           </div> </label
-
                         ><label class="column no-padding" style="width: 25%;">
-
                           <div class="content">
-
                             <button
-
                               class="g-button"
-
                               data-node-type="TA"
-
                               data-title="Desconectada"
-
                               style="border-radius: 0px;"
-
                             >
-
                               <span
-
                                 class="gravit-icon-node-disconnected"
-
                               ></span>
-
                             </button>
-
                           </div> </label
-
                         ><label class="column no-padding" style="width: 25%;">
-
                           <div class="content">
-
                             <button
-
                               class="g-button"
-
                               data-node-type="TS"
-
                               data-title="Asimétrica"
-
                               style="border-radius: 0px 3px 3px 0px;"
-
                             >
-
                               <span class="gravit-icon-node-assymetric"></span>
-
                             </button>
-
                           </div>
-
                         </label>
-
                       </div>
-
                     </div>
 
                     <div
-
                       point-only="true"
-
                       corner-only="true"
-
                       class="g-property-row corner-radius"
-
                       style="display: none;"
-
                     >
-
                       <label><span class="vertical-align">Esquina</span></label>
 
                       <div class="columns">
-
                         <div class="column auto-grow">
-
                           <div class="content">
-
                             <div
-
                               data-point-property="cl"
-
                               class="g-input-slider generic"
-
                               value="50"
-
                               min="0"
-
                               max="100"
-
                             >
-
                               <div class="g-input-slider-track generic">
-
                                 <div
-
                                   class="g-input-slider-thumb generic"
-
                                   style="height: 10px; width: 10px;"
-
                                 ></div>
-
                               </div>
-
                             </div>
-
                           </div>
-
                         </div>
 
                         <div class="column no-padding" style="width: 5px;">
-
                           &nbsp;
-
                         </div>
 
                         <label class="column" style="width: 35px;">
-
                           <div class="content">
-
                             <input
-
                               type="text"
-
                               data-point-property="cl"
-
                               class="corner-radius"
-
                             />
-
                           </div>
-
                         </label>
 
                         <div class="column no-padding">&nbsp;</div>
 
                         <div class="column" style="width: 40px;">
-
                           <div class="content">
-
                             <span
-
                               class="clickable g-button corner-type"
-
                               data-point-property="ctp"
-
                               ><span></span
-
                             ></span>
-
                           </div>
-
                         </div>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div class="appearance-property-panel" style="display: none;">
-
                     <div class="g-property-row">
-
                       <label><span class="vertical-align">Ángulos</span></label>
 
                       <div class="columns">
-
                         <label class="column" style="width: 50%;">
-
                           <div class="content">
-
                             <input type="text" data-property="sa" />
-
                           </div> </label
-
                         ><label class="column" style="width: 50%;">
-
                           <div class="content">
-
                             <input type="text" data-property="ea" />
-
                           </div>
-
                         </label>
-
                       </div>
-
                     </div>
 
                     <div class="g-property-row">
-
                       <label><span class="vertical-align">Forma</span></label>
 
                       <div class="columns">
-
                         <div class="column" style="width: 33.3%;">
-
                           <div class="content">
-
                             <div data-property="etp-2" class="g-button g-icon">
-
                               <span class="gravit-icon-ellipse-arc"></span>
-
                             </div>
-
                           </div>
-
                         </div>
 
                         <div class="column" style="width: 33.3%;">
-
                           <div class="content">
-
                             <div data-property="etp-1" class="g-button g-icon">
-
                               <span class="gravit-icon-ellipse-chord"></span>
-
                             </div>
-
                           </div>
-
                         </div>
 
                         <div class="column" style="width: 33.3%;">
-
                           <div class="content">
-
                             <div data-property="etp-0" class="g-button g-icon">
-
                               <span class="gravit-icon-circle-pie"></span>
-
                             </div>
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div class="labels">
-
                         <label style="width: 33.3%;"><span>Abierto</span></label
-
                         ><label style="width: 33.3%;"
-
                           ><span>Cerrado</span></label
-
                         ><label style="width: 33.3%;"
-
                           ><span>Sectores</span></label
-
                         >
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div class="appearance-property-panel text-properties-panel">
-
                     <div class="g-property-row no-label">
-
                       <div class="columns">
-
                         <div class="column" style="width: 70px;">
-
                           <div class="content">
-
                             <span style="display: flex; justify-content: left;"
-
                               >Fuente</span
-
                             >
-
                           </div>
-
                         </div>
 
                         <label class="column auto-grow">
-
                           <div class="content">
-
                             <select
-
                               data-attr="customProps.font-family"
-
                               style="width: 100%;"
-
                               id="font_family"
-
                             >
-
                               <option style="font-family:serif" value="serif"
-
                                 >Serif</option
-
                               >
 
                               <option
-
                                 style="font-family:sans-serif"
-
                                 value="sans-serif"
-
                                 >Sans-serif</option
-
                               >
 
                               <option
-
                                 style="font-family:cursive"
-
                                 value="cursive"
-
                                 >Cursive</option
-
                               >
 
                               <option
-
                                 style="font-family:fantasy"
-
                                 value="fantasy"
-
                                 >Fantasy</option
-
                               >
 
                               <option
-
                                 style="font-family:monospace"
-
                                 value="monospace"
-
                                 >Monospace</option
-
                               >
-
                             </select>
-
                           </div>
-
                         </label>
 
                         <div class="column" style="width: 25%;">
-
                           <div class="content">
-
                             <div>
-
                               <input
-
                                 id="font_size"
-
                                 type="text"
-
                                 size="3"
-
                                 value="24"
-
                                 class="g-select g-unitbox"
-
                                 style="width: 100%;"
-
                                 data-attr="customProps.font-size"
-
                               />
-
                             </div>
-
                           </div>
-
                         </div>
-
                       </div>
-
                     </div>
 
                     <div class="g-property-row">
-
                       <label
-
                         ><span class="vertical-align">Decoración</span></label
-
                       >
 
                       <div class="columns">
-
                         <label class="column" style="width: 25%;">
-
                           <div class="content">
-
                             <button
-
                               class="g-button"
-
                               data-attr="customProps.isBold"
-
                               data-title="Negrita"
-
                               tabindex="-1"
-
                               style="width: 100%;"
-
                               id="tool_bold"
-
                             >
-
                               <span
-
                                 class="gravit-icon-text-decoration-bold"
-
                               ></span>
-
                             </button>
-
                           </div> </label
-
                         ><label class="column" style="width: 25%;">
-
                           <div class="content">
-
                             <button
-
                               class="g-button"
-
                               data-attr="customProps.isItalic"
-
                               data-title="Cursiva"
-
                               tabindex="-1"
-
                               style="width: 100%;"
-
                               id="tool_italic"
-
                             >
-
                               <span
-
                                 class="gravit-icon-text-decoration-italic"
-
                               ></span>
-
                             </button>
-
                           </div> </label
-
                         ><label class="column" style="width: 25%;">
-
                           <div class="content">
-
                             <button
-
                               class="g-button"
-
                               data-attr="customProps.isUnderline"
-
                               data-title="Subrayado"
-
                               tabindex="-1"
-
                               style="width: 100%;"
-
                               id="tool_underline"
-
                             >
-
                               <span
-
                                 class="gravit-icon-text-decoration-underline"
-
                               ></span>
-
                             </button>
-
                           </div> </label
-
                         ><label class="column" style="width: 25%;">
-
                           <div class="content">
-
                             <button
-
                               class="g-button"
-
                               data-attr="customProps.isLineThrough"
-
                               data-title="Tachado"
-
                               tabindex="-1"
-
                               style="width: 100%;"
-
                               id="tool_line_through"
-
                             >
-
                               <span
-
                                 class="gravit-icon-text-decoration-strikeout"
-
                               ></span>
-
                             </button>
-
                           </div>
-
                         </label>
-
                       </div>
-
                     </div>
 
                     <div class="g-property-row">
-
                       <label
-
                         ><span class="vertical-align">Espaciado</span></label
-
                       >
 
                       <div class="columns">
-
                         <label class="column" style="width: 30%;">
-
                           <div class="content">
-
                             <input type="text" data-property="_tcs" />
-
                           </div> </label
-
                         ><label class="column" style="width: 30%;">
-
                           <div class="content">
-
                             <input type="text" data-property="_tws" />
-
                           </div>
-
                         </label>
 
                         <div class="column" style="width: 40%;">
-
                           <div class="content">
-
                             <div style="position: relative;">
-
                               <input
-
                                 type="text"
-
                                 data-property="_plh"
-
                                 style="width: 100%;"
-
                               /><button
-
                                 class="g-flat"
-
                                 data-property="_plh_unit"
-
                                 tabindex="-1"
-
                                 style="position: absolute; right: 5px;"
-
                               >
-
                                 %
-
                               </button>
-
                             </div>
-
                           </div>
-
                         </div>
-
                       </div>
 
                       <div class="labels">
-
                         <label style="width: 30%;"><span>Carácter</span></label
-
                         ><label style="width: 30%;"><span>Palabra</span></label
-
                         ><label style="width: 40%;"><span>Línea</span></label>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div class="appearance-property-panel image-properties-panel">
-
                     <div class="g-property-row">
-
                       <label><span class="vertical-align">URL</span></label>
 
                       <div class="columns">
-
                         <div class="column auto-grow">
-
                           <div class="content">
-
-                            <input type="text" style="width: 100%;" id="image_url" />
-
+                            <input
+                              type="text"
+                              style="width: 100%;"
+                              id="image_url"
+                            />
                           </div>
-
                         </div>
-
                       </div>
-
                     </div>
-
                   </div>
 
                   <div class="appearance-property-panel">
-
                     <div class="g-property-row opacity">
-
                       <label
-
                         ><span class="vertical-align">Opacidad</span></label
-
                       >
 
                       <div class="columns">
-
                         <div class="column auto-grow">
-
                           <div class="content">
-
                             <div
-
                               id="group_opacity_slider"
-
                               data-property="_stop"
-
                               class="g-input-slider custom opacity"
-
                               value="100"
-
                               min="0"
-
                               max="100"
-
                             >
-
                               <div class="g-input-slider-track custom">
-
                                 <div
-
                                   class="ui-slider-handle g-input-slider-thumb custom"
-
                                   style="height: 8px; width: 8px; left: 100%;"
-
                                 ></div>
-
                               </div>
-
                             </div>
-
                           </div>
-
                         </div>
 
                         <div class="column no-padding" style="width: 5px;">
-
                           &nbsp;
-
                         </div>
 
                         <label class="column" style="width: 60px;">
-
                           <div class="content">
-
                             <input
-
                               id="group_opacity"
-
                               type="text"
-
                               data-property="_stop"
-
                             />
-
                           </div>
-
                         </label>
-
                       </div>
-
                     </div>
 
                     <div class="g-property-row blur">
-
                       <label
-
                         ><span class="vertical-align">Difuminar</span></label
-
                       >
 
                       <div class="columns">
-
                         <div class="column auto-grow">
-
                           <div class="content">
-
                             <div
-
                               id="group_blur_slider"
-
                               data-property="_stop"
-
                               class="g-input-slider custom opacity"
-
                             >
-
                               <div class="g-input-slider-track custom">
-
                                 <div
-
                                   class="ui-slider-handle g-input-slider-thumb custom"
-
                                   style="height: 8px; width: 8px; left: 100%;"
-
                                 ></div>
-
                               </div>
-
                             </div>
-
                           </div>
-
                         </div>
 
                         <div class="column no-padding" style="width: 5px;">
-
                           &nbsp;
-
                         </div>
 
                         <label class="column" style="width: 60px;">
-
                           <div class="content">
-
                             <input
-
                               id="group_blur"
-
                               type="text"
-
                               data-property="_stop"
-
                             />
-
                           </div>
-
                         </label>
-
                       </div>
-
                     </div>
 
                     <div class="g-property-row">
-
                       <label><span class="vertical-align">Mezcla</span></label>
 
                       <div class="columns">
-
                         <label class="column" style="width: 100%;">
-
                           <div class="content">
-
                             <select data-property="_sbl">
-
                               <option value="m">Máscara</option>
 
                               <option value="!m">Invertir máscara</option>
 
                               <optgroup label="Mezcla">
-
                                 <option value="normal">Normal</option>
 
                                 <option value="multiply">Multiplicar</option>
@@ -4621,15 +2630,11 @@
                                 <option value="lighten">Aclarar</option>
 
                                 <option value="color-dodge"
-
                                   >Aclarar color</option
-
                                 >
 
                                 <option value="color-burn"
-
                                   >Oscurecer color</option
-
                                 >
 
                                 <option value="hard-light">Luz fuerte</option>
@@ -4649,15 +2654,11 @@
                                 <option value="luminosity">Luminosidad</option>
 
                                 <option value="linear_burn"
-
                                   >Subexposición lineal</option
-
                                 >
 
                                 <option value="linear_dodge"
-
                                   >Sobreexposición lineal</option
-
                                 >
 
                                 <option value="linear_light">Luz lineal</option>
@@ -4679,35 +2680,22 @@
                                 <option value="harmonic">Armónico</option>
 
                                 <option value="sin">Seno</option>
-
                               </optgroup>
-
                             </select>
-
                           </div>
-
                         </label>
-
                       </div>
-
                     </div>
 
                     <div class="g-property-row">
-
                       <label><span class="vertical-align">Estilo</span></label>
 
                       <div style="display: flex;">
-
                         <div
-
                           style="display: flex; width: 100%; overflow: hidden;"
-
                         >
-
                           <div
-
                             class="g-styles-preview"
-
                             style="
 
                               margin-right: 5px;
@@ -4717,25 +2705,16 @@
                               display: none;
 
                             "
-
                           ></div>
 
                           <div
-
                             class="g-select g-styles-field-container pro"
-
                             style="overflow: hidden; margin-right: 5px;"
-
                           >
-
                             <span
-
                               type="text"
-
                               class="g-styles-field"
-
                               data-property="_styles"
-
                               style="
 
                                 width: 95%;
@@ -4749,49 +2728,30 @@
                                 overflow: hidden;
 
                               "
-
                               >Ningún estilo compartido</span
-
                             >
-
                           </div>
-
                         </div>
 
                         <button
-
                           class="g-style-sync g-disabled"
-
                           style="width: 60px;"
-
                         >
-
                           Sincroniz.
-
                         </button>
-
                       </div>
-
                     </div>
-
                   </div>
-
                 </div>
 
                 <hr />
-
               </div>
 
               <div id="panel_relleno" class="root-panel">
-
                 <div class="toolbar list-toolbar accordion empty-list">
-
                   <label>Relleno</label
-
                   ><button class="g-accordion">
-
                     <span class="gravit-icon-down"></span>
-
                   </button>
                   <div class="g-accordion-ghost"></div>
                 </div>
@@ -5328,7 +3288,6 @@
           <img
             class="svg_icon"
             src="data:image/svg+xml;charset=utf-8;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjQgMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgY2xhc3M9InN2Z19pY29uIj48c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iLTYwIC02MCAxMjAgMTIwIj4KICAgICAgICAgICAgPHBhdGggc3Ryb2tlLXdpZHRoPSIxMCIgc3Ryb2tlPSIjZmY3ZjAwIiBmaWxsPSIjZmY3ZjAwIiBkPSJtNTAsMGwtMTAwLDQwbDMwLC00MGwtMzAsLTQweiIvPgogICAgICAgIDwvc3ZnPjwvc3ZnPg=="
-
             alt="icon"
           />
         </li>
@@ -5864,11 +3823,22 @@
     />
     <div id="dialog_box" style="display: none;">
       <div class="overlay"></div>
-      <div id="dialog_container" class="ui-draggable" style="position: absolute;">
-        <div id="dialog_content" class="prompt"><p>Please enter a unique layer name</p></div>
-        <div id="dialog_buttons"><input type="text"><input type="button" data-ok="" value="OK"><input type="button" value="Cancel"></div>
+      <div
+        id="dialog_container"
+        class="ui-draggable"
+        style="position: absolute;"
+      >
+        <div id="dialog_content" class="prompt">
+          <p>Please enter a unique layer name</p>
+        </div>
+        <div id="dialog_buttons">
+          <input type="text" /><input
+            type="button"
+            data-ok=""
+            value="OK"
+          /><input type="button" value="Cancel" />
+        </div>
       </div>
     </div>
   </body>
 </html>
-

@@ -1406,7 +1406,7 @@ editor.init = function() {
     if (layerNameToHighlight) {
       curNames.forEach(curName => {
         if (curName !== layerNameToHighlight) {
-          svgCanvas.getCurrentDrawing().setLayerOpacity(curName, 0.5);
+          svgCanvas.getCurrentDrawing().setLayerOpacity(curName, 0.2);
         }
       });
     } else {
@@ -1416,14 +1416,56 @@ editor.init = function() {
     }
   };
 
-  /**
-   *
-   * @returns {void}
-   */
+  const getNodeInfo = function(svgNode) {
+    const map = {
+      a: { text: "Link", icon: "group-4" },
+      circle: { text: "Circle", icon: "ellipse" },
+      ellipse: { text: "Ellipse", icon: "ellipse" },
+      foreignObject: { text: "Foreign object", icon: "clip-content" },
+      g: { text: "Group", icon: "group" },
+      image: { text: "Image", icon: "image" },
+      line: { text: "Line", icon: "line" },
+      path: { text: "Path", icon: "pen" },
+      polygon: { text: "Polygon", icon: "polygon" },
+      polyline: { text: "Polyline", icon: "line" },
+      rect: { text: "Rectangle", icon: "rectangle" },
+      text: { text: "Text", icon: "textbox" },
+      use: { text: "Symbol", icon: "symbolinstance" }
+    };
+
+    return map[svgNode.tagName];
+  };
+
+  const populateElements = function() {
+    const drawing = svgCanvas.getCurrentDrawing();
+    const currentLayer = drawing.getCurrentLayer();
+    const elementList = $("#elemlist").empty();
+
+    let element = currentLayer.childNodes.length;
+
+    while (element > 1) {
+      element--;
+      const node = currentLayer.childNodes.item(element);
+      const info = getNodeInfo(node);
+
+      if (info) {
+        const [, id] = node.id.split("_");
+
+        const rowTemplate = `<div id="elem_${id}" class="layer-row">
+    <span class="layer-title-group" style="padding-left: 15px">
+      <span class="layer-icon gravit-icon-${info.icon}" style="opacity: initial;"></span>
+      <span class="layer-title">${info.text}</span>
+    </span>
+   </div>`;
+
+        $(rowTemplate).appendTo(elementList);
+      }
+    }
+  };
+
   const populateLayers = function() {
     svgCanvas.clearSelection();
     const layerlist = $("#layerlist").empty();
-    const selLayerNames = $("#selLayerNames").empty();
     const drawing = svgCanvas.getCurrentDrawing();
     const currentLayerName = drawing.getCurrentLayerName();
     const icon = $.getSvgIcon("eye");
@@ -1441,10 +1483,6 @@ editor.init = function() {
       } g-active" data-title="Alternar visibilidad" ></span> </div>`;
 
       $(rowTemplate).appendTo(layerlist);
-
-      selLayerNames.append(
-        '<option value="' + name + '">' + name + "</option>"
-      );
     }
 
     // handle selection of layer
@@ -1453,6 +1491,7 @@ editor.init = function() {
         $("#layerlist .layer-row").removeClass("g-selected");
         $(this).addClass("g-selected");
         svgCanvas.setCurrentLayer(this.textContent.trim());
+        populateElements();
         evt.preventDefault();
       })
       .mouseover(function() {
@@ -1464,7 +1503,8 @@ editor.init = function() {
       .dblclick(function() {
         layerRename();
       });
-    $("#layerlist .layer-visibility").click(function() {
+    $("#layerlist .layer-visibility").click(function(e) {
+      e.stopPropagation();
       const name = $(this)
         .parent()
         .text()
@@ -1475,9 +1515,15 @@ editor.init = function() {
       $(this).removeClass(vis ? "gravit-icon-display" : "gravit-icon-hide");
       $(this).addClass(vis ? "gravit-icon-hide" : "gravit-icon-display");
     });
+
+    populateElements();
   };
 
   let editingsource = false;
+  /**
+   *
+   * @returns {void}
+   */
   let origSource = "";
 
   /**
@@ -5045,7 +5091,8 @@ editor.init = function() {
 
     const newName = await $.prompt(
       uiStrings.notification.enterUniqueLayerName,
-      name
+      name,
+      { height: 115 }
     );
     if (!newName) {
       return;

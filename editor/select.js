@@ -387,7 +387,6 @@ export class SelectorManager {
     });
     canvasOverlay.append(xGuide);
     canvasOverlay.append(yGuide);
-    svgFactory_.svgRoot().append(canvasOverlay);
 
     // remove old selector parent group if it existed
     if (this.selectorParentGroup && this.selectorParentGroup.parentNode) {
