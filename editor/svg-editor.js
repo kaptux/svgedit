@@ -1436,18 +1436,21 @@ editor.init = function() {
     return map[svgNode.tagName];
   };
 
-  const updateSelectedLayerElements = function () {
+  const updateSelectedLayerElements = function() {
     const elems = svgCanvas.getSelectedElems();
-    $("#elemlist").find('.g-selected').removeClass('g-selected');
+    $("#elemlist")
+      .find(".g-selected")
+      .removeClass("g-selected");
     for (const elem of elems) {
-      $(`#elem_${elem.id.split("_")[1]}`).addClass('g-selected');
+      $(`#elem_${elem.id.split("_")[1]}`).addClass("g-selected");
     }
-  }
+  };
 
   const populateElements = function() {
     const drawing = svgCanvas.getCurrentDrawing();
     const currentLayer = drawing.getCurrentLayer();
     const elementList = $("#elemlist").empty();
+    const selectedElements = svgCanvas.getSelectedElems();
 
     let element = currentLayer.childNodes.length;
 
@@ -1455,13 +1458,18 @@ editor.init = function() {
       element--;
       const node = currentLayer.childNodes.item(element);
       const info = getNodeInfo(node);
+      const isSelected = selectedElements.includes(node);
 
       if (info) {
         const [, id] = node.id.split("_");
 
-        const rowTemplate = `<div id="elem_${id}" class="layer-row">
+        const rowTemplate = `<div id="elem_${id}" class="layer-row ${
+          isSelected ? "g-selected" : ""
+        }">
     <span class="layer-title-group" style="padding-left: 15px">
-      <span class="layer-icon gravit-icon-${info.icon}" style="opacity: initial;"></span>
+      <span class="layer-icon gravit-icon-${
+        info.icon
+      }" style="opacity: initial;"></span>
       <span class="layer-title">${info.text}</span>
     </span>
    </div>`;
@@ -1478,6 +1486,14 @@ editor.init = function() {
       .mouseout(function() {
         const id = this.id.split("_")[1];
         svgCanvas.removeOverlayShape(id);
+      })
+      .click(function() {
+        const elem = $(`#svg_${this.id.split("_")[1]}`)[0];
+        if ($(this).hasClass("g-selected")) {
+          svgCanvas.removeFromSelection([elem]);
+        } else {
+          svgCanvas.addToSelection([elem]);
+        }
       });
   };
 
@@ -5153,10 +5169,27 @@ editor.init = function() {
     populateLayers();
   }
 
-  /**
-   * @param {Integer} pos
-   * @returns {void}
-   */
+  function moveElement(pos) {
+    let curIndex = $("#elemlist .g-selected").index();
+    if (curIndex >= 0 && pos != 0) {
+      const firstElementInSelection = $("#elemlist .g-selected").first()[0];
+      const lastElementInSelection = $("#elemlist .g-selected").last()[0];
+
+      const firstSVGElem = $(`#svg_${lastElementInSelection.id.split("_")[1]}`);
+      const lastSVGElem = $(`#svg_${firstElementInSelection.id.split("_")[1]}`);
+
+      let elemToMove = pos > 0 ? firstSVGElem.prev() : lastSVGElem.next();
+      if (elemToMove.length) {
+        if (pos > 0) {
+          elemToMove.detach().insertAfter(lastSVGElem);
+        } else {
+          elemToMove.detach().insertBefore(firstSVGElem);
+        }
+      }
+    }
+    populateElements();
+  }
+
   function moveLayer(pos) {
     const total = svgCanvas.getCurrentDrawing().getNumLayers();
 
@@ -5168,6 +5201,14 @@ editor.init = function() {
     }
   }
 
+  $("#element_up").click(() => {
+    moveElement(-1);
+  });
+
+  $("#element_down").click(() => {
+    moveElement(1);
+  });
+
   $("#layer_delete").click(deleteLayer);
 
   $("#layer_up").click(() => {
@@ -5175,6 +5216,14 @@ editor.init = function() {
   });
 
   $("#layer_down").click(() => {
+    moveLayer(1);
+  });
+
+  $("#element_up").click(() => {
+    moveLayer(-1);
+  });
+
+  $("#element_down").click(() => {
     moveLayer(1);
   });
 

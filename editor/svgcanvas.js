@@ -1887,6 +1887,7 @@ class SvgCanvas {
       }
       // the copy becomes the master now
       selectedElements = newSelectedItems;
+      call("selected", selectedElements);
     };
 
     /**
