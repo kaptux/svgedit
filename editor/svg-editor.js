@@ -1436,6 +1436,14 @@ editor.init = function() {
     return map[svgNode.tagName];
   };
 
+  const updateSelectedLayerElements = function () {
+    const elems = svgCanvas.getSelectedElems();
+    $("#elemlist").find('.g-selected').removeClass('g-selected');
+    for (const elem of elems) {
+      $(`#elem_${elem.id.split("_")[1]}`).addClass('g-selected');
+    }
+  }
+
   const populateElements = function() {
     const drawing = svgCanvas.getCurrentDrawing();
     const currentLayer = drawing.getCurrentLayer();
@@ -1461,6 +1469,16 @@ editor.init = function() {
         $(rowTemplate).appendTo(elementList);
       }
     }
+
+    $("#elemlist .layer-row")
+      .mouseover(function() {
+        const id = this.id.split("_")[1];
+        svgCanvas.addOverlayShape(id);
+      })
+      .mouseout(function() {
+        const id = this.id.split("_")[1];
+        svgCanvas.removeOverlayShape(id);
+      });
   };
 
   const populateLayers = function() {
@@ -2511,6 +2529,7 @@ editor.init = function() {
     // Deal with pathedit mode
     togglePathEditMode(isNode, elems);
     updateContextPanel();
+    updateSelectedLayerElements();
     svgCanvas.runExtensions(
       "selectedChanged",
       /** @type {module:svgcanvas.SvgCanvas#event:ext_selectedChanged} */ {

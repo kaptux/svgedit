@@ -310,6 +310,21 @@ class SvgCanvas {
       return canvas.current_drawing_;
     });
 
+    const addOverlayShape = (canvas.addOverlayShape = function(id) {
+      const elem = getElem(`svg_${id}`).cloneNode();
+      $(elem)
+        .attr({
+          id: `overlay_${id}`,
+          stroke: "#d72e63",
+          "fill-opacity": "0.3"
+        })
+        .appendTo(selectorManager.canvasOverlay);
+    });
+
+    const removeOverlayShape = (canvas.removeOverlayShape = function(id) {
+      getElem(`overlay_${id}`).remove();
+    });
+
     /**
      * Float displaying the current zoom level (1 = 100%, .5 = 50%, etc.).
      * @type {Float}
@@ -2434,7 +2449,7 @@ class SvgCanvas {
       };
 
       const drawGuide = function(guide, value, attr1, attr2) {
-        const zoomedValue = value * currentZoom;
+        const zoomedValue = value;
 
         if (value != null) {
           guide.setAttribute("display", "inline");
@@ -8383,8 +8398,12 @@ function hideCursor () {
         width: svgcontent.getAttribute("width"),
         height: svgcontent.getAttribute("height"),
         x,
-        y
+        y,
+        viewBox: "0 0 " + this.contentW + " " + this.contentH
       });
+
+      selectorManager.xGuide.setAttribute("stroke-width", 1 / currentZoom);
+      selectorManager.yGuide.setAttribute("stroke-width", 1 / currentZoom);
 
       const bgImg = getElem("background_image");
       if (bgImg) {
