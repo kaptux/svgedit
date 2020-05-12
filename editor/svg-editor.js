@@ -1487,11 +1487,40 @@ editor.init = function() {
         const id = this.id.split("_")[1];
         svgCanvas.removeOverlayShape(id);
       })
-      .click(function() {
+      .click(function(e) {
         const elem = $(`#svg_${this.id.split("_")[1]}`)[0];
-        if ($(this).hasClass("g-selected")) {
-          svgCanvas.removeFromSelection([elem]);
+        if (e.ctrlKey) {
+          if ($(this).hasClass("g-selected")) {
+            svgCanvas.removeFromSelection([elem]);
+          } else {
+            svgCanvas.addToSelection([elem]);
+          }
+        } else if (e.shiftKey) {
+          const index = $("#elemlist .layer-row").index(this);
+          const firstSelectIndex = $("#elemlist .layer-row.g-selected")
+            .first()
+            .index();
+
+          let minIndex = index;
+          let maxIndex = firstSelectIndex;
+
+          if (index > firstSelectIndex) {
+            minIndex = firstSelectIndex;
+            maxIndex = index;
+          }
+
+          const selection = [];
+          $("#elemlist .layer-row").each(function(i) {
+            if (i >= minIndex && i <= maxIndex) {
+              const elem = $(`#svg_${this.id.split("_")[1]}`)[0];
+              selection.push(elem);
+            }
+          });
+
+          svgCanvas.clearSelection();
+          svgCanvas.addToSelection(selection);
         } else {
+          svgCanvas.clearSelection();
           svgCanvas.addToSelection([elem]);
         }
       });
@@ -2471,6 +2500,7 @@ editor.init = function() {
     $("#tool_undo").prop("disabled", undoMgr.getUndoStackSize() === 0);
     $("#tool_redo").prop("disabled", undoMgr.getRedoStackSize() === 0);
     $("#menuDropDown").hide();
+    $("#layerToMove").hide();
 
     if (info.isNew) {
       populateElements();
@@ -5065,7 +5095,6 @@ editor.init = function() {
         .addClass("push_button");
     });
 
-  // ask for a layer name
   $("#layer_new").click(async function() {
     let uniqName,
       i = svgCanvas.getCurrentDrawing().getNumLayers();
@@ -5172,6 +5201,11 @@ editor.init = function() {
   function moveElement(pos) {
     let curIndex = $("#elemlist .g-selected").index();
     if (curIndex >= 0 && pos != 0) {
+      const maxIndex = $("#elemlist .layer-row").length - 1;
+      if ((pos < 0 && curIndex == 0) || (pos > 0 && curIndex == maxIndex)) {
+        return;
+      }
+
       const firstElementInSelection = $("#elemlist .g-selected").first()[0];
       const lastElementInSelection = $("#elemlist .g-selected").last()[0];
 
@@ -5209,6 +5243,60 @@ editor.init = function() {
     moveElement(1);
   });
 
+  $("#move_elements").click(function() {
+    if ($("#layerToMove").is(":visible")) {
+      $("#layerToMove").hide();
+      return;
+    }
+
+    const names = [];
+    $("#layerlist .layer-row").each(function() {
+      if (!$(this).hasClass("g-selected")) {
+        names.push(
+          $(this)
+            .text()
+            .trim()
+        );
+      }
+    });
+    $("#layerToMove").empty();
+
+    const moveToLayer = function(e) {
+      const layerName = $(e.target)
+        .text()
+        .trim();
+      svgCanvas.moveSelectedToLayer(layerName);
+      $("#layerToMove").hide();
+      populateElements();
+    };
+
+    if (names.length > 0) {
+      for (const name of names) {
+        $(`<li class="g-menu-item has-icon" data-id="layer_merge_all">
+      <span class="g-menu-item-icon"><i class="undefined"></i></span>
+      <span class="g-menu-item-caption">${name}</span>
+      </li>`)
+          .appendTo("#layerToMove")
+          .hover(
+            function() {
+              $(this).addClass("g-hover");
+            },
+            function() {
+              $(this).removeClass("g-hover");
+            }
+          )
+          .click(moveToLayer);
+      }
+    } else {
+      $(`<li class="g-menu-item has-icon" data-id="layer_merge_all">
+      <span class="g-menu-item-icon"><i class="undefined"></i></span>
+      <span class="g-menu-item-caption"><i>No layers</i></span>
+      </li>`).appendTo("#layerToMove");
+    }
+
+    $("#layerToMove").show();
+  });
+
   $("#layer_delete").click(deleteLayer);
 
   $("#layer_up").click(() => {
@@ -5216,14 +5304,6 @@ editor.init = function() {
   });
 
   $("#layer_down").click(() => {
-    moveLayer(1);
-  });
-
-  $("#element_up").click(() => {
-    moveLayer(-1);
-  });
-
-  $("#element_down").click(() => {
     moveLayer(1);
   });
 

@@ -75,7 +75,11 @@
         <div id="toolbar" style="left: 0px; top: 0px; right: 0px;">
           <div class="section compound-section file-section">
             <div class="toolbar-button" data-action="file.save">
-              <button class="action-button icon" data-title="Guardar">
+              <button
+                id="tool_save"
+                class="action-button icon"
+                data-title="Guardar"
+              >
                 <span class="icon gravit-icon-save"></span>
               </button>
             </div>
@@ -513,11 +517,7 @@
                   data-title="Duplicate layer"
                   id="layer_duplicate"
                 />
-                <button
-                  id="layer_moreopts"
-                  class="dropdown-button"
-                  style="padding: 0"
-                >
+                <button class="dropdown-button" style="padding: 0">
                   <span class="gravit-icon-vertical-dots"></span>
                 </button>
               </div>
@@ -535,17 +535,22 @@
             </div>
             <div class="toolbar layer-toolbar">
               <label style="flex-grow: 1;">Elementos</label>
-              <button id="element_down">
+              <button id="element_down" data-title="Move elements down">
                 <span class="gravit-icon-down"></span>
               </button>
-              <button id="element_up">
+              <button id="element_up" data-title="Move elements up">
                 <span class="gravit-icon-up"></span>
               </button>
-              <button data-title="Nueva capa">
+              <button id="move_elements" data-title="Move to other layer">
                 <span class="gravit-icon-exchange"></span>
               </button>
             </div>
             <div class="layers-container">
+              <ul
+                id="layerToMove"
+                class="g-menu g-menu-bottom"
+                style="display: none;top:0;right:0"
+              ></ul>
               <div
                 id="elemlist"
                 class="layers g-layer-panel g-virtual-list g-virtual-tree"
