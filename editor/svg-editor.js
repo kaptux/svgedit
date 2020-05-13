@@ -2118,6 +2118,8 @@ editor.init = function() {
       workarea.scroll();
     }
 
+    svgCanvas.updateSctm();
+
     if (
       urldata.storagePrompt !== true &&
       editor.storagePromptState === "ignore"

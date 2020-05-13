@@ -22,6 +22,7 @@ import jQueryPluginSVG from "./jQuery.attr.js"; // Needed for SVG attribute sett
 import jQueryPluginDBox from "./dbox.js";
 import * as draw from "./draw.js";
 import AnchorSystem from "./anchor-system.js";
+import debounce from "./debounce.js";
 // eslint-disable-next-line no-duplicate-imports
 import {
   identifyLayers,
@@ -2025,9 +2026,7 @@ class SvgCanvas {
           canvas.cloneSelectedElements(0, 0);
         }
 
-        rootSctm = $("#svgcontent g")[0]
-          .getScreenCTM()
-          .inverse();
+        canvas.updateSctm();
         isShiftKey = evt.shiftKey;
 
         const pt = snapToGuides(transformPoint(evt.pageX, evt.pageY, rootSctm));
@@ -2461,7 +2460,7 @@ class SvgCanvas {
         }
       };
 
-      const drawGuides = function(pt, leftButtonPushed) {
+      const drawGuides = debounce(function(pt, leftButtonPushed) {
         const isSelectMode = currentMode == "select";
         const isDragging =
           leftButtonPushed && isSelectMode && selectedElements.length == 1;
@@ -2496,7 +2495,7 @@ class SvgCanvas {
           canvas.yGuideValue = canvas.guidesValue.x;
           drawGuide(selectorManager.yGuide, canvas.yGuideValue, "x1", "x2");
         }
-      };
+      }, 50);
 
       // in this function we do not record any state changes yet (but we do update
       // any elements that are still being created, moved or resized on the canvas)
@@ -3494,6 +3493,12 @@ class SvgCanvas {
         .mouseup(mouseUp);
       // $(window).mouseup(mouseUp);
 
+      $("#workarea").scroll(
+        debounce(function() {
+          canvas.updateSctm();
+        }, 50)
+      );
+
       // TODO(rafaelcastrocouto): User preference for shift key and zoom factor
       $(container).bind(
         "mousewheel DOMMouseScroll",
@@ -3510,10 +3515,6 @@ class SvgCanvas {
 
           e.preventDefault();
           const evt = e.originalEvent;
-
-          rootSctm = $("#svgcontent g")[0]
-            .getScreenCTM()
-            .inverse();
 
           const workarea = $("#workarea");
           const scrbar = 15;
@@ -6119,11 +6120,14 @@ function hideCursor () {
       );
 
       setTimeout(function() {
-        console.log("Sctm updated");
-        rootSctm = $("#svgcontent g")[0]
-          .getScreenCTM()
-          .inverse();
+        canvas.updateSctm();
       }, 300);
+    };
+
+    this.updateSctm = function() {
+      rootSctm = $("#svgcontent g")[0]
+        .getScreenCTM()
+        .inverse();
     };
 
     /**
@@ -8366,10 +8370,6 @@ function hideCursor () {
       const x = (w - this.contentW * currentZoom) / 2;
       const y = (h - this.contentH * currentZoom) / 2;
 
-      rootSctm = $("#svgcontent g")[0]
-        .getScreenCTM()
-        .inverse();
-
       anchorSys.setCanvas(
         {
           x: 0,
@@ -8418,6 +8418,8 @@ function hideCursor () {
         "transform",
         "translate(" + x + "," + y + ")"
       );
+
+      canvas.updateSctm();
 
       /**
        * Invoked upon updates to the canvas.
