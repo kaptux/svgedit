@@ -2286,7 +2286,9 @@ editor.init = function() {
           height: res.h
         };
       }
-    } else if (["g", "polyline", "path", "polygon"].includes(elem.nodeName)) {
+    } else if (
+      ["g", "polyline", "path", "polygon", "image"].includes(elem.nodeName)
+    ) {
       box = svgCanvas.getStrokedBBox([elem]);
     } else {
       let width = getAttrValue(elem, "width");
@@ -3717,6 +3719,7 @@ editor.init = function() {
 
   $("#toolbarFigures").dropdown();
   $("#toolbarMerges").dropdown();
+  $("#toolbarNew").dropdown();
   $("#slider-points").slider({
     min: 3,
     max: 25,
@@ -4115,7 +4118,7 @@ editor.init = function() {
    */
   const clickClear = async function() {
     const [x, y] = curConfig.dimensions;
-    const ok = await $.confirm(uiStrings.notification.QwantToClear);
+    const ok = await $.confirm(uiStrings.notification.QwantToClear, {height: 135});
     if (!ok) {
       return;
     }
@@ -6379,7 +6382,7 @@ editor.init = function() {
      * @returns {void}
      */
     const importImage = function(e) {
-      $.process_cancel(uiStrings.notification.loadingImage);
+      $.process_cancel(uiStrings.notification.loadingImage, {height: 134});
       e.stopPropagation();
       e.preventDefault();
       $("#workarea").removeAttr("style");
@@ -6399,63 +6402,58 @@ editor.init = function() {
       // Detected an image
       // svg handling
       let reader;
-      if (file.type.includes("svg")) {
-        reader = new FileReader();
-        reader.onloadend = function(ev) {
-          const newElement = svgCanvas.importSvgString(ev.target.result, true);
-          svgCanvas.ungroupSelectedElement();
-          svgCanvas.ungroupSelectedElement();
-          svgCanvas.groupSelectedElements();
+      let box = null;
+      const selectedElements = svgCanvas.getSelectedElems();
+      if (
+        selectedElements.length == 1 &&
+        selectedElements[0].tagName == "image"
+      ) {
+        box = svgCanvas.getStrokedBBox([selectedElements[0]]);
+      }
+
+      // bitmap handling
+      reader = new FileReader();
+      reader.onloadend = function({ target: { result } }) {
+        /**
+         * Insert the new image until we know its dimensions.
+         * @param {Float} width
+         * @param {Float} height
+         * @returns {void}
+         */
+        const insertNewImage = function(width, height) {
+          const newImage = box
+            ? selectedElements[0]
+            : svgCanvas.addSVGElementFromJson({
+                element: "image",
+                attr: {
+                  x: 0,
+                  y: 0,
+                  width,
+                  height,
+                  id: svgCanvas.getNextId(),
+                  style: "pointer-events:inherit"
+                }
+              });
+          svgCanvas.setHref(newImage, result);
+          svgCanvas.selectOnly([newImage]);
           svgCanvas.alignSelectedElements("m", "page");
           svgCanvas.alignSelectedElements("c", "page");
-          // highlight imported element, otherwise we get strange empty selectbox
-          svgCanvas.selectOnly([newElement]);
+          updateContextPanel();
           $("#dialog_box").hide();
         };
-        reader.readAsText(file);
-      } else {
-        // bitmap handling
-        reader = new FileReader();
-        reader.onloadend = function({ target: { result } }) {
-          /**
-           * Insert the new image until we know its dimensions.
-           * @param {Float} width
-           * @param {Float} height
-           * @returns {void}
-           */
-          const insertNewImage = function(width, height) {
-            const newImage = svgCanvas.addSVGElementFromJson({
-              element: "image",
-              attr: {
-                x: 0,
-                y: 0,
-                width,
-                height,
-                id: svgCanvas.getNextId(),
-                style: "pointer-events:inherit"
-              }
-            });
-            svgCanvas.setHref(newImage, result);
-            svgCanvas.selectOnly([newImage]);
-            svgCanvas.alignSelectedElements("m", "page");
-            svgCanvas.alignSelectedElements("c", "page");
-            updateContextPanel();
-            $("#dialog_box").hide();
-          };
-          // create dummy img so we know the default dimensions
-          let imgWidth = 100;
-          let imgHeight = 100;
-          const img = new Image();
-          img.style.opacity = 0;
-          img.addEventListener("load", function() {
-            imgWidth = img.offsetWidth || img.naturalWidth || img.width;
-            imgHeight = img.offsetHeight || img.naturalHeight || img.height;
-            insertNewImage(imgWidth, imgHeight);
-          });
-          img.src = result;
-        };
-        reader.readAsDataURL(file);
-      }
+        // create dummy img so we know the default dimensions
+        let imgWidth = 100;
+        let imgHeight = 100;
+        const img = new Image();
+        img.style.opacity = 0;
+        img.addEventListener("load", function() {
+          imgWidth = img.offsetWidth || img.naturalWidth || img.width;
+          imgHeight = img.offsetHeight || img.naturalHeight || img.height;
+          insertNewImage(imgWidth, imgHeight);
+        });
+        img.src = result;
+      };
+      reader.readAsDataURL(file);
     };
 
     workarea[0].addEventListener("dragenter", onDragEnter);
@@ -6470,7 +6468,7 @@ editor.init = function() {
       }
       svgCanvas.clear();
       if (this.files.length === 1) {
-        $.process_cancel(uiStrings.notification.loadingImage);
+        $.process_cancel(uiStrings.notification.loadingImage, {height: 134});
         const reader = new FileReader();
         reader.onloadend = async function({ target }) {
           await loadSvgString(target.result);

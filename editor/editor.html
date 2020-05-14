@@ -75,12 +75,33 @@
         <div id="cur_context_panel" style="display: none;"></div>
         <div id="toolbar" style="left: 0px; top: 0px; right: 0px;">
           <div class="section compound-section file-section">
-            <div class="toolbar-button">
+            <div
+              id="toolbarNew"
+              class="toolbar-button dropdown"
+              data-top="37px"
+              data-left="10px"
+            >
               <button
                 id="tool_open"
                 class="action-button icon"
+                data-icon="gravit-icon-folderclose"
+                data-default="true"
+                data-title="Open SVG"
+                id="tool_line"
               >
                 <span class="icon gravit-icon-folderclose"></span>
+              </button>
+              <button
+                id="tool_clear"
+                class="action-button icon"
+                data-icon="gravit-icon-page"
+                data-title="New Image"
+                data-trigger="mouseup"
+              >
+                <span class="icon gravit-icon-page"></span>
+              </button>
+              <button class="dropdown-button">
+                <span class="gravit-icon-down"></span>
               </button>
             </div>
             <div class="toolbar-button" data-action="file.save">
@@ -180,9 +201,7 @@
                 data-title="Seleccionar"
                 id="tool_select"
               >
-                <span class="icon gravit-icon-cursor-filled"></span></button
-              ><button class="dropdown-button">
-                <span class="gravit-icon-down"></span>
+                <span class="icon gravit-icon-cursor-filled"></span>
               </button>
             </div>
             <div
@@ -267,9 +286,7 @@
                 class="action-button icon"
                 data-title="Imagen"
               >
-                <span class="icon gravit-icon-upload-image-icon"></span></button
-              ><button class="dropdown-button">
-                <span class="gravit-icon-down"></span>
+                <span class="icon gravit-icon-upload-image-icon"></span>
               </button>
             </div>
           </div>
@@ -440,25 +457,6 @@
                 <span class="icon gravit-icon-vectorize-border"></span>
               </button>
             </div>
-          </div>
-          <div class="section compound-section export-section">
-            <div
-              class="toolbar-button pro legacy-feature"
-              data-action="file.export"
-            >
-              <button
-                class="action-button icon"
-                data-title="Exportación avanzada..."
-              >
-                <span class="icon gravit-icon-export"></span>
-              </button>
-            </div>
-            <button
-              class="share-button g-highlight-button highlighted"
-              style="display: none;"
-            >
-              Compartir
-            </button>
           </div>
         </div>
         <div
@@ -2536,6 +2534,14 @@
                               id="image_url"
                             />
                           </div>
+                        </div>
+                        <div class="column" style="width: 40px">
+                          <button
+                            id="tool_import"
+                            class="action-button icon"
+                          >
+                            <span class="icon gravit-icon-upload"></span>
+                          </button>
                         </div>
                       </div>
                     </div>

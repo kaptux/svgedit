@@ -187,15 +187,15 @@ export default function jQueryPluginDBox(
    * @param {string} msg Message for which to ask confirmation
    * @returns {jQueryPluginDBox.ResultPromise}
    */
-  $.confirm = function(msg) {
-    return dbox("confirm", msg);
+  $.confirm = function(msg, dimensions) {
+    return dbox("confirm", msg, null, dimensions);
   };
   /**
    * @param {string} msg Message to indicate upon cancelable indicator
    * @returns {jQueryPluginDBox.ResultPromise}
    */
-  $.process_cancel = function(msg) {
-    return dbox("process", msg);
+  $.process_cancel = function(msg, dimensions) {
+    return dbox("process", msg, null, dimensions);
   };
   /**
    * @param {string} msg Message to accompany the prompt
