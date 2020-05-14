@@ -72,8 +72,17 @@
         <div id="workarea">
           <div id="svgcanvas" style="position: relative;"></div>
         </div>
+        <div id="cur_context_panel" style="display: none;"></div>
         <div id="toolbar" style="left: 0px; top: 0px; right: 0px;">
           <div class="section compound-section file-section">
+            <div class="toolbar-button">
+              <button
+                id="tool_open"
+                class="action-button icon"
+              >
+                <span class="icon gravit-icon-folderclose"></span>
+              </button>
+            </div>
             <div class="toolbar-button" data-action="file.save">
               <button
                 id="tool_save"
@@ -474,7 +483,7 @@
             </div>
           </div>
         </div>
-        <div id="left-sidebars" style="width: 250px; top: 37px; height: 837px;">
+        <div id="left-sidebars">
           <div class="sidebar-selector">
             <div class="sidebar-option sidebar-outline active">Capas</div>
             <div class="sidebar-option sidebar-library">Bibliotecas</div>

@@ -317,6 +317,7 @@ class SvgCanvas {
         .attr({
           id: `overlay_${id}`,
           stroke: "#d72e63",
+          "stroke-width": "1",
           "fill-opacity": "0.3"
         })
         .appendTo(selectorManager.canvasOverlay);
@@ -6145,6 +6146,7 @@ function hideCursor () {
      * @returns {void}
      */
     this.setMode = function(name) {
+
       pathActions.clear(true);
       textActions.clear();
       curProperties =

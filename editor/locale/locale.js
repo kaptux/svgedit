@@ -378,6 +378,12 @@ export const readLang = async function(langData) {
       tool_wireframe: tools.wireframe_mode,
       tool_zoom: tools.mode_zoom,
       url_notice: tools.no_embed,
+      tool_clear: tools.new_doc,
+      tool_docprops: tools.docprops,
+      tool_export: tools.export_img,
+      tool_import: tools.import_doc,
+      tool_open: tools.open_doc,
+      tool_save: tools.save_doc,
       element_down: "Move elements down",
       element_up: "Move elements up",
       move_elements: "Move elements to another layer"

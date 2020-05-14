@@ -121,6 +121,24 @@ video {
   background-color: #f7f7f7;
 }
 
+#cur_context_panel {
+  position: absolute;
+  top: 53px;
+  left: 266px;
+  line-height: 22px;
+  overflow: auto;
+  padding-left: 5px;
+  font-size: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #ccc;
+  padding: 0 10px;
+  border-radius: 0 0 3px 0;
+}
+
+#cur_context_panel a {
+  color: #19c;
+}
+
 #workarea.wireframe #svgcontent * {
   fill: none;
   stroke: #000;
@@ -6830,11 +6848,11 @@ li.tool_button.current {
 #right-sidebars {
   box-sizing: border-box;
   position: absolute;
-  top: 0;
-  width: auto;
-  height: 100%;
+  top: 37px;
+  width: 250px;
   padding: 0;
   background: white;
+  height: calc(100vh - 37px);
 }
 #left-sidebars#left-sidebars,
 #right-sidebars#left-sidebars {
@@ -8922,7 +8940,8 @@ body.pro-license
   -ms-flex-negative: 0;
   flex-shrink: 0;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .sidebar-outline > .pages-container > .pages {
   position: absolute !important;

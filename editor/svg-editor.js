@@ -1531,7 +1531,6 @@ editor.init = function() {
     const layerlist = $("#layerlist").empty();
     const drawing = svgCanvas.getCurrentDrawing();
     const currentLayerName = drawing.getCurrentLayerName();
-    const icon = $.getSvgIcon("eye");
     let layer = svgCanvas.getCurrentDrawing().getNumLayers();
     // we get the layers in the reverse z-order (the layer rendered on top is listed first)
     while (layer--) {
@@ -1566,7 +1565,7 @@ editor.init = function() {
       .dblclick(function() {
         layerRename();
       });
-    $("#layerlist .layer-visibility").click(function(e) {
+    $("#layerlist .layer-visibility").mouseup(function(e) {
       e.stopPropagation();
       const name = $(this)
         .parent()
