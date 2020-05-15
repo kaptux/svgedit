@@ -5212,8 +5212,8 @@ editor.init = function() {
       const firstElementInSelection = $("#elemlist .g-selected").first()[0];
       const lastElementInSelection = $("#elemlist .g-selected").last()[0];
 
-      const firstSVGElem = $(`#svg_${lastElementInSelection.id.split("_")[1]}`);
-      const lastSVGElem = $(`#svg_${firstElementInSelection.id.split("_")[1]}`);
+      const firstSVGElem = $(`#${lastElementInSelection.id.substr("elem_".length)}`);
+      const lastSVGElem = $(`#${firstElementInSelection.id.substr("elem_".length)}`);
 
       let elemToMove = pos > 0 ? firstSVGElem.prev() : lastSVGElem.next();
       if (elemToMove.length) {
