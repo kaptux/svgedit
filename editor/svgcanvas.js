@@ -311,11 +311,11 @@ class SvgCanvas {
       return canvas.current_drawing_;
     });
 
-    const addOverlayShape = (canvas.addOverlayShape = function(id) {
-      const elem = getElem(`svg_${id}`).cloneNode();
+    const addOverlayShape = (canvas.addOverlayShape = function(svgId) {
+      const elem = $(`#${svgId}`)[0].cloneNode();
       $(elem)
         .attr({
-          id: `overlay_${id}`,
+          id: `overlay_${svgId}`,
           stroke: "#d72e63",
           "stroke-width": "1",
           "fill-opacity": "0.3"
@@ -323,8 +323,8 @@ class SvgCanvas {
         .appendTo(selectorManager.canvasOverlay);
     });
 
-    const removeOverlayShape = (canvas.removeOverlayShape = function(id) {
-      getElem(`overlay_${id}`).remove();
+    const removeOverlayShape = (canvas.removeOverlayShape = function(svgId) {
+      $(`#overlay_${svgId}`).remove();
     });
 
     /**
@@ -6146,7 +6146,6 @@ function hideCursor () {
      * @returns {void}
      */
     this.setMode = function(name) {
-
       pathActions.clear(true);
       textActions.clear();
       curProperties =
@@ -7296,6 +7295,7 @@ function hideCursor () {
         }
 
         anchorSys.removeShape(selected);
+        this.removeOverlayShape(selected.id);
         delete selectedPoints[selected.id];
 
         let parent = selected.parentNode;

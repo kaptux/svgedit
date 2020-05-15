@@ -1442,7 +1442,7 @@ editor.init = function() {
       .find(".g-selected")
       .removeClass("g-selected");
     for (const elem of elems) {
-      $(`#elem_${elem.id.split("_")[1]}`).addClass("g-selected");
+      $(`#elem_${elem.id}`).addClass("g-selected");
     }
   };
 
@@ -1461,9 +1461,7 @@ editor.init = function() {
       const isSelected = selectedElements.includes(node);
 
       if (info) {
-        const [, id] = node.id.split("_");
-
-        const rowTemplate = `<div id="elem_${id}" class="layer-row ${
+        const rowTemplate = `<div id="elem_${node.id}" class="layer-row ${
           isSelected ? "g-selected" : ""
         }">
     <span class="layer-title-group" style="padding-left: 15px">
@@ -1480,15 +1478,14 @@ editor.init = function() {
 
     $("#elemlist .layer-row")
       .mouseover(function() {
-        const id = this.id.split("_")[1];
-        svgCanvas.addOverlayShape(id);
+        svgCanvas.addOverlayShape(this.id.substr("elem_".length));
       })
       .mouseout(function() {
-        const id = this.id.split("_")[1];
-        svgCanvas.removeOverlayShape(id);
+        svgCanvas.removeOverlayShape(this.id.substr("elem_".length));
       })
       .click(function(e) {
-        const elem = $(`#svg_${this.id.split("_")[1]}`)[0];
+        const elemId = this.id.substr("elem_".length);
+        const elem = $(`#${elemId}`)[0];
         if (e.ctrlKey) {
           if ($(this).hasClass("g-selected")) {
             svgCanvas.removeFromSelection([elem]);
@@ -1512,7 +1509,7 @@ editor.init = function() {
           const selection = [];
           $("#elemlist .layer-row").each(function(i) {
             if (i >= minIndex && i <= maxIndex) {
-              const elem = $(`#svg_${this.id.split("_")[1]}`)[0];
+              const elem = $(`#${this.id.substr("elem_".length)}`)[0];
               selection.push(elem);
             }
           });
@@ -4118,7 +4115,9 @@ editor.init = function() {
    */
   const clickClear = async function() {
     const [x, y] = curConfig.dimensions;
-    const ok = await $.confirm(uiStrings.notification.QwantToClear, {height: 135});
+    const ok = await $.confirm(uiStrings.notification.QwantToClear, {
+      height: 135
+    });
     if (!ok) {
       return;
     }
@@ -6382,7 +6381,7 @@ editor.init = function() {
      * @returns {void}
      */
     const importImage = function(e) {
-      $.process_cancel(uiStrings.notification.loadingImage, {height: 134});
+      $.process_cancel(uiStrings.notification.loadingImage, { height: 134 });
       e.stopPropagation();
       e.preventDefault();
       $("#workarea").removeAttr("style");
@@ -6468,7 +6467,7 @@ editor.init = function() {
       }
       svgCanvas.clear();
       if (this.files.length === 1) {
-        $.process_cancel(uiStrings.notification.loadingImage, {height: 134});
+        $.process_cancel(uiStrings.notification.loadingImage, { height: 134 });
         const reader = new FileReader();
         reader.onloadend = async function({ target }) {
           await loadSvgString(target.result);
