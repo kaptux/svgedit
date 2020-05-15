@@ -1522,44 +1522,39 @@
                         </div>
                       </div>
 
-                      <div class="column" style="width: 25%;">
+                      <div class="column" style="width: 37.5%;">
                         <div class="content">
                           <div>
                             <span class="g-input-label">An.</span
                             ><input
+                              id="canvas_width"
                               type="text"
-                              data-property="box.width"
+                              data-attr="width"
                               style="padding-left: 24px; width: 100%;"
                             />
                           </div>
                         </div>
                       </div>
 
-                      <div class="column" style="width: 25%;">
+                      <div class="column" style="width: 37.5%;">
                         <div class="content">
                           <div>
                             <span class="g-input-label">Alt.</span
                             ><input
+                              id="canvas_height"
                               type="text"
-                              data-property="box.height"
+                              data-attr="height"
                               style="padding-left: 25px; width: 100%;"
                             />
                           </div>
                         </div>
                       </div>
-
-                      <label class="column" style="width: 25%;">
-                        <div class="content">
-                          <input type="text" data-property="bop" />
-                        </div>
-                      </label>
                     </div>
 
                     <div class="labels">
                       <label style="width: 25%;"><span>Color</span></label
-                      ><label style="width: 25%;"><span>Anchura</span></label
-                      ><label style="width: 25%;"><span>Altura</span></label
-                      ><label style="width: 25%;"><span>Opacidad</span></label>
+                      ><label style="width: 37.5%;"><span>Anchura</span></label
+                      ><label style="width: 37.5%;"><span>Altura</span></label>
                     </div>
                   </div>
 
@@ -1573,354 +1568,26 @@
 
                       <label class="column" style="width: 60%;">
                         <div class="content">
-                          <select
-                            data-property="preset-size"
-                            style="width: 100%;"
-                          >
-                            <optgroup label="Tamaño personalizado">
-                              <option value="@infinite">Lienzo infinito</option>
+                          <select id="resolution" autocomplete="off">
+                            <option selected="selected">Custom size</option>
+                            <optgroup label="Escritorio">
+                              <option value="640x480">640x480</option>
+                              <option value="800x600">800x600</option>
+                              <option value="1024x768">1024x768</option>
+                              <option value="1280x960">1280x960</option>
+                              <option value="1600x1200">1600x1200</option>
                             </optgroup>
-
-                            <optgroup label="Web/Escritorio">
-                              <option
-                                data-preset-id="preset-web"
-                                data-preset-locale-en="Blog Cover"
-                                value="560x315x72"
-                              >
-                                Portada de blog</option
-                              >
-
-                              <option
-                                data-preset-id="preset-web"
-                                data-preset-locale-en="Blog Graphic"
-                                value="800x1200x72"
-                              >
-                                Gráfico de blog</option
-                              >
-
-                              <option
-                                data-preset-id="preset-web"
-                                data-preset-locale-en="Website - Small"
-                                value="1024x768x72"
-                                >Sitio web - Pequeño</option
-                              >
-
-                              <option
-                                data-preset-id="preset-web"
-                                data-preset-locale-en="Website - Normal"
-                                value="1280x800x72"
-                                >Sitio web - Normal</option
-                              >
-
-                              <option
-                                data-preset-id="preset-web"
-                                data-preset-locale-en="Website - Medium"
-                                value="1366x768x72"
-                                >Sitio web - Medio</option
-                              >
-
-                              <option
-                                data-preset-id="preset-web"
-                                data-preset-locale-en="Website - Large"
-                                value="1440x900x72"
-                                >Sitio web - Grande</option
-                              >
-
-                              <option
-                                data-preset-id="preset-web"
-                                data-preset-locale-en="Website - Huge"
-                                value="1920x1280x72"
-                                >Sitio web - Enorme</option
-                              >
-
-                              <option
-                                data-preset-id="preset-web"
-                                data-preset-locale-en="Full Website"
-                                value="1440x3072x72"
-                              >
-                                Sitio web entero</option
-                              >
-                            </optgroup>
-
-                            <optgroup label="Redes sociales">
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Facebook Cover"
-                                value="851x315x72"
-                                >Portada de Facebook</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Twitter Cover"
-                                value="1500x500x72"
-                                >Portada de Twitter</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="YouTube Cover"
-                                value="2560x1440x72"
-                                >Portada de YouTube</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Google+ Cover"
-                                value="1080x608x72"
-                                >Portada de Google+</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="LinkedIn Cover"
-                                value="1440x425x72"
-                                >Portada de LinkedIn</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Twitch Cover"
-                                value="900x480x72"
-                                >Portada de Twitch</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Twitter Post"
-                                value="1024x512x72"
-                                >Mensaje de Twitter</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Facebook Post"
-                                value="940x788x72"
-                                >Mensaje de Facebook</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Facebook App"
-                                value="810x450x72"
-                                >App de Facebook</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Facebook Ad"
-                                value="1200x627x72"
-                                >Anuncio de Facebook</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Instagram Post"
-                                value="1080x1080x72"
-                                >Mensaje de Instagram</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Tumblr Graphic"
-                                value="540x810x72"
-                                >Gráfico de Tumblr</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Pinterest Pin"
-                                value="735x600x72"
-                                >Pin de Pinterest</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Twitch Video"
-                                value="1206x708x72"
-                                >Vídeo de Twitch</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="LinkedIn Banner"
-                                value="646x220x72"
-                                >Anuncio de LinkedIn</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Dribbble Shot"
-                                value="400x300x72"
-                                >Shot de Dribbble 400x300</option
-                              >
-
-                              <option
-                                data-preset-id="preset-social"
-                                data-preset-locale-en="Dribbble Shot"
-                                value="800x600x72"
-                                >Shot de Dribbble 800x600</option
-                              >
-                            </optgroup>
-
-                            <optgroup label="Dispositivos">
-                              <option
-                                data-preset-id="preset-screen"
-                                value="375x812x72"
-                                >iPhone X</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="828x1792x72"
-                                >iPhone XR</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="1242x2688x72"
-                                >iPhone XS Max</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="414x736x72"
-                                >iPhone 6/7/8 Plus</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="375x667x72"
-                                >iPhone 6/7/8</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="320x568x72"
-                                >iPhone 5/SE</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="411x731x72"
-                                >Google Pixel 2/XL</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                data-preset-locale-en="Android mobile"
-                                value="360x640x72"
-                                >Dispositivo móvil Android</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="272x340x72"
-                                >Apple Watch 38 mm</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="312x390x72"
-                                >Apple Watch 42 mm</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="324x394x72"
-                                >Apple Watch 4 40 mm</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="368x448x72"
-                                >Apple Watch 4 44 mm</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="768x1024x72"
-                                >iPad 3/4/Air/Mini</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="1024x1366x72"
-                                >iPad Pro 12.9in</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="600x960x72"
-                                >Nexus 7</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="1024x768x72"
-                                >Nexus 9</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="1280x800x72"
-                                >Nexus 10</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="1440x960x72"
-                                >Surface Pro 3</option
-                              >
-
-                              <option
-                                data-preset-id="preset-screen"
-                                value="1368x912x72"
-                                >Surface Pro 4</option
-                              >
-                            </optgroup>
-
-                            <optgroup
-                              label="Imprimir a petición"
-                              style="display: none;"
-                            >
-                              <option
-                                data-preset-id="preset-merch"
-                                data-preset-locale-en="Amazon Popsocket"
-                                value="485x485x72"
-                                >Popsocket de Amazon</option
-                              >
-
-                              <option
-                                data-preset-id="preset-merch"
-                                data-preset-locale-en="Teepublic T-Shirt"
-                                value="1500x1995x72"
-                                >Camiseta de Teepublic</option
-                              >
-
-                              <option
-                                data-preset-id="preset-merch"
-                                data-preset-locale-en="Redbubble Standard"
-                                value="2400x3200x72"
-                                >Redbubble estándar 2400x3200</option
-                              >
-
-                              <option
-                                data-preset-id="preset-merch"
-                                data-preset-locale-en="Redbubble Long"
-                                value="2875x3900x72"
-                                >Redbubble largo 2875x3900</option
-                              >
+                            <optgroup label="Papel">
+                              <option value="1684x2384">A1</option>
+                              <option value="1191x1684">A2</option>
+                              <option value="842x1191">A3</option>
+                              <option value="595x842">A4</option>
                             </optgroup>
                           </select>
                         </div> </label
                       ><label class="column" style="width: 15%;">
                         <div class="content">
-                          <button
-                            data-property="rotate-canvas"
-                            default-data-title="Girar lienzo"
-                            data-title="Girar lienzo"
-                          >
+                          <button id="rotate_canvas" >
                             <span class="gravit-icon-flip-canvas"></span>
                           </button>
                         </div>
@@ -2536,10 +2203,7 @@
                           </div>
                         </div>
                         <div class="column" style="width: 40px">
-                          <button
-                            id="tool_import"
-                            class="action-button icon"
-                          >
+                          <button id="tool_import" class="action-button icon">
                             <span class="icon gravit-icon-upload"></span>
                           </button>
                         </div>

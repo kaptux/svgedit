@@ -4398,13 +4398,6 @@ editor.init = function() {
     updateWireFrame();
   };
 
-  $("#svg_docprops_container, #svg_prefs_container")
-    .draggable({
-      cancel: "button,fieldset",
-      containment: "window"
-    })
-    .css("position", "absolute");
-
   let docprops = false;
   let preferences = false;
 
@@ -4515,26 +4508,27 @@ editor.init = function() {
     setSelectMode();
   };
 
-  /**
-   *
-   * @returns {void}
-   */
-  const hideDocProperties = function() {
-    $("#svg_docprops").hide();
-    $("#canvas_width,#canvas_height").removeAttr("disabled");
-    $("#resolution")[0].selectedIndex = 0;
-    $("#image_save_opts input").val([editor.pref("img_save")]);
-    docprops = false;
-  };
+  $("#canvas_width, #canvas_height").change(function() {
+    saveDocProperties();
+  });
 
-  /**
-   *
-   * @returns {void}
-   */
-  const hidePreferences = function() {
-    $("#svg_prefs").hide();
-    preferences = false;
-  };
+  $("#resolution").change(function() {
+    const values = $(this)
+      .val()
+      .split("x");
+    if (values.length == 2) {
+      $("#canvas_width").val(values[0]);
+      $("#canvas_height").val(values[1]);
+      saveDocProperties();
+    }
+  });
+
+  $("#rotate_canvas").click(function() {
+    const width = $("#canvas_width").val();
+    $("#canvas_width").val($("#canvas_height").val());
+    $("#canvas_height").val(width);
+    saveDocProperties();
+  });
 
   /**
    *
@@ -4542,7 +4536,7 @@ editor.init = function() {
    */
   const saveDocProperties = function() {
     // set title
-    const newTitle = $("#canvas_title").val();
+    const newTitle = $("#canvas_title").val() || "No title";
     updateTitle(newTitle);
     svgCanvas.setDocumentTitle(newTitle);
 
@@ -4574,9 +4568,8 @@ editor.init = function() {
     }
 
     // Set image save option
-    editor.pref("img_save", $("#image_save_opts :checked").val());
+    // editor.pref("img_save", $("#image_save_opts :checked").val());
     updateCanvas();
-    hideDocProperties();
     return true;
   };
 
@@ -5212,8 +5205,12 @@ editor.init = function() {
       const firstElementInSelection = $("#elemlist .g-selected").first()[0];
       const lastElementInSelection = $("#elemlist .g-selected").last()[0];
 
-      const firstSVGElem = $(`#${lastElementInSelection.id.substr("elem_".length)}`);
-      const lastSVGElem = $(`#${firstElementInSelection.id.substr("elem_".length)}`);
+      const firstSVGElem = $(
+        `#${lastElementInSelection.id.substr("elem_".length)}`
+      );
+      const lastSVGElem = $(
+        `#${firstElementInSelection.id.substr("elem_".length)}`
+      );
 
       let elemToMove = pos > 0 ? firstSVGElem.prev() : lastSVGElem.next();
       if (elemToMove.length) {
