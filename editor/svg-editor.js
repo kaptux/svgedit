@@ -2477,6 +2477,8 @@ editor.init = function() {
       page: "#panel_documento .g-property-row",
       rect:
         "#panel_position .g-property-row,.g-property-row.corner-radius,.g-property-row.opacity,.g-property-row.blur",
+      path:
+        "#panel_position .g-property-row,.g-property-row.opacity,.g-property-row.blur",
       polygon:
         "#panel_position .g-property-row, #panel_apariencia .g-property-row:eq(0)",
       text:
