@@ -3410,6 +3410,7 @@ class SvgCanvas {
             element.setAttribute("style", "pointer-events:inherit");
             cleanupElement(element);
             if (currentMode === "path") {
+              pathActions.simplify(element);
               const currentSelectedElements = selectedElements;
               pathActions.toEditMode(element);
 
@@ -6785,8 +6786,8 @@ function hideCursor () {
      * @function module:svgcanvas.SvgCanvas#getItalic
      * @returns {boolean} Indicates whether or not element is italic
      */
-    this.setItalic = function() {
-      this.setTextAttr("font-style", "italic");
+    this.setItalic = function(b) {
+      this.setTextAttr("font-style", b ? "italic" : "");
     };
 
     /**

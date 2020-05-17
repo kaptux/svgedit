@@ -2480,6 +2480,26 @@ export const pathActions = (function() {
         return null;
       }
     },
+    simplify(path) {
+      const len = path.pathSegList.numberOfItems;
+      if (len > 1) {
+        let index = 1;
+        do {
+          const current = path.pathSegList.getItem(index);
+          if (current.pathSegType === 6) {
+            let distance1 = new paper.Point(current.x, current.y).getDistance(current.x2, current.y2);
+            if (distance1 <= 5) {
+              const prev = path.pathSegList.getItem(index - 1);
+              let distance2 = new paper.Point(prev.x, prev.y).getDistance(current.x1, current.y1);
+              if (distance2 <= 5) {
+                replacePathSeg(4, index, [current.x, current.y], path);
+              }
+            }
+          }
+          index++;
+        } while(index < len);
+      }
+    },
     isDragging() {
       return path && path.dragging;
     },
