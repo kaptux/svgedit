@@ -117,7 +117,18 @@ export default function jQueryPluginSpinButton($) {
    * @returns {external:jQuery}
    */
   $.fn.SpinButton = function(cfg) {
-    cfg = cfg || {};
+    if (typeof cfg === "number") {
+      return this.each(function() {
+        if (this.spinCfg) {
+          $(this).val(cfg);
+          if (this.spinCfg.slider) {
+            $(this.spinCfg.slider).slider("option", "value", cfg * 100);
+          }
+        }
+      });
+    }
+
+    var cfg = cfg || {};
     let slider = null;
 
     /**

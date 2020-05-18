@@ -2242,7 +2242,12 @@ editor.init = function() {
     if (!Utils.isNullish(selectedElement)) {
       const opacPerc = (selectedElement.getAttribute("opacity") || 1.0) * 100;
       $("#group_opacity").val(opacPerc);
-      $("#opac_slider").slider("option", "value", opacPerc);
+      $("#group_opacity_slider").slider("option", "value", opacPerc);
+
+      const blurVal = svgCanvas.getBlur(selectedElement);
+      $("#group_blur").val(blurVal);
+      $("#group_blur_slider").slider("option", "value", blurVal);
+
       $("#elem_id").val(selectedElement.id);
       $("#elem_class").val(selectedElement.getAttribute("class"));
     }
@@ -3232,6 +3237,31 @@ editor.init = function() {
       $("#opac_slider").slider("option", "value", val);
     }
     svgCanvas.setOpacity(val / 100);
+  };
+
+  const changeFillOpacity = function(ctl, val) {
+    if (Utils.isNullish(val)) {
+      val = ctl.value;
+    }
+    $("#group_fill_opacity").val(val);
+    if (!ctl || !ctl.handle) {
+      $("#group_fill_opacity_slider").slider("option", "value", val);
+    }
+
+    paintBox.fill.setOpacity(val, true, true);
+  };
+
+
+  const changeStrokeOpacity = function(ctl, val) {
+    if (Utils.isNullish(val)) {
+      val = ctl.value;
+    }
+    $("#group_stroke_opacity").val(val);
+    if (!ctl || !ctl.handle) {
+      $("#group_stroke_opacity_slider").slider("option", "value", val);
+    }
+
+    paintBox.stroke.setOpacity(val, true, true);
   };
 
   const changePoints = function(ctl, val) {
@@ -4819,7 +4849,7 @@ editor.init = function() {
           svgCanvas.setPaint(picker, paint);
           $("#color_picker").hide();
         },
-        function() {
+        function(p1, p2) {
           $("#color_picker").hide();
         }
       );
@@ -4833,7 +4863,7 @@ editor.init = function() {
      * @param {string|Element|external:jQuery} container
      * @param {"fill"} type
      */
-    constructor(container, type) {
+    constructor(container, type, spinner) {
       const cur = curConfig[type === "fill" ? "initFill" : "initStroke"];
       // set up gradients to be used for the buttons
       const svgdocbox = new DOMParser().parseFromString(
@@ -4861,18 +4891,23 @@ editor.init = function() {
       this.grad = this.defs.firstElementChild;
       this.paint = new $.jGraduate.Paint({ solidColor: cur.color });
       this.type = type;
+      this.spinner = spinner;
     }
 
-    /**
-     * @param {module:jGraduate~Paint} paint
-     * @param {boolean} apply
-     * @returns {void}
-     */
-    setPaint(paint, apply) {
+    setOpacity(v, apply, fromSpinner) {
+      const paint = Object.assign({}, this.paint, {alpha: v});
+      this.setPaint(paint, apply, fromSpinner);
+    }
+
+    setPaint(paint, apply, fromSpinner) {
       this.paint = paint;
 
       const ptype = paint.type;
       const opac = paint.alpha / 100;
+
+      if (!fromSpinner && this.spinner) {
+        this.spinner.SpinButton(opac);
+      }
 
       if (opac) {
         this.noColor.hide();
@@ -4903,7 +4938,7 @@ editor.init = function() {
 
       if (apply) {
         svgCanvas.setColor(this.type, this._paintColor, true);
-        svgCanvas.setPaintOpacity(this.type, this._paintOpacity, true);
+        svgCanvas.setPaintOpacity(this.type, opac, true);
       }
     }
 
@@ -4992,8 +5027,8 @@ editor.init = function() {
   }
   PaintBox.ctr = 0;
 
-  paintBox.fill = new PaintBox("#fill_color", "fill");
-  paintBox.stroke = new PaintBox("#stroke_color", "stroke");
+  paintBox.fill = new PaintBox("#fill_color", "fill", $("#group_fill_opacity"));
+  paintBox.stroke = new PaintBox("#stroke_color", "stroke", $("#group_stroke_opacity"));
 
   $("#stroke_width").val(curConfig.initStroke.width);
   $("#group_opacity").val(curConfig.initOpacity * 100);
@@ -6182,6 +6217,22 @@ editor.init = function() {
     stateObj,
     callback: changeOpacity,
     slider: "#group_opacity_slider"
+  });
+  $("#group_fill_opacity").SpinButton({
+    min: 0,
+    max: 100,
+    step: 5,
+    stateObj,
+    callback: changeFillOpacity,
+    slider: "#group_fill_opacity_slider"
+  });
+  $("#group_stroke_opacity").SpinButton({
+    min: 0,
+    max: 100,
+    step: 5,
+    stateObj,
+    callback: changeStrokeOpacity,
+    slider: "#group_stroke_opacity_slider"
   });
   $("#group_blur").SpinButton({
     min: 0,

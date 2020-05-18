@@ -2188,8 +2188,8 @@
                     </div>
                   </div>
 
-                  <div class="appearance-property-panel image-properties-panel" style="padding:5px 10px">
-                    <div class="g-property-row">
+                  <div class="appearance-property-panel image-properties-panel">
+                    <div class="g-property-row" style="margin:5px 10px">
                       <label><span class="vertical-align">URL</span></label>
 
                       <div class="columns">
@@ -2439,14 +2439,11 @@
                   </button>
                   <div class="g-accordion-ghost"></div>
                 </div>
-                <div class="properties-panel fill-properties-panel">
-                  <div
-                    class="fill-block g-cursor-hand-open g-property-row no-label"
-                    draggable="true"
-                  >
-                    <div class="columns g-cursor-hand-open">
+                <div class="properties-panel" style="margin-right: 4px">
+                  <div class="fill-block g-property-row no-label" >
+                    <div class="columns">
                       <div
-                        class="column g-cursor-hand-open"
+                        class="column"
                         style="width: 40px;"
                       >
                         <div class="content">
@@ -2498,20 +2495,66 @@
                   </button>
                   <div class="g-accordion-ghost"></div>
                 </div>
-                <div class="properties-panel fill-properties-panel">
-                  <div
-                    class="fill-block g-cursor-hand-open g-property-row no-label"
-                    draggable="true"
-                  >
-                    <div class="columns g-cursor-hand-open">
+                <div class="properties-panel" style="margin-right: 4px">
+                  <div class="fill-block g-property-row no-label" >
+                    <div class="columns">
                       <div
-                        class="column g-cursor-hand-open"
+                        class="column"
                         style="width: 40px;"
                       >
                         <div class="content">
                           <div data-property="_pt" class="g-pattern-chooser">
                             <span id="stroke_color"></span>
                           </div>
+                        </div>
+                      </div>
+                      <div class="column auto-grow">
+                        <div class="content">
+                          <div
+                            id="group_stroke_opacity_slider"
+                            data-property="_stop"
+                            class="g-input-slider custom opacity"
+                            value="100"
+                            min="0"
+                            max="100"
+                          >
+                            <div class="g-input-slider-track custom">
+                              <div
+                                class="ui-slider-handle g-input-slider-thumb custom"
+                                style="height: 8px; width: 8px; left: 100%;"
+                              ></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="column no-padding" style="width: 5px;">
+                        &nbsp;
+                      </div>
+                      <label class="column" style="width: 60px;">
+                        <div class="content">
+                          <input
+                            id="group_stroke_opacity"
+                            type="text"
+                            data-property="_stop"
+                          />
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="properties-panel" style="margin-right: 4px">
+                  <div
+                    class="fill-block g-property-row no-label"
+                  >
+                    <div class="columns">
+                      <div
+                        class="column"
+                        style="width: 40px;"
+                      >
+                        <div class="content">
+                          <label>
+                            Trazo
+                          </label>
                         </div>
                       </div>
                       <div
@@ -2531,7 +2574,6 @@
                             <option value="2,2">.........</option>
                             <option value="5,5">- - - - - -</option>
                             <option value="5,2,2,2">- .- .- .</option>
-                            <option value="5,2,2,2,2,2">- ..- ..- ..</option>
                           </select>
                         </label>
                         <div class="toolbar-button group">
@@ -2644,7 +2686,7 @@
                       </div>
                       <div
                         class="column g-cursor-hand-open"
-                        style="width: 65px;"
+                        style="width: 60px;"
                       >
                         <div class="content">
                           <label
@@ -2662,11 +2704,6 @@
                               class="spin-button"
                             />
                           </label>
-                          <span
-                            data-property="_vs"
-                            class="fill-action fill-visibility gravit-icon-display"
-                            data-title="Alternar visibilidad"
-                          ></span>
                         </div>
                       </div>
                     </div>
