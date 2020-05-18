@@ -2188,7 +2188,7 @@
                     </div>
                   </div>
 
-                  <div class="appearance-property-panel image-properties-panel">
+                  <div class="appearance-property-panel image-properties-panel" style="padding:5px 10px">
                     <div class="g-property-row">
                       <label><span class="vertical-align">URL</span></label>
 
@@ -2237,11 +2237,9 @@
                             </div>
                           </div>
                         </div>
-
                         <div class="column no-padding" style="width: 5px;">
                           &nbsp;
                         </div>
-
                         <label class="column" style="width: 60px;">
                           <div class="content">
                             <input
@@ -2457,31 +2455,37 @@
                           </div>
                         </div>
                       </div>
-                      <label class="column auto-grow g-cursor-hand-open"
-                        ><div class="content">
-                          <select data-property="_bl"
-                            ><option value="normal">Normal</option></select
-                          >
-                        </div>
-                      </label>
-                      <label
-                        class="column g-cursor-hand-open"
-                        style="width: 45px;"
-                        ><div class="content">
-                          <input data-property="_op" type="text" /></div
-                      ></label>
-                      <div
-                        class="column g-cursor-hand-open"
-                        style="width: 20px;"
-                      >
+                      <div class="column auto-grow">
                         <div class="content">
-                          <span
-                            data-property="_vs"
-                            class="fill-action fill-visibility gravit-icon-display"
-                            data-title="Alternar visibilidad"
-                          ></span>
+                          <div
+                            id="group_fill_opacity_slider"
+                            data-property="_stop"
+                            class="g-input-slider custom opacity"
+                            value="100"
+                            min="0"
+                            max="100"
+                          >
+                            <div class="g-input-slider-track custom">
+                              <div
+                                class="ui-slider-handle g-input-slider-thumb custom"
+                                style="height: 8px; width: 8px; left: 100%;"
+                              ></div>
+                            </div>
+                          </div>
                         </div>
                       </div>
+                      <div class="column no-padding" style="width: 5px;">
+                        &nbsp;
+                      </div>
+                      <label class="column" style="width: 60px;">
+                        <div class="content">
+                          <input
+                            id="group_fill_opacity"
+                            type="text"
+                            data-property="_stop"
+                          />
+                        </div>
+                      </label>
                     </div>
                   </div>
                 </div>

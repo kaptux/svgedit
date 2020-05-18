@@ -2486,7 +2486,7 @@ editor.init = function() {
       textedit:
         "#panel_position .g-property-row, #panel_apariencia .text-properties-panel .g-property-row",
       image:
-        "#panel_position .g-property-row, #panel_apariencia .image-properties-panel .g-property-row"
+        "#panel_position .g-property-row, .g-property-row.opacity,.g-property-row.blur, #panel_apariencia .image-properties-panel .g-property-row"
     }[info.type];
 
     if (panels) {
