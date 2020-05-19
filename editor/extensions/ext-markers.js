@@ -300,15 +300,15 @@ export default {
     *
     * @returns {void}
     */
-    function setMarker () {
+    function setMarker (markId, value) {
       const poslist = {start_marker: 'start', mid_marker: 'mid', end_marker: 'end'};
-      const pos = poslist[this.id];
+      const pos = poslist[markId || this.id];
       const markerName = 'marker-' + pos;
       const el = selElems[0];
       const marker = getLinked(el, markerName);
       if (marker) { $(marker).remove(); }
       el.removeAttribute(markerName);
-      let val = this.value;
+      let val = value || this.value;
       if (val === '') { val = '\\nomarker'; }
       if (val === '\\nomarker') {
         setIcon(pos, val);
@@ -381,12 +381,11 @@ export default {
     * @param {string} val
     * @returns {void}
     */
-    function triggerTextEntry (pos, val) {
-      $('#' + pos + '_marker').val(val);
-      $('#' + pos + '_marker').change();
-      // const txtbox = $('#'+pos+'_marker');
-      // if (val.substr(0,1)=='\\') {txtbox.hide();}
-      // else {txtbox.show();}
+    function triggerTextEntry (pos, val, img) {
+      if (img) {
+        $(`cur_${pos}_marker_list`).empty().append(img);
+      }
+      setMarker(`${pos}_marker`, val);
     }
 
     /**
@@ -433,12 +432,13 @@ export default {
     */
     async function setArrowFromButton (ev) {
       const parts = this.id.split('_');
+      const img = $($(this).children()[0]).clone();
       const pos = parts[1];
       let val = parts[2];
       if (parts[3]) { val += '_' + parts[3]; }
 
       if (val !== 'textmarker') {
-        triggerTextEntry(pos, '\\' + val);
+        triggerTextEntry(pos, '\\' + val, img);
       } else {
         await showTextPrompt(pos);
       }
@@ -462,30 +462,6 @@ export default {
     */
     function buildButtonList () {
       const buttons = [];
-      // const i = 0;
-      /*
-      buttons.push({
-        id: idPrefix + 'markers_off',
-        title: 'Turn off all markers',
-        type: 'context',
-        events: { click: setMarkerSet },
-        panel: 'marker_panel'
-      });
-      buttons.push({
-        id: idPrefix + 'markers_dimension',
-        title: 'Dimension',
-        type: 'context',
-        events: { click: setMarkerSet },
-        panel: 'marker_panel'
-      });
-      buttons.push({
-        id: idPrefix + 'markers_label',
-        title: 'Label',
-        type: 'context',
-        events: { click: setMarkerSet },
-        panel: 'marker_panel'
-      });
-  */
       $.each(mtypes, function (k, pos) {
         const listname = pos + '_marker_list';
         let def = true;

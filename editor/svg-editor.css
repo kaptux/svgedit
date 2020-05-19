@@ -269,6 +269,22 @@ video {
   background-image: url(./jgraduate/images/NoColor.svg);
 }
 
+.icon_label {
+  text-align: center;
+}
+
+.marker_list_opts {
+  width: 60px;
+  display: flex;
+  flex-wrap: wrap;
+}
+.marker_list_opts li {
+  flex-grow: 1;
+  width: 50%;
+  height: 24px;
+  text-align: center;
+}
+
 
 .gravit-icon-vertical-dots:before {
   content: "\e0f8";

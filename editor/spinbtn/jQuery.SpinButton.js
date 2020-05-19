@@ -122,7 +122,7 @@ export default function jQueryPluginSpinButton($) {
         if (this.spinCfg) {
           $(this).val(cfg);
           if (this.spinCfg.slider) {
-            $(this.spinCfg.slider).slider("option", "value", cfg * 100);
+            $(this.spinCfg.slider).slider("option", "value", cfg);
           }
         }
       });
@@ -396,7 +396,7 @@ export default function jQueryPluginSpinButton($) {
           step,
           value: $(spin).val(),
           slide(e, ui) {
-            $(spin)[0].value = ui.value;
+            spin.value = ui.value;
             spin.adjustValue(0, true);
           }
         });

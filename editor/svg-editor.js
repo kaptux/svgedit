@@ -166,10 +166,10 @@ const callbacks = [],
    */
   defaultExtensions = [
     // "ext-connector.js",
-    "ext-eyedropper.js",
-    "ext-grid.js",
-    "ext-imagelib.js",
     "ext-markers.js",
+    "ext-eyedropper.js",
+    //"ext-grid.js",
+    "ext-imagelib.js",
     "ext-overview_window.js",
     "ext-panning.js",
     "ext-polygon.js",
@@ -2219,9 +2219,14 @@ editor.init = function() {
           $("#stroke_width").val(
             selectedElement.getAttribute("stroke-width") || 1
           );
-          $("#stroke_style").val(
-            selectedElement.getAttribute("stroke-dasharray") || "none"
-          );
+
+          const dashArray =  selectedElement.getAttribute("stroke-dasharray");
+          let selectOption = dashArray;
+          if($(`#stroke_style option[value='${dashArray}']`).length == 0) {
+            selectOption = "custom";
+          }
+          $("#stroke_style_detail").val(dashArray);
+          $("#stroke_style").val(selectOption);
 
           let attr = selectedElement.getAttribute("stroke-linejoin") || "miter";
 
@@ -3039,7 +3044,7 @@ editor.init = function() {
         /** @type {module:SVGEditor.Button} */ btn
       ) {
         let { id } = btn;
-        const button = $(`#${id}`);
+        let button = $(`#${id}`);
 
         $.each(btn.events, function(name, func) {
           if (name === "click" && btn.type === "mode") {
@@ -3295,6 +3300,15 @@ editor.init = function() {
   };
 
   $("#stroke_style").change(function() {
+    const val = $(this).val();
+    if (val !== "custom") {
+      $("#stroke_style_detail").val(val);
+      svgCanvas.setStrokeAttr("stroke-dasharray", val);
+      operaRepaint();
+    }
+  });
+
+  $("#stroke_style_detail").change(function() {
     svgCanvas.setStrokeAttr("stroke-dasharray", $(this).val());
     operaRepaint();
   });
@@ -3731,6 +3745,30 @@ editor.init = function() {
     "#linejoin_opts",
     function() {
       setStrokeOpt(this, true);
+    },
+    { dropUp: true }
+  );
+
+  addAltDropDown(
+    "#cur_start_marker_list",
+    "#start_marker_list_opts",
+    function() {
+    },
+    { dropUp: true }
+  );
+
+  addAltDropDown(
+    "#cur_mid_marker_list",
+    "#mid_marker_list_opts",
+    function() {
+    },
+    { dropUp: true }
+  );
+
+  addAltDropDown(
+    "#cur_end_marker_list",
+    "#end_marker_list_opts",
+    function() {
     },
     { dropUp: true }
   );
@@ -4906,7 +4944,7 @@ editor.init = function() {
       const opac = paint.alpha / 100;
 
       if (!fromSpinner && this.spinner) {
-        this.spinner.SpinButton(opac);
+        this.spinner.SpinButton(paint.alpha);
       }
 
       if (opac) {
