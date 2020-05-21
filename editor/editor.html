@@ -483,11 +483,11 @@
         </div>
         <div id="left-sidebars">
           <div class="sidebar-selector">
-            <div class="sidebar-option sidebar-outline active">Capas</div>
-            <div class="sidebar-option sidebar-library">Bibliotecas</div>
-            <div class="sidebar-option sidebar-symbols">Símbolos</div>
+            <div class="sidebar-option sidebar-symbols" data-tab="tabpages">Páginas</div>
+            <div class="sidebar-option sidebar-outline active" data-tab="tablayers">Capas</div>
+            <div class="sidebar-option sidebar-library" data-tab="tablibrary">Bibliotecas</div>
           </div>
-          <div class="sidebar-container sidebar-outline multiple">
+          <div id="tablayers" class="sidebar-container sidebar-outline multiple">
             <div class="toolbar page-toolbar accordion">
               <label>Capas</label>
               <div class="g-accordion-ghost"></div>
@@ -567,6 +567,7 @@
           </div>
 
           <div
+            id="tablibrary"
             class="sidebar-container sidebar-library multiple"
             style="display: none;"
           >
@@ -705,11 +706,12 @@
           </div>
 
           <div
-            class="sidebar-container sidebar-symbols multiple"
-            style="display: none;"
+            id="tabpages"
+            class="sidebar-container sidebar-pages multiple"
+            style="display:none"
           >
             <div class="toolbar symbols-toolbar">
-              <label style="flex-grow: 1;">Símbolos</label
+              <label style="flex-grow: 1;">Páginas</label
               ><button data-title="Eliminar símbolo">
                 <span class="gravit-icon-trash"></span></button
               ><button data-title="Crear nuevo símbolo" class="">
@@ -717,22 +719,7 @@
               </button>
             </div>
 
-            <div class="symbols-container">
-              <div class="symbols g-symbols-panel">
-                <div>
-                  <div class="symbol-panel-info">
-                    <div class="symbol-panel-infotitle">
-                      No se definió ningún símbolo.
-                    </div>
-
-                    <span
-                      >Los símbolos le permiten reutilizar contenido en el
-                      diseño. Cree un símbolo con el icono “+” de sus elementos
-                      seleccionados.</span
-                    >
-                  </div>
-                </div>
-              </div>
+            <div id="sidepanels" class="symbols-container">
             </div>
           </div>
         </div>

@@ -2220,12 +2220,12 @@ editor.init = function() {
             selectedElement.getAttribute("stroke-width") || 1
           );
 
-          const dashArray =  selectedElement.getAttribute("stroke-dasharray");
+          const dashArray =  selectedElement.getAttribute("stroke-dasharray") || "";
           let selectOption = dashArray;
           if($(`#stroke_style option[value='${dashArray}']`).length == 0) {
             selectOption = "custom";
           }
-          $("#stroke_style_detail").val(dashArray);
+          $("#stroke_style_detail")[0].value = dashArray;
           $("#stroke_style").val(selectOption);
 
           let attr = selectedElement.getAttribute("stroke-linejoin") || "miter";
@@ -6369,6 +6369,14 @@ editor.init = function() {
 
   $("#cmenu_canvas li").disableContextMenu();
   canvMenu.enableContextMenuItems("#delete,#cut,#copy");
+
+  $("#left-sidebars .sidebar-option").click(function() {
+    $("#left-sidebars .sidebar-option").removeClass("active");
+    $("#left-sidebars .sidebar-container").hide();
+
+    $(this).addClass("active");
+    $(`#${$(this).data("tab")}`).show();
+  })
 
   /**
    * @returns {void}
