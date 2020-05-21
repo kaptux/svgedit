@@ -2056,6 +2056,11 @@ export const pathActions = (function() {
       }
       d = d.join(" ");
 
+      const ppath = new paper.Path(d);
+      if (ppath.simplify()) {
+        d = ppath.pathData;
+      }
+
       // create new path element
       element = editorContext_.addSVGElementFromJson({
         element: "path",

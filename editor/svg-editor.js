@@ -3785,6 +3785,7 @@ editor.init = function() {
     });
 
   $("#toolbarFigures").dropdown();
+  $("#toolbarPath").dropdown();
   $("#toolbarMerges").dropdown();
   $("#toolbarNew").dropdown();
   $("#slider-points").slider({

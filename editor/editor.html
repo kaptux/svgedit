@@ -253,22 +253,39 @@
                 <span class="gravit-icon-down"></span>
               </button>
             </div>
-            <div class="toolbar-button">
+            <div
+              id="toolbarPath"
+              class="toolbar-button dropdown"
+              data-top="37px"
+              data-left="458px"
+            >
               <button
                 class="action-button icon"
-                id="tool_path"
                 data-title="Trayecto"
+                data-icon="gravit-icon-pen"
+                data-default="true"
+                id="tool_path"
               >
                 <span class="icon gravit-icon-pen"></span>
               </button>
-            </div>
-            <div class="toolbar-button dropdown">
+              <button
+                class="action-button icon"
+                data-title="Mano alzada"
+                data-icon="gravit-icon-free-hand-draw"
+                id="tool_fhpath"
+              >
+                <span class="icon gravit-icon-free-hand-draw"></span>
+              </button>
               <button
                 id="tool_knife"
                 class="action-button icon"
                 data-title="Cuchillo"
+                data-icon="gravit-icon-scalpel"
               >
                 <span class="icon gravit-icon-scalpel"></span>
+              </button>
+              <button class="dropdown-button">
+                <span class="gravit-icon-down"></span>
               </button>
             </div>
             <div class="toolbar-button">

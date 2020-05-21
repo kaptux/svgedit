@@ -3202,6 +3202,8 @@ class SvgCanvas {
             }
             if (keep) {
               element = pathActions.smoothPolylineIntoPath(element);
+              const newD = pathActions.convertPath(element);
+              element.setAttribute("d", newD);
             }
             break;
           }
