@@ -2057,7 +2057,7 @@ export const pathActions = (function() {
       d = d.join(" ");
 
       const ppath = new paper.Path(d);
-      if (ppath.simplify()) {
+      if (ppath.simplify(3)) {
         d = ppath.pathData;
       }
 

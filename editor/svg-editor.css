@@ -171,6 +171,42 @@ video {
   z-index: 5;
 }
 
+.push_button_pressed {
+  background: #e1e1e1;
+}
+
+#svg_source_editor #svg_source_container {
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    right: 30px;
+    bottom: 30px;
+    opacity: 1.0;
+    text-align: center;
+    z-index: 100;
+    border: 1px solid white;
+    background: white;
+    padding: 4px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+#svg_source_editor form {
+    position: absolute;
+    top: 40px;
+    bottom: 30px;
+    width: 100%;
+}
+#svg_source_editor #svg_source_textarea {
+    position: relative;
+    width: 95%;
+    height: 95%;
+    padding: 5px;
+    font-size: 12px;
+}
+#svg_source_editor #tool_source_back {
+  position: absolute;
+  bottom: 14px;
+  right: 34px;
+}
 #dialog_container {
   position: absolute;
   font-family: Verdana;
@@ -288,6 +324,10 @@ video {
 
 .gravit-icon-vertical-dots:before {
   content: "\e0f8";
+}
+
+.gravit-icon-source:before {
+  content: "\e0fa";
 }
 
 /* HTML5 display-role reset for older browsers */
@@ -6097,6 +6137,10 @@ li.tool_button.current {
   > div.section
   > .toolbar-button
   > .action-button:not(:disabled).tool_button_current,
+#toolbar
+  > div.section
+  > .toolbar-button
+  > .action-button:not(:disabled).push_button_pressed,
 #toolbar > div.section > .toolbar-button > .action-button:not(:disabled):hover,
 #toolbar
   > div.section
