@@ -1522,10 +1522,17 @@ export const updateCursor = (mode, submode) => {
       cursors = ["move", null];
       break;
     case "path":
+    case "fhpath":
       cursors = ["pen", "pen"];
       break;
     case "ext-panning":
       cursors = ["hand-open", "hand-open"];
+      break;
+    case "ellipse":
+    case "rect":
+    case "line":
+    case "polygon":
+      cursors = ["cross", "cross"];
       break;
   }
 
