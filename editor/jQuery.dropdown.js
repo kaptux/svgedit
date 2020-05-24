@@ -53,8 +53,8 @@ export default function jQueryDropdown($) {
         .children(".dropdown-button")
         .click(function(e) {
           e.stopPropagation();
-          const left = $(rootPanel).data("left");
-          const top = $(rootPanel).data("top");
+          const left = $(rootPanel).data("left") || Math.max(e.clientX - 44, 0);
+          const top = $(rootPanel).data("top") || 37;
           menuDropDown.children("li").remove();
 
           if (options.hideButtons) {

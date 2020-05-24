@@ -10,6 +10,9 @@ function setProp(input, prop, info) {
     if ($(input).hasClass("g-button")) {
       $(input).toggleClass("g-active", current === true);
     } else {
+      if ($(input).data("type") === "number") {
+        current = +parseFloat(current).toFixed(2);
+      }
       $(input).val(current);
     }
   }

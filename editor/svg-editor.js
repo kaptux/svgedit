@@ -83,7 +83,7 @@ const stylesheet = "svg-editor.css";
 if (!$.loadingStylesheets.includes(stylesheet)) {
   $.loadingStylesheets.push(stylesheet);
 }
-const favicon = "images/logo.png";
+const favicon = "assets/images/logo.png";
 if (
   $.loadingStylesheets.some(item => {
     return !Array.isArray(item) || item[0] !== favicon;
@@ -3659,8 +3659,8 @@ editor.init = function() {
     const menuDropDown = $("#menuDropDown");
     $(rootPanel).click(function(e) {
       e.stopPropagation();
-      const left = $(rootPanel).data("left");
-      const top = $(rootPanel).data("top");
+      const left = $(rootPanel).data("left") || ( e.clientX - 44 );
+      const top = $(rootPanel).data("top") || 37;
       menuDropDown.children("li").remove();
 
       for (const item of items) {

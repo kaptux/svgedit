@@ -75,11 +75,18 @@
         <div id="cur_context_panel" style="display: none;"></div>
         <div id="toolbar" style="left: 0px; top: 0px; right: 0px;">
           <div class="section compound-section file-section">
+            <button
+              class="action-button icon"
+              data-icon="gravit-icon-folderclose"
+              data-default="true"
+              data-title="Open SVG"
+              style="height: 27px;"
+            >
+              <span class="icon gravit-icon-shirt"></span>
+            </button>
             <div
               id="toolbarNew"
               class="toolbar-button dropdown"
-              data-top="37px"
-              data-left="3px"
             >
               <button
                 id="tool_open"
@@ -87,7 +94,6 @@
                 data-icon="gravit-icon-folderclose"
                 data-default="true"
                 data-title="Open SVG"
-                id="tool_line"
               >
                 <span class="icon gravit-icon-folderclose"></span>
               </button>
@@ -161,8 +167,6 @@
               <button
                 id="zoom_dropdown"
                 class="action-button menu left-attached right-attached"
-                data-top="37px"
-                data-left="150px"
               >
                 <span class="gravit-icon-zoom-in icon"></span
                 ><span class="caption">100%</span></button
@@ -225,8 +229,6 @@
             <div
               id="toolbarFigures"
               class="toolbar-button dropdown"
-              data-top="37px"
-              data-left="408px"
             >
               <button
                 class="action-button icon"
@@ -274,8 +276,6 @@
             <div
               id="toolbarPath"
               class="toolbar-button dropdown"
-              data-top="37px"
-              data-left="458px"
             >
               <button
                 class="action-button icon"
@@ -388,8 +388,6 @@
             <div
               id="toolbarMerges"
               class="toolbar-button dropdown"
-              data-top="37px"
-              data-left="795px"
             >
               <button
                 class="action-button icon"
@@ -1046,6 +1044,7 @@
                               type="text"
                               class="attr_changer"
                               data-attr="x"
+                              data-type="number"
                               style="padding-left: 20px; width: 100%;"
                             />
                           </div>
@@ -1064,6 +1063,7 @@
                               type="text"
                               class="attr_changer"
                               data-attr="y"
+                              data-type="number"
                               style="padding-left: 20px; width: 100%;"
                             />
                           </div>
@@ -1084,6 +1084,7 @@
                               type="text"
                               class="attr_changer"
                               data-attr="width"
+                              data-type="number"
                               style="padding-left: 24px; width: 100%;"
                             />
                           </div>
@@ -1109,6 +1110,7 @@
                               type="text"
                               class="attr_changer"
                               data-attr="height"
+                              data-type="number"
                               style="padding-left: 25px; width: 100%;"
                             />
                           </div>
@@ -1129,6 +1131,7 @@
                               id="angle"
                               type="text"
                               data-attr="angle"
+                              data-type="number"
                               style="padding-left: 20px; width: 100%;"
                             />
                           </div>
@@ -1441,6 +1444,7 @@
                               id="canvas_width"
                               type="text"
                               data-attr="width"
+                              data-type="number"
                               style="padding-left: 24px; width: 100%;"
                             />
                           </div>
@@ -1455,6 +1459,7 @@
                               id="canvas_height"
                               type="text"
                               data-attr="height"
+                              data-type="number"
                               style="padding-left: 25px; width: 100%;"
                             />
                           </div>
