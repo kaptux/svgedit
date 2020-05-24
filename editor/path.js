@@ -2476,8 +2476,8 @@ export const pathActions = (function() {
       }
     },
     drawNearestPoint(x, y) {
-      const point = this.getNearestPoint(x, y);
-      if (point) {
+      if (typeof x !== "undefined" && typeof y !== "undefined") {
+        const point = this.getNearestPoint(x, y);
         addNearestPointGrip(point.x, point.y);
         return point;
       } else {
