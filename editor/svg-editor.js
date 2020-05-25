@@ -6506,50 +6506,62 @@ editor.init = function() {
       ) {
         box = svgCanvas.getStrokedBBox([selectedElements[0]]);
       }
-
-      // bitmap handling
-      reader = new FileReader();
-      reader.onloadend = function({ target: { result } }) {
-        /**
-         * Insert the new image until we know its dimensions.
-         * @param {Float} width
-         * @param {Float} height
-         * @returns {void}
-         */
-        const insertNewImage = function(width, height) {
-          const newImage = box
-            ? selectedElements[0]
-            : svgCanvas.addSVGElementFromJson({
-                element: "image",
-                attr: {
-                  x: 0,
-                  y: 0,
-                  width,
-                  height,
-                  id: svgCanvas.getNextId(),
-                  style: "pointer-events:inherit"
-                }
-              });
-          svgCanvas.setHref(newImage, result);
-          svgCanvas.selectOnly([newImage]);
-          svgCanvas.alignSelectedElements("m", "page");
-          svgCanvas.alignSelectedElements("c", "page");
-          updateContextPanel();
-          $("#dialog_box").hide();
+      if (file.type.includes('svg')) {
+        svgCanvas.deleteSelectedElements();
+        reader = new FileReader();
+        reader.onloadend = function (ev) {
+          const newElement = svgCanvas.importSvgString(ev.target.result, true);
+          newElement.setAttribute("x", box.x);
+          newElement.setAttribute("y", box.y);
+          svgCanvas.ungroupSelectedElement();
+          svgCanvas.ungroupSelectedElement();
+          svgCanvas.groupSelectedElements();
+          svgCanvas.alignSelectedElements('m', 'page');
+          svgCanvas.alignSelectedElements('c', 'page');
+          // highlight imported element, otherwise we get strange empty selectbox
+          svgCanvas.selectOnly([newElement]);
+          $('#dialog_box').hide();
         };
-        // create dummy img so we know the default dimensions
-        let imgWidth = 100;
-        let imgHeight = 100;
-        const img = new Image();
-        img.style.opacity = 0;
-        img.addEventListener("load", function() {
-          imgWidth = img.offsetWidth || img.naturalWidth || img.width;
-          imgHeight = img.offsetHeight || img.naturalHeight || img.height;
-          insertNewImage(imgWidth, imgHeight);
-        });
-        img.src = result;
-      };
-      reader.readAsDataURL(file);
+        reader.readAsText(file);
+      } else {
+        // bitmap handling
+        reader = new FileReader();
+        reader.onloadend = function({ target: { result } }) {
+          const insertNewImage = function(width, height) {
+            const newImage = box
+              ? selectedElements[0]
+              : svgCanvas.addSVGElementFromJson({
+                  element: "image",
+                  attr: {
+                    x: 0,
+                    y: 0,
+                    width,
+                    height,
+                    id: svgCanvas.getNextId(),
+                    style: "pointer-events:inherit"
+                  }
+                });
+            svgCanvas.setHref(newImage, result);
+            svgCanvas.selectOnly([newImage]);
+            svgCanvas.alignSelectedElements("m", "page");
+            svgCanvas.alignSelectedElements("c", "page");
+            updateContextPanel();
+            $("#dialog_box").hide();
+          };
+          // create dummy img so we know the default dimensions
+          let imgWidth = 100;
+          let imgHeight = 100;
+          const img = new Image();
+          img.style.opacity = 0;
+          img.addEventListener("load", function() {
+            imgWidth = img.offsetWidth || img.naturalWidth || img.width;
+            imgHeight = img.offsetHeight || img.naturalHeight || img.height;
+            insertNewImage(imgWidth, imgHeight);
+          });
+          img.src = result;
+        };
+        reader.readAsDataURL(file);
+      }
     };
 
     workarea[0].addEventListener("dragenter", onDragEnter);
