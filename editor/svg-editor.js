@@ -71,11 +71,6 @@ const $ = [
   jQueryPluginDropdown
 ].reduce((jq, func) => func(jq), jQuery);
 
-/*
-if (!$.loadingStylesheets) {
-  $.loadingStylesheets = [];
-}
-*/
 
 const homePage = "https://github.com/SVG-Edit/svgedit";
 
@@ -2373,6 +2368,20 @@ editor.init = function() {
           return svgCanvas.getUnderline();
         }
       ],
+      input: [
+        function isItalic() {
+          return svgCanvas.getItalic();
+        },
+        function isBold() {
+          return svgCanvas.getBold();
+        },
+        function isLineThrough() {
+          return svgCanvas.getLineThrough();
+        },
+        function isUnderline() {
+          return svgCanvas.getUnderline();
+        }
+      ],
       use: [
         function title() {
           svgCanvas.getTitle();
@@ -2424,9 +2433,13 @@ editor.init = function() {
       nodeName: null,
       tagName: null
     };
-
+    
     if (mode !== "select") {
       type = mode;
+    }
+
+    if (type === "rect" && selectedElement.dataset.as) {
+      type = selectedElement.dataset.as;
     }
 
     let angle,
@@ -2491,6 +2504,8 @@ editor.init = function() {
         "#panel_position .g-property-row,.g-property-row.opacity,.g-property-row.blur",
       polygon:
         "#panel_position .g-property-row, #panel_apariencia .g-property-row:eq(0)",
+      input:
+        "#panel_position .g-property-row,#panel_position, #panel_apariencia .text-properties-panel .g-property-row",
       text:
         "#panel_position .g-property-row,#panel_position, #panel_apariencia .text-properties-panel .g-property-row",
       textedit:
@@ -3860,6 +3875,11 @@ editor.init = function() {
   const clickRect = function() {
     svgCanvas.setMode("rect");
     toolButtonClick("#tool_rect");
+  };
+
+  const clickInput = function() {
+    svgCanvas.setMode("input");
+    toolButtonClick("#tool_input");
   };
 
   /**
@@ -5616,6 +5636,11 @@ editor.init = function() {
         icon: "rect"
       },
       {
+        sel: "#tool_input",
+        fn: clickInput,
+        evt: "mouseup",
+      },
+      {
         sel: "#tool_square",
         fn: clickSquare,
         evt: "mouseup",
@@ -6922,15 +6947,4 @@ window.addEventListener("message", messageListener);
 
 // Run init once DOM is loaded
 // jQuery(editor.init);
-
-(async () => {
-  try {
-    // We wait a micro-task to let the svgEditor variable be defined for module checks
-    await Promise.resolve();
-    editor.init();
-  } catch (err) {
-    console.error(err); // eslint-disable-line no-console
-  }
-})();
-
 export default editor;

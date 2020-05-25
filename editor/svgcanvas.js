@@ -2287,6 +2287,7 @@ class SvgCanvas {
           // (for resizing purposes this could be important)
           // Fallthrough
           case "rect":
+          case "input":
             started = true;
             startX = x;
             startY = y;
@@ -2813,6 +2814,7 @@ class SvgCanvas {
           case "square":
           // fall through
           case "rect":
+          case "input":
           // fall through
           case "image": {
             const square = currentMode === "square" || evt.shiftKey;
@@ -3213,6 +3215,7 @@ class SvgCanvas {
             break;
           case "foreignObject":
           case "square":
+          case "input":
           case "rect":
           case "image":
             attrs = $(element).attr(["width", "height"]);
@@ -3377,11 +3380,15 @@ class SvgCanvas {
           canvas.addedNew = true;
           anchorSys.addShape(element);
 
+          if (currentMode === "input") {
+            element.dataset.as = "input";
+          }
+
           if (useUnit) {
             convertAttrs(element);
           }
 
-          let aniDur = 0.2;
+          let aniDur = 0.3;
           let cAni;
           if (
             opacAni.beginElement &&
@@ -6726,10 +6733,14 @@ function hideCursor () {
       const selected = selectedElements[0];
       if (
         !isNullish(selected) &&
-        selected.tagName === "text" &&
+        (selected.tagName === "text" || selected.dataset.as === "input") &&
         isNullish(selectedElements[1])
       ) {
-        return selected.getAttribute(name) === value;
+        if (selected.dataset.as === "input") {
+          return selected.dataset[name] === value;
+        } else {
+          return selected.getAttribute(name) === value;
+        }
       }
       return false;
     };
@@ -6738,10 +6749,14 @@ function hideCursor () {
       const selected = selectedElements[0];
       if (
         !isNullish(selected) &&
-        selected.tagName === "text" &&
+        ( selected.tagName === "text" || selected.dataset.as === "input") &&
         isNullish(selectedElements[1])
       ) {
-        changeSelectedAttribute(name, value);
+        if (selected.dataset.as === "input") {
+          selected.dataset[name] = value;
+        } else {
+          changeSelectedAttribute(name, value);
+        }
       }
       if (!selectedElements[0].textContent) {
         textActions.setCursor();

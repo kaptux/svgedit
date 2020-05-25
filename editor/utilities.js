@@ -1530,6 +1530,7 @@ export const updateCursor = (mode, submode) => {
       break;
     case "ellipse":
     case "rect":
+    case "input":
     case "line":
     case "polygon":
       cursors = ["cross", "cross"];
