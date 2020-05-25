@@ -168,3 +168,9 @@ svgEditor.setConfig(
   },
   { allowInitialUserOverride: true }
 );
+
+svgEditor.ready(function() {
+  console.log("svgEditor is ready");
+});
+
+jQuery(svgEditor.init); 
