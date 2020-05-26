@@ -3383,6 +3383,8 @@ class SvgCanvas {
 
           if (currentMode === "input") {
             element.dataset.as = "input";
+            element.dataset.fontSize = curText.font_size;
+            element.dataset.fontFamily = curText.font_family;
           }
 
           if (useUnit) {
@@ -3444,6 +3446,51 @@ class SvgCanvas {
         startTransform = null;
       };
 
+      const createTextInput = function(input){
+        if (input.dataset.inputText) {
+          const textInput = getElem(input.dataset.inputText);
+          if (textInput) {
+            return textInput;
+          }
+        }
+
+        const PADDING_LEFT = 10;
+        const id = getNextId();
+
+        const attr = {
+          id,
+          fill: "#000000",
+          "xml:space": "preserve",
+          opacity: "1",
+          "stroke-opacity": "1",
+          x: parseFloat(input.getAttribute("x")) + PADDING_LEFT,
+          y: input.getAttribute("y")
+        };
+
+        ["font-weight","font-style","font-size","font-family","text-anchor"].forEach(function(a) {
+          attr[a] = input.dataset[toDataSetProp(a)];
+        });
+
+        const inputText = addSVGElementFromJson({
+              element: "text",
+              curStyles: true,
+              attr
+            });
+
+        input.dataset.inputText = id;
+
+        canvas.selectOnly([input, inputText]);
+        canvas.alignSelectedElements("m", "largest");
+        if (input.dataset.textAnchor) {
+          const align = {middle: "c", end: "r"}[input.dataset.textAnchor];
+          if (align) {
+            canvas.alignSelectedElements(align, "largest");
+          }
+        }
+
+        return inputText;
+      }
+
       const dblClick = function(evt) {
         const evtTarget = evt.target;
         const parent = evtTarget.parentNode;
@@ -3455,6 +3502,12 @@ class SvgCanvas {
 
         let mouseTarget = getMouseTarget(evt);
         const { tagName } = mouseTarget;
+
+        if (tagName === "rect" && mouseTarget.dataset.as && mouseTarget.dataset.as === "input") {
+          const textInput = createTextInput(mouseTarget);
+          canvas.selectOnly([textInput]);
+          textActions.select(textInput);
+        }
 
         if (tagName === "text" && currentMode !== "textedit") {
           const pt = transformPoint(evt.pageX, evt.pageY, rootSctm);
@@ -7158,8 +7211,9 @@ function hideCursor () {
           continue;
         }
 
-        if (elem.dataset.as && ["font-weight","font-size","font-family","text-anchor","input-type","input-name","input-autocomplete","font-color"].includes(attr)) {
+        if (elem.dataset.as && ["font-weight","font-style","font-size","font-family","text-anchor","input-type","input-name","input-autocomplete","font-color"].includes(attr)) {
           elem.dataset[toDataSetProp(attr)] = newValue;
+          const inputText = getElem(elem.dataset.inputText);
           continue;
         }
 
