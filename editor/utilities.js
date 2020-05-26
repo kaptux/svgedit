@@ -1578,6 +1578,25 @@ export const setCursor = (elemsCursor, canvasCursor) => {
     `);
 };
 
+export const toDataSetProp = (str) => {
+  if(!str) {
+    return str;
+  }
+
+  let res = str;
+  const tokens = str.split("-");
+  if (tokens.length > 1) {
+    res = tokens[0];
+    for (let index = 1; index < tokens.length; index++) {
+      const word = tokens[index];
+      res += word.charAt(0).toUpperCase() + word.slice(1);
+    }
+  }
+
+  return res;
+}
+
+
 /**
  * Overwrite methods for unit testing.
  * @function module:utilities.mock

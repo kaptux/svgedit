@@ -1412,6 +1412,8 @@ editor.init = function() {
   };
 
   const getNodeInfo = function(svgNode) {
+    const tagName = svgNode.dataset.as ? svgNode.dataset.as : svgNode.tagName;
+
     const map = {
       a: { text: "Link", icon: "group-4" },
       circle: { text: "Circle", icon: "ellipse" },
@@ -1425,10 +1427,11 @@ editor.init = function() {
       polyline: { text: "Polyline", icon: "line" },
       rect: { text: "Rectangle", icon: "rectangle" },
       text: { text: "Text", icon: "textbox" },
-      use: { text: "Symbol", icon: "symbolinstance" }
+      use: { text: "Symbol", icon: "symbolinstance" },
+      input: {text: "Input", icon: "input"}
     };
 
-    return map[svgNode.tagName];
+    return map[tagName];
   };
 
   const updateSelectedLayerElements = function() {
@@ -2366,9 +2369,24 @@ editor.init = function() {
         },
         function isUnderline() {
           return svgCanvas.getUnderline();
+        },
+        function isTextAlignLeft() {
+          return svgCanvas.getAlignLeft();
+        },
+        function isTextAlignCenter() {
+          return svgCanvas.getAlignCenter();
+        },
+        function isTextAlignRight() {
+          return svgCanvas.getAlignRight();
         }
       ],
       input: [
+        "font-family",
+        "font-weight",
+        "font-size",
+        "input-name",
+        "input-type",
+        "input-autocomplete",
         function isItalic() {
           return svgCanvas.getItalic();
         },
@@ -2380,6 +2398,15 @@ editor.init = function() {
         },
         function isUnderline() {
           return svgCanvas.getUnderline();
+        },
+        function isTextAlignLeft() {
+          return svgCanvas.getAlignLeft();
+        },
+        function isTextAlignCenter() {
+          return svgCanvas.getAlignCenter();
+        },
+        function isTextAlignRight() {
+          return svgCanvas.getAlignRight();
         }
       ],
       use: [
@@ -2390,7 +2417,7 @@ editor.init = function() {
     };
 
     const res = {};
-    const props = propsMap[tagName];
+    const props = propsMap[elem.dataset.as ? elem.dataset.as : tagName];
 
     if (props) {
       $.each(props, function(i, item) {
@@ -2411,6 +2438,9 @@ editor.init = function() {
 
   function getAttrValue(elem, attr) {
     let attrVal = elem.getAttribute(attr);
+    if (elem.dataset.as) {
+      attrVal = elem.dataset[Utils.toDataSetProp(attr)];
+    }
     if (curConfig.baseUnit !== "px" && elem[attr]) {
       const bv = elem[attr].baseVal.value;
       attrVal = convertUnit(bv);
@@ -2433,12 +2463,12 @@ editor.init = function() {
       nodeName: null,
       tagName: null
     };
-    
+
     if (mode !== "select") {
       type = mode;
     }
 
-    if (type === "rect" && selectedElement.dataset.as) {
+    if (type === "rect" && elem && elem.dataset.as) {
       type = selectedElement.dataset.as;
     }
 
@@ -4245,6 +4275,24 @@ editor.init = function() {
     return false;
   };
 
+  const clickTextAlignLeft = function() {
+    svgCanvas.setAlignLeft(!svgCanvas.getAlignLeft());
+    updateContextPanel();
+    return false;
+  }
+
+  const clickTextAlignCenter = function() {
+    svgCanvas.setAlignCenter(!svgCanvas.getAlignCenter());
+    updateContextPanel();
+    return false;
+  }
+
+  const clickTextAlignRight = function() {
+    svgCanvas.setAlignRight(!svgCanvas.getAlignRight());
+    updateContextPanel();
+    return false;
+  }
+
   /**
    *
    * @returns {false}
@@ -5861,6 +5909,9 @@ editor.init = function() {
       { sel: "#tool_bold", fn: clickBold, evt: "mousedown" },
       { sel: "#tool_italic", fn: clickItalic, evt: "mousedown" },
       { sel: "#tool_underline", fn: clickUnderline, evt: "mousedown" },
+      { sel: "#tool_text_align_left", fn: clickTextAlignLeft, evt: "mousedown" },
+      { sel: "#tool_text_align_center", fn: clickTextAlignCenter, evt: "mousedown" },
+      { sel: "#tool_text_align_right", fn: clickTextAlignRight, evt: "mousedown" },
       { sel: "#tool_line_through", fn: clickLineThrough, evt: "mousedown" },
       { sel: "#sidepanel_handle", fn: toggleSidePanel, key: ["X"] },
       { sel: "#copy_save_done", fn: cancelOverlays, evt: "click" },
@@ -6314,6 +6365,14 @@ editor.init = function() {
       const current = svgCanvas.getZoom() * 100;
       changeZoom({ value: Math.ceil(current + step) });
     });
+
+  $("#input_name,#input_type").change(function() {
+    svgCanvas.changeSelectedAttribute(this.id.replace("_", "-"), $(this).val());
+  });
+
+  $("#input_autocomplete").change(function() {
+    svgCanvas.changeSelectedAttribute("input-autocomplete", this.checked);
+  });
 
   $("#workarea").contextMenu(
     {

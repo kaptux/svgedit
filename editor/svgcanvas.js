@@ -75,7 +75,8 @@ import {
   getBBox as utilsGetBBox,
   getStrokedBBoxDefaultVisible,
   isNullish,
-  updateCursor
+  updateCursor,
+  toDataSetProp
 } from "./utilities.js";
 import * as hstry from "./history.js";
 import {
@@ -6737,7 +6738,7 @@ function hideCursor () {
         isNullish(selectedElements[1])
       ) {
         if (selected.dataset.as === "input") {
-          return selected.dataset[name] === value;
+          return selected.dataset[toDataSetProp(name)] === value;
         } else {
           return selected.getAttribute(name) === value;
         }
@@ -6753,7 +6754,8 @@ function hideCursor () {
         isNullish(selectedElements[1])
       ) {
         if (selected.dataset.as === "input") {
-          selected.dataset[name] = value;
+          selected.dataset[toDataSetProp(name)] = value;
+          return;
         } else {
           changeSelectedAttribute(name, value);
         }
@@ -6772,12 +6774,6 @@ function hideCursor () {
       return this.getTextAttr("font-weight", "bold");
     };
 
-    /**
-     * Make the selected element bold or normal.
-     * @function module:svgcanvas.SvgCanvas#setBold
-     * @param {boolean} b - Indicates bold (`true`) or normal (`false`)
-     * @returns {void}
-     */
     this.setBold = function(b) {
       this.setTextAttr("font-weight", b ? "bold" : "normal");
     };
@@ -6796,6 +6792,31 @@ function hideCursor () {
 
     this.getLineThrough = function() {
       return this.getTextAttr("text-decoration", "line-through");
+    };
+
+
+    this.setAlignLeft = function(b) {
+      this.setTextAttr("text-anchor", b ? "start" : "");
+    };
+
+    this.getAlignLeft = function(b) {
+      return this.getTextAttr("text-anchor", "start");
+    }
+
+    this.setAlignCenter = function(b) {
+      this.setTextAttr("text-anchor", b ? "middle" : "");
+    };
+
+    this.getAlignCenter = function() {
+      return this.getTextAttr("text-anchor", "middle");
+    };
+
+    this.setAlignRight = function(b) {
+      this.setTextAttr("text-anchor", b ? "end" : "");
+    };
+
+    this.getAlignRight = function() {
+      return this.getTextAttr("text-anchor", "end");
     };
 
     /**
@@ -6887,7 +6908,7 @@ function hideCursor () {
     this.setFontSize = function(val) {
       curText.font_size = val;
       changeSelectedAttribute("font-size", val);
-      if (!selectedElements[0].textContent) {
+      if (!selectedElements[0].textContent && !selectedElements[0].dataset.as) {
         textActions.setCursor();
       }
     };
@@ -7133,6 +7154,11 @@ function hideCursor () {
       while (i--) {
         let elem = elems[i];
         if (isNullish(elem)) {
+          continue;
+        }
+
+        if (elem.dataset.as && ["font-weight","font-size","font-family","text-anchor","input-type","input-name","input-autocomplete","font-color"].includes(attr)) {
+          elem.dataset[toDataSetProp(attr)] = newValue;
           continue;
         }
 

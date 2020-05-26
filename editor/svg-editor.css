@@ -141,7 +141,7 @@ video {
   top: 37px;
   left: 250px;
   bottom: 0px;
-  right: 357px;
+  right: 325px;
   overflow: auto;
   text-align: center;
   background-color: #f7f7f7;
@@ -290,7 +290,7 @@ video {
   height: 15px;
   top: 37px;
   left: 266px;
-  right: 358px;
+  right: 325px;
   border-bottom: 1px solid;
   border-left: 1px solid #777;
 }

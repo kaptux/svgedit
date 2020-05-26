@@ -500,28 +500,6 @@
             </div>
           </div>
         </div>
-        <div
-          id="panels"
-          class="collapse-none"
-          style="display: none; left: 250px; width: 234px;"
-        >
-          <div class="panels-tabs"></div>
-          <div class="panels-frame"></div>
-        </div>
-        <div id="footer" style="display: none; left: 250px; width: 234px;">
-          <div class="root">
-            <div class="panel-container software-update-panel g-hide">
-              <div class="g-btn-close">
-                <span class="gravit-icon-close"></span>
-              </div>
-            </div>
-            <div class="panel-container g-hide g-notification-panel">
-              <div class="g-btn-close">
-                <span class="gravit-icon-close"></span>
-              </div>
-            </div>
-          </div>
-        </div>
         <div id="left-sidebars">
           <div class="sidebar-selector">
             <div class="sidebar-option sidebar-symbols" data-tab="tabpages">Páginas</div>
@@ -656,7 +634,7 @@
 
         <div
           id="right-sidebars"
-          style="width: 358px; top: 37px; height: 837px;"
+          style="width: 325px;"
         >
           <div class="sidebar-container sidebar-inspector">
             <div class="panels scrolling-panels">
@@ -2002,7 +1980,6 @@
                       <label
                         ><span class="vertical-align">Decoración</span></label
                       >
-
                       <div class="columns">
                         <label class="column" style="width: 25%;">
                           <div class="content">
@@ -2070,6 +2047,73 @@
 
                     <div class="g-property-row">
                       <label
+                        ><span class="vertical-align">Alineación</span></label
+                      >
+                      <div class="columns">
+                        <label class="column" style="width: 25%;">
+                          <div class="content">
+                            <button
+                              class="g-button"
+                              data-attr="customProps.isTextAlignLeft"
+                              tabindex="-1"
+                              style="width: 100%;"
+                              id="tool_text_align_left"
+                            >
+                              <span
+                                class="gravit-icon-text-align-left"
+                              ></span>
+                            </button>
+                          </div> </label
+                        ><label class="column" style="width: 25%;">
+                          <div class="content">
+                            <button
+                              class="g-button"
+                              data-attr="customProps.isTextAlignCenter"
+                              tabindex="-1"
+                              style="width: 100%;"
+                              id="tool_text_align_center"
+                            >
+                              <span
+                                class="gravit-icon-text-align-center"
+                              ></span>
+                            </button>
+                          </div> </label
+                        ><label class="column" style="width: 25%;">
+                          <div class="content">
+                            <button
+                              class="g-button"
+                              data-attr="customProps.isTextAlignRight"
+                              tabindex="-1"
+                              style="width: 100%;"
+                              id="tool_text_align_right"
+                            >
+                              <span
+                                class="gravit-icon-text-align-right"
+                              ></span>
+                            </button>
+                          </div> </label
+                        ><label class="column" style="width: 25%;">
+                          <div class="content">
+                            <button
+                              class="g-button"
+                              data-attr="customProps.isJustify"
+                              data-title="Tachado"
+                              tabindex="-1"
+                              style="width: 100%;"
+                              id="tool_text_justify"
+                            >
+                              <span
+                                class="gravit-icon-text-justify"
+                              ></span>
+                            </button>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+
+
+                    <div class="g-property-row">
+                      <label
                         ><span class="vertical-align">Espaciado</span></label
                       >
 
@@ -2110,7 +2154,49 @@
                         ><label style="width: 40%;"><span>Línea</span></label>
                       </div>
                     </div>
+
+                    <hr />
+
+                    <div class="g-property-row">
+                      <label>
+                        <div class="g-pattern-chooser">
+                          <span id="font_color"></span>
+                        </div>
+                      </label>
+                        <div class="columns">
+                          <div class="column" style="width: 50%;">
+                            <div class="content">
+                              <select id="input_type" data-attr="customProps.input-type">
+                                <option>Text</option>
+                              </select>
+                            </div>
+                          </div>
+                          <div class="column" style="width: 50%;">
+                            <div class="content">
+                              <input id="input_name" type="text" data-attr="customProps.input-name" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="labels">
+                          <label style="width: 50%;"><span>Tipo</span></label>
+                          <label style="width: 50%;"><span>Nombre</span></label>
+                        </div>
+                    </div>
+
+                    <div class="g-property-row">
+                      <label>
+                        <span></span>
+                      </label>
+                      <div class="columns">
+                        <div class="column auto-grow">
+                          <div class="content">
+                            <label><input type="checkbox" data-attr="customProps.input-autocomplete" id="input_autocomplete"><span>Autocompletar</span></label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+
 
                   <div class="appearance-property-panel image-properties-panel">
                     <div class="g-property-row" style="margin:5px 10px">
@@ -2371,7 +2457,7 @@
                         style="width: 40px;"
                       >
                         <div class="content">
-                          <div data-property="_pt" class="g-pattern-chooser">
+                          <div class="g-pattern-chooser">
                             <span id="fill_color"></span>
                           </div>
                         </div>
@@ -2490,7 +2576,7 @@
                             id="stroke_style"
                             title="Change stroke dash style"
                             autocomplete="off"
-                            style="margin-right: 20px;margin-left: 10px"
+                            style="margin-right: 10px"
                           >
                             <option selected="selected" value=""
                               >&#9473;&#9473;&#9473;&#9473;</option
@@ -2500,7 +2586,7 @@
                             <option value="5,2,2,2">- .- .- .</option>
                             <option value="custom">Custom</option>
                           </select>
-                          <input id="stroke_style_detail" type="text" style="width: 105px" />
+                          <input id="stroke_style_detail" type="text" style="width: 90px" />
                         </label>
 
                       </div>

@@ -228,7 +228,7 @@ table.jPicker {
 }
 .jPicker .Grid {
   text-align: center;
-  width: 114px;
+  width: 110px;
 }
 .jPicker .Grid span.QuickColor {
   border: 1px solid white;
@@ -241,5 +241,5 @@ table.jPicker {
   width: 19px;
 }
 .jPicker .Grid span[class="QuickColor"] {
-  width: 17px;
+  width: 15px;
 }

@@ -9,6 +9,8 @@ function setProp(input, prop, info) {
   if (current != undefined) {
     if ($(input).hasClass("g-button")) {
       $(input).toggleClass("g-active", current === true);
+    } if($(input).attr("type") === "checkbox") {
+      $(input).attr("checked", current == "true");
     } else {
       if ($(input).data("type") === "number") {
         current = +parseFloat(current).toFixed(2);
@@ -23,7 +25,7 @@ export default function jQuerySet($) {
     this.each(function(_, panel) {
       $(panel)
         .find(
-          ".properties-panel input, .properties-panel select, .properties-panel button"
+          "input,select,button"
         )
         .each(function(_, input) {
           const prop = $(input).data("attr");
