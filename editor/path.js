@@ -442,7 +442,7 @@ export const addPointGrip = function(index, x, y) {
   return pointGrip;
 };
 
-export const addNearestPointGrip = function(x, y) {
+export const addNearestPointGrip = function(point) {
   // create the container of all the point grips
   const pointGripContainer = getGripContainer();
   const id = "nearestpointgrip";
@@ -464,7 +464,8 @@ export const addNearestPointGrip = function(x, y) {
     assignAttributes(pointGrip, atts);
     pointGripContainer.prepend(pointGrip);
   }
-  if (x && y) {
+  if (point) {
+    const {x, y} = point;
     // set up the point grip element and display it
     assignAttributes(pointGrip, {
       cx: x,
@@ -2478,7 +2479,7 @@ export const pathActions = (function() {
     drawNearestPoint(x, y) {
       if (typeof x !== "undefined" && typeof y !== "undefined") {
         const point = this.getNearestPoint(x, y);
-        addNearestPointGrip(point.x, point.y);
+        addNearestPointGrip(point);
         return point;
       } else {
         addNearestPointGrip();
