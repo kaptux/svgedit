@@ -4002,6 +4002,7 @@ function hideCursor () {
           /* const selector = */ selectorManager.requestSelector(curtext); // Do we need this? Has side effect of setting lock, so keeping for now, but next line wasn't being used
           // const sel = selector.selectorRect;
 
+          textinput.value = canvas.getText();
           textActions.init();
 
           $(curtext).css("cursor", "text");
