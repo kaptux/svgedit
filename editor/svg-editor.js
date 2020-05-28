@@ -308,6 +308,8 @@ const callbacks = [],
   uiStrings = (editor.uiStrings = {});
 
 let svgCanvas,
+  inputElements = [],
+  currentInputIndex = -1,
   urldata = {},
   isReady = false,
   customExportImage = false,
@@ -1445,6 +1447,7 @@ editor.init = function() {
   };
 
   const populateElements = function() {
+    inputElements = [];
     const drawing = svgCanvas.getCurrentDrawing();
     const currentLayer = drawing.getCurrentLayer();
     const elementList = $("#elemlist").empty();
@@ -1457,6 +1460,10 @@ editor.init = function() {
       const node = currentLayer.childNodes.item(element);
       const info = getNodeInfo(node);
       const isSelected = selectedElements.includes(node);
+
+      if (info.text === "Input") {
+        inputElements.unshift(node);
+      }
 
       if (info) {
         const rowTemplate = `<div id="elem_${node.id}" class="layer-row ${
@@ -2524,6 +2531,10 @@ editor.init = function() {
       .end()
       .hide();
 
+    if (info.type === "text" && selectedElement && selectedElement.dataset.inputElement) {
+      currentInputIndex = inputElements.findIndex(e => e.id == selectedElement.dataset.inputElement);
+    }
+
     console.log(info);
 
     const panels = {
@@ -3414,8 +3425,22 @@ editor.init = function() {
     svgCanvas.setSegType($(this).val());
   });
 
-  $("#text").bind("keyup input", function() {
+  $("#text").bind("keyup input", function(e) {
     svgCanvas.setTextContent(this.value);
+  });
+
+  $("#text").keydown(function(e) {
+    if (e.which == 9) { // TAB
+      e.preventDefault();
+      currentInputIndex += 1;
+      if (currentInputIndex == inputElements.length) {
+        currentInputIndex = 0;
+      }
+      const current = inputElements[currentInputIndex];
+      svgCanvas.focusInput(current);
+      // const rect = current.getBoundingClientRect();
+      //$("#autocompleteDropDown").show().css({top: rect.top + rect.height + 5, left: rect.left});
+    }
   });
 
   $("#image_url").change(function() {

@@ -401,6 +401,52 @@ class SvgCanvas {
       return retval;
     });
 
+    const createTextInput = (this.createTextInput = function(input) {
+      if (input.dataset.inputText) {
+        const textInput = getElem(input.dataset.inputText);
+        if (textInput) {
+          return textInput;
+        }
+      }
+
+      const PADDING_LEFT = 10;
+      const id = getNextId();
+
+      const attr = {
+        id,
+        fill: "#000000",
+        "xml:space": "preserve",
+        opacity: "1",
+        "stroke-opacity": "1",
+        x: parseFloat(input.getAttribute("x")) + PADDING_LEFT,
+        y: input.getAttribute("y")
+      };
+
+      ["font-weight","font-style","font-size","font-family","text-anchor"].forEach(function(a) {
+        attr[a] = input.dataset[toDataSetProp(a)];
+      });
+
+      const inputText = addSVGElementFromJson({
+            element: "text",
+            curStyles: true,
+            attr
+          });
+
+      input.dataset.inputText = id;
+      inputText.dataset.inputElement = input.id;
+
+      canvas.selectOnly([input, inputText]);
+      canvas.alignSelectedElements("m", "largest");
+      if (input.dataset.textAnchor) {
+        const align = {middle: "c", end: "r"}[input.dataset.textAnchor];
+        if (align) {
+          canvas.alignSelectedElements(align, "largest");
+        }
+      }
+
+      return inputText;
+    });
+
     /**
      * This should really be an intersection implementing all rather than a union.
      * @name module:svgcanvas.SvgCanvas#addSVGElementFromJson
@@ -3385,6 +3431,8 @@ class SvgCanvas {
             element.dataset.as = "input";
             element.dataset.fontSize = curText.font_size;
             element.dataset.fontFamily = curText.font_family;
+            element.dataset.inputName = "";
+            element.dataset.inputAutocomplete = false;
           }
 
           if (useUnit) {
@@ -3446,51 +3494,6 @@ class SvgCanvas {
         startTransform = null;
       };
 
-      const createTextInput = function(input){
-        if (input.dataset.inputText) {
-          const textInput = getElem(input.dataset.inputText);
-          if (textInput) {
-            return textInput;
-          }
-        }
-
-        const PADDING_LEFT = 10;
-        const id = getNextId();
-
-        const attr = {
-          id,
-          fill: "#000000",
-          "xml:space": "preserve",
-          opacity: "1",
-          "stroke-opacity": "1",
-          x: parseFloat(input.getAttribute("x")) + PADDING_LEFT,
-          y: input.getAttribute("y")
-        };
-
-        ["font-weight","font-style","font-size","font-family","text-anchor"].forEach(function(a) {
-          attr[a] = input.dataset[toDataSetProp(a)];
-        });
-
-        const inputText = addSVGElementFromJson({
-              element: "text",
-              curStyles: true,
-              attr
-            });
-
-        input.dataset.inputText = id;
-
-        canvas.selectOnly([input, inputText]);
-        canvas.alignSelectedElements("m", "largest");
-        if (input.dataset.textAnchor) {
-          const align = {middle: "c", end: "r"}[input.dataset.textAnchor];
-          if (align) {
-            canvas.alignSelectedElements(align, "largest");
-          }
-        }
-
-        return inputText;
-      }
-
       const dblClick = function(evt) {
         const evtTarget = evt.target;
         const parent = evtTarget.parentNode;
@@ -3504,7 +3507,7 @@ class SvgCanvas {
         const { tagName } = mouseTarget;
 
         if (tagName === "rect" && mouseTarget.dataset.as && mouseTarget.dataset.as === "input") {
-          const textInput = createTextInput(mouseTarget);
+          const textInput = canvas.createTextInput(mouseTarget);
           canvas.selectOnly([textInput]);
           textActions.select(textInput);
         }
@@ -3898,14 +3901,14 @@ class SvgCanvas {
        * @param {Float} yIn
        * @returns {module:math.XYObject}
        */
-      function ptToScreen(xIn, yIn) {
+      function ptToScreen(xIn, yIn, m) {
         const out = {
           x: xIn,
           y: yIn
         };
 
-        if (matrix) {
-          const pt = transformPoint(out.x, out.y, matrix);
+        if (matrix || m) {
+          const pt = transformPoint(out.x, out.y, matrix || m);
           out.x = pt.x;
           out.y = pt.y;
         }
@@ -3965,6 +3968,7 @@ function hideCursor () {
       }
 
       return /** @lends module:svgcanvas.SvgCanvas#textActions */ {
+        ptToScreen,
         /**
          * @param {Element} target
          * @param {Float} x
@@ -5299,6 +5303,12 @@ function hideCursor () {
         console.log("Unexpected element to ungroup:", elem); // eslint-disable-line no-console
       }
     });
+
+    this.focusInput = function(input) {
+      const textInput = createTextInput(input);
+      canvas.selectOnly([textInput]);
+      textActions.select(textInput);
+    }
 
     /**
      * This function sets the current drawing as the input SVG XML.
@@ -7396,6 +7406,12 @@ function hideCursor () {
         anchorSys.removeShape(selected);
         this.removeOverlayShape(selected.id);
         delete selectedPoints[selected.id];
+        if (selected.tagName === "text" && selected.dataset.inputElement) {
+          const inputElem = getElem(selected.dataset.inputElement);
+          if (inputElem) {
+            delete inputElem.dataset.inputText;
+          }
+        }
 
         let parent = selected.parentNode;
         let t = selected;
