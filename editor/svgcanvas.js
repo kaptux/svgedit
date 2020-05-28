@@ -3494,6 +3494,51 @@ class SvgCanvas {
         startTransform = null;
       };
 
+      const createTextInput = function(input){
+        if (input.dataset.inputText) {
+          const textInput = getElem(input.dataset.inputText);
+          if (textInput) {
+            return textInput;
+          }
+        }
+
+        const PADDING_LEFT = 10;
+        const id = getNextId();
+
+        const attr = {
+          id,
+          fill: "#000000",
+          "xml:space": "preserve",
+          opacity: "1",
+          "stroke-opacity": "1",
+          x: parseFloat(input.getAttribute("x")) + PADDING_LEFT,
+          y: input.getAttribute("y")
+        };
+
+        ["font-weight","font-style","font-size","font-family","text-anchor"].forEach(function(a) {
+          attr[a] = input.dataset[toDataSetProp(a)];
+        });
+
+        const inputText = addSVGElementFromJson({
+              element: "text",
+              curStyles: true,
+              attr
+            });
+
+        input.dataset.inputText = id;
+
+        canvas.selectOnly([input, inputText]);
+        canvas.alignSelectedElements("m", "largest");
+        if (input.dataset.textAnchor) {
+          const align = {middle: "c", end: "r"}[input.dataset.textAnchor];
+          if (align) {
+            canvas.alignSelectedElements(align, "largest");
+          }
+        }
+
+        return inputText;
+      }
+
       const dblClick = function(evt) {
         const evtTarget = evt.target;
         const parent = evtTarget.parentNode;
